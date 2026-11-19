@@ -38,31 +38,43 @@ async function importNotion() {
   }
 
   const client = createNotionClient({ token: process.env.NOTION_API_TOKEN });
+  const status = createStatus();
 
-  // 1. The content itself: the title and the full block tree.
+  // 1. The content itself: the title and the full block tree. This is the
+  //    slow part: one request per block that has children.
+  status.update('Fetching page title…');
   const title = await client.pageTitle(pageId);
-  const blocks = await client.tree(pageId);
+
+  status.update('Fetching blocks…');
+  const blocks = await client.tree(pageId, (count) => status.update(`Fetching blocks… ${count} so far`));
+  status.done(`Fetched ${plural(countBlocks(blocks), 'block')}`);
 
   // 2. Footnotes: anchors come from the page Markdown, note text from the
   //    comments on each anchored block.
+  status.update('Fetching page Markdown…');
   const markdown = await client.pageMarkdown(pageId);
   const anchors = findAnchors(markdown.markdown);
+  status.done(`Fetched page Markdown: ${plural(anchors.length, 'commented span')}`);
 
+  const commentedBlocks = [...new Set(anchors.map((anchor) => anchor.blockId))];
   const comments: NotionComment[] = [];
-  for (const blockId of new Set(anchors.map((anchor) => anchor.blockId))) {
+  for (const [index, blockId] of commentedBlocks.entries()) {
+    status.update(`Fetching comments… block ${index + 1} of ${commentedBlocks.length}`);
     comments.push(...(await client.comments(blockId)));
   }
+  status.done(`Fetched ${plural(comments.length, 'comment')} from ${plural(commentedBlocks.length, 'block')}`);
 
   const footnotes = anchorFootnotes(blocks, anchors, selectFootnotes(comments));
 
   // 3. Save, then report.
   const story: Story = { title, blocks: footnotes.blocks, glossary: {}, footnotes: footnotes.footnotes };
   await writeStory(story);
+  status.done(`Saved ${STORY_FILE}`);
 
   // Counts and IDs only, never story text, so the output is safe to share.
-  console.log('Saved a private local story snapshot.');
+  console.log('');
   console.log('Block counts:', countBlockTypes(blocks));
-  console.log(`Commented spans: ${anchors.length}. Footnotes anchored: ${Object.keys(story.footnotes).length}.`);
+  console.log(`Footnotes anchored: ${Object.keys(story.footnotes).length}.`);
 
   if (markdown.truncated) {
     console.warn('Warning: Notion truncated the page Markdown, so footnotes near the end may be missing.');
@@ -78,6 +90,39 @@ async function importNotion() {
 }
 
 /**
+ * Progress messages on stderr. In a terminal, `update` rewrites a single
+ * status line in place; `done` finishes it with the elapsed time and moves
+ * on. When output isn't a terminal (e.g. redirected to a file), only the
+ * `done` lines are printed.
+ */
+function createStatus() {
+  const live = process.stderr.isTTY;
+  let stepStart = Date.now();
+
+  const clearLine = () => {
+    if (live) {
+      process.stderr.write('\r\x1b[2K');
+    }
+  };
+
+  return {
+    update(text: string) {
+      if (live) {
+        clearLine();
+        process.stderr.write(text);
+      }
+    },
+
+    done(text: string) {
+      const seconds = Math.round((Date.now() - stepStart) / 1000);
+      clearLine();
+      process.stderr.write(`${text}${seconds > 0 ? ` (${seconds}s)` : ''}\n`);
+      stepStart = Date.now();
+    },
+  };
+}
+
+/**
  * Write to a temporary file, then rename it into place. The rename is atomic,
  * so a failed or interrupted run never leaves a half-written snapshot, and the
  * last good snapshot survives until a new one is complete.
@@ -90,6 +135,14 @@ async function writeStory(story: Story) {
   await writeFile(tempFile, JSON.stringify(story, null, 2), { mode: 0o600 });
 
   await rename(tempFile, STORY_FILE);
+}
+
+function plural(count: number, noun: string): string {
+  return `${count} ${noun}${count === 1 ? '' : 's'}`;
+}
+
+function countBlocks(blocks: Block[]): number {
+  return blocks.reduce((total, block) => total + 1 + countBlocks(block.children ?? []), 0);
 }
 
 function countBlockTypes(blocks: Block[], counts: Record<string, number> = {}) {
@@ -231,22 +284,32 @@ export function createNotionClient({ token, fetchImpl = fetch, sleep = delay }: 
   /**
    * Fetch a block's full subtree, depth first, attaching each block's children
    * as a `children` array (the API itself only returns one level at a time).
+   * `onProgress` is called with the running total of blocks fetched.
    */
-  async function tree(blockId: string, ancestors: ReadonlySet<string> = new Set()): Promise<NotionBlock[]> {
-    // Guards against synced blocks or links that loop back on themselves.
-    if (ancestors.has(blockId)) {
-      throw new Error('Cyclic block tree detected.');
-    }
-    const path = new Set(ancestors).add(blockId);
+  async function tree(rootId: string, onProgress?: (blocksFetched: number) => void): Promise<NotionBlock[]> {
+    let fetched = 0;
 
-    const blocks = await getAll<NotionBlock>(`blocks/${encodeURIComponent(blockId)}/children`);
-    for (const block of blocks) {
-      if (block.has_children) {
-        block.children = await tree(block.id, path);
+    async function subtree(blockId: string, ancestors: ReadonlySet<string>): Promise<NotionBlock[]> {
+      // Guards against synced blocks or links that loop back on themselves.
+      if (ancestors.has(blockId)) {
+        throw new Error('Cyclic block tree detected.');
       }
+      const path = new Set(ancestors).add(blockId);
+
+      const blocks = await getAll<NotionBlock>(`blocks/${encodeURIComponent(blockId)}/children`);
+      fetched += blocks.length;
+      onProgress?.(fetched);
+
+      for (const block of blocks) {
+        if (block.has_children) {
+          block.children = await subtree(block.id, path);
+        }
+      }
+
+      return blocks;
     }
 
-    return blocks;
+    return subtree(rootId, new Set());
   }
 
   /** The page's title, as plain text. */
