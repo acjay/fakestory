@@ -76,6 +76,20 @@ export const fixture: Story = {
       ],
     },
     block('next', 'heading_2', [text('Building from here')]),
+    block('next-intro', 'paragraph', [text('Two ways to compare sounds:')]),
+    block(
+      'list-ratio',
+      'bulleted_list_item',
+      [text('By '), text('ratio', { annotations: { bold: true } })],
+      [
+        block('list-ratio-a', 'bulleted_list_item', [text('2:1 is an octave')]),
+        block('list-ratio-b', 'bulleted_list_item', [text('3:2 is a fifth')]),
+      ],
+    ),
+    block('list-difference', 'bulleted_list_item', [text('By difference, in hertz')]),
+    block('steps-intro', 'paragraph', [text('And a recipe for hearing one:')]),
+    block('step-1', 'numbered_list_item', [text('Play a tone.')]),
+    block('step-2', 'numbered_list_item', [text('Play another at twice the frequency.')]),
     block('next-p', 'paragraph', [
       text(
         'A future demo will let you hear the relationship. For now, the panel marks where an interactive experience will live.',

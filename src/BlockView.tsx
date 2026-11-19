@@ -2,15 +2,56 @@ import { MathExpression } from './MathExpression';
 import type { Block, RichText } from './model';
 import { RichTextView } from './RichTextView';
 
-/** Renders a list of sibling blocks. */
+/**
+ * Renders a list of sibling blocks.
+ *
+ * Notion has no list block: each list item is its own block. So consecutive
+ * items of the same kind are grouped here into one <ul> or <ol>.
+ */
 export function Blocks({ blocks }: { blocks: Block[] }) {
   return (
     <>
-      {blocks.map((block) => (
-        <BlockView key={block.id} block={block} />
-      ))}
+      {groupListItems(blocks).map((group) => {
+        if (group.kind === 'block') {
+          return <BlockView key={group.block.id} block={group.block} />;
+        }
+
+        const List = group.kind === 'bulleted_list_item' ? 'ul' : 'ol';
+        return (
+          <List key={group.items[0].id}>
+            {group.items.map((item) => (
+              <BlockView key={item.id} block={item} />
+            ))}
+          </List>
+        );
+      })}
     </>
   );
+}
+
+const LIST_ITEM_TYPES = ['bulleted_list_item', 'numbered_list_item'] as const;
+type ListItemType = (typeof LIST_ITEM_TYPES)[number];
+
+type BlockGroup = { kind: 'block'; block: Block } | { kind: ListItemType; items: Block[] };
+
+/** Group runs of consecutive list items of the same type; other blocks stay single. */
+function groupListItems(blocks: Block[]): BlockGroup[] {
+  const groups: BlockGroup[] = [];
+
+  for (const block of blocks) {
+    const listType = LIST_ITEM_TYPES.find((type) => type === block.type);
+    const last = groups.at(-1);
+
+    if (!listType) {
+      groups.push({ kind: 'block', block });
+    } else if (last && last.kind === listType) {
+      last.items.push(block);
+    } else {
+      groups.push({ kind: listType, items: [block] });
+    }
+  }
+
+  return groups;
 }
 
 /**
@@ -54,6 +95,17 @@ export function BlockView({ block }: { block: Block }) {
           <p>{text}</p>
           {children}
         </>
+      );
+
+    // Always inside the <ul>/<ol> that `Blocks` wraps around them. Nested
+    // items arrive as children, so they become a nested list.
+    case 'bulleted_list_item':
+    case 'numbered_list_item':
+      return (
+        <li>
+          {text}
+          {children}
+        </li>
       );
 
     case 'quote':

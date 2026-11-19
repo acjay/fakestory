@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { fixture } from './fixture';
 import { parseGlossaryLink, safeHref } from './links';
-import type { RichText, Story } from './model';
+import type { Block, RichText, Story } from './model';
 import { Reader } from './Reader';
 
 const text = (plain_text: string, footnote?: string): RichText => ({ type: 'text', plain_text, footnote });
@@ -28,6 +28,39 @@ describe('Reader', () => {
     const story = { ...fixture, blocks: [{ id: 'x', type: 'video', video: {} }] };
 
     expect(renderToStaticMarkup(<Reader story={story} />)).toContain('Unsupported block: video');
+  });
+});
+
+describe('lists', () => {
+  const item = (id: string, type: string, label: string, children?: Block[]): Block => ({
+    id,
+    type,
+    [type]: { rich_text: [text(label)] },
+    ...(children ? { has_children: true, children } : {}),
+  });
+  const render = (blocks: Block[]) => renderToStaticMarkup(<Reader story={{ ...fixture, blocks }} />);
+
+  it('groups consecutive items into one list, nesting children', () => {
+    const html = render([
+      item('a', 'bulleted_list_item', 'A', [item('a1', 'bulleted_list_item', 'A1')]),
+      item('b', 'bulleted_list_item', 'B'),
+    ]);
+
+    expect(html).toContain('<ul><li>A<ul><li>A1</li></ul></li><li>B</li></ul>');
+  });
+
+  it('starts a new list when the type changes or another block interrupts', () => {
+    const html = render([
+      item('a', 'numbered_list_item', 'One'),
+      item('b', 'numbered_list_item', 'Two'),
+      item('c', 'bulleted_list_item', 'Dot'),
+      item('p', 'paragraph', 'Break'),
+      item('d', 'bulleted_list_item', 'Dot again'),
+    ]);
+
+    expect(html).toContain(
+      '<ol><li>One</li><li>Two</li></ol><ul><li>Dot</li></ul><p>Break</p><ul><li>Dot again</li></ul>',
+    );
   });
 });
 
