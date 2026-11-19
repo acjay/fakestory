@@ -28,7 +28,7 @@ The story's notes are currently Notion comments. Whether they can be migrated de
 ### Decisions
 
 - **Only comments that start with `Footnote: ` are footnotes.** Everything else is an editorial note and is never published. The prefix is removed from the rendered note.
-- **Only a thread's first comment can be a footnote.** Replies are discussion and are never published (for example, an `Idea: ...` reply under a footnote). To be confirmed.
+- **Only a thread's first comment can be a footnote.** Replies are discussion and are never published (for example, an `Idea: ...` reply under a footnote).
 - **The block tree is the source of truth; page Markdown is used only to locate footnote anchors.** Each anchor's `discussion://PAGE/BLOCK/DISCUSSION` URL names its block. The importer finds the span's text among that block's rich-text runs (using its position in the Markdown paragraph when the phrase repeats) and splits runs so the footnote covers exactly those words. Rendering from Markdown was rejected: it lacks per-block IDs (needed for stable links and per-block diffs), can be truncated or omit unknown blocks, and would need a parser for an evolving format.
 - **Resolved comments are ignored.** That matches what the API returns anyway, since it only lists open comments.
 
