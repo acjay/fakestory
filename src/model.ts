@@ -24,6 +24,13 @@ export type RichText = {
     underline?: boolean;
     code?: boolean;
   };
+
+  /**
+   * Our extension, not part of the Notion API: the ID of the footnote anchored
+   * to this run. A footnote anchored across several runs (e.g. bold text then
+   * plain text) has the same ID on each of them. Set by the importer.
+   */
+  footnote?: string;
 };
 
 /**
@@ -41,10 +48,12 @@ export type Block = {
 
 export type GlossaryEntry = { name: string; definition: string };
 
-/** Lookup tables for the glossary terms and footnotes that rich text links to. */
+/** Lookup tables for the glossary terms and footnotes referenced from rich text. */
 export type References = {
   glossary: Record<string, GlossaryEntry>;
-  footnotes: Record<string, string>;
+
+  /** Footnote text, keyed by the ID in `RichText.footnote`. */
+  footnotes: Record<string, RichText[]>;
 };
 
 export type Story = References & {

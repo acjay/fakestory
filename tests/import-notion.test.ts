@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { createNotionClient } from '../scripts/inspect-notion.ts';
+import { createNotionClient } from '../scripts/import-notion.ts';
 
 const noDelay = async () => {};
 
@@ -54,5 +54,25 @@ describe('Notion client', () => {
     const client = createNotionClient({ token: 'fake', fetchImpl, sleep: noDelay });
 
     await expect(client.tree('root')).rejects.toThrow(/cursor missing/);
+  });
+
+  it("lists a block's comments across pages, filtered by block", async () => {
+    const calls: URL[] = [];
+
+    const fetchImpl = async (input: string | URL | Request) => {
+      const url = new URL(String(input));
+      calls.push(url);
+
+      return url.searchParams.has('start_cursor')
+        ? json({ results: [{ discussion_id: 'b' }], has_more: false })
+        : json({ results: [{ discussion_id: 'a' }], has_more: true, next_cursor: 'next' });
+    };
+
+    const client = createNotionClient({ token: 'fake', fetchImpl, sleep: noDelay });
+    const comments = await client.comments('block-1');
+
+    expect(comments.map((comment) => comment.discussion_id)).toEqual(['a', 'b']);
+    expect(calls.map((url) => url.pathname)).toEqual(['/v1/comments', '/v1/comments']);
+    expect(calls.every((url) => url.searchParams.get('block_id') === 'block-1')).toBe(true);
   });
 });

@@ -1,21 +1,20 @@
 /**
  * How the reader interprets links in rich text.
  *
- * Prototype convention: glossary terms and footnotes are ordinary links to
- * first-party URLs, e.g. https://fakestory.music/terminology/octave. This is
- * a placeholder, not a chosen authoring format.
+ * Prototype convention: glossary terms are ordinary links to first-party URLs,
+ * e.g. https://fakestory.music/terminology/octave. This is a placeholder, not
+ * a chosen authoring format. (Footnotes don't use links: see `RichText.footnote`.)
  */
 
-export type ReferenceLink = { kind: 'glossary' | 'footnotes'; id: string };
-
-const REFERENCE_HOST = 'fakestory.music';
-const REFERENCE_PATH = /^\/(glossary|terminology|footnotes)\/([a-z0-9-]+)\/?$/;
+const GLOSSARY_HOST = 'fakestory.music';
+const GLOSSARY_PATH = /^\/(?:glossary|terminology)\/([a-z0-9-]+)\/?$/;
 
 /**
- * Parse a glossary or footnote link. Anything that isn't exactly the expected
- * shape (other hosts, query strings, fragments) is treated as a normal link.
+ * Parse a glossary link, returning the term's ID. Anything that isn't exactly
+ * the expected shape (other hosts, query strings, fragments) is treated as a
+ * normal link.
  */
-export function parseReference(href?: string | null): ReferenceLink | null {
+export function parseGlossaryLink(href?: string | null): string | null {
   if (!href) {
     return null;
   }
@@ -28,19 +27,13 @@ export function parseReference(href?: string | null): ReferenceLink | null {
   }
 
   const isFirstParty =
-    url.protocol === 'https:' && url.hostname === REFERENCE_HOST && !url.port && !url.search && !url.hash;
+    url.protocol === 'https:' && url.hostname === GLOSSARY_HOST && !url.port && !url.search && !url.hash;
   if (!isFirstParty) {
     return null;
   }
 
-  const match = url.pathname.match(REFERENCE_PATH);
-  if (!match) {
-    return null;
-  }
-
-  const [, section, id] = match;
   // "terminology" is accepted as an alias of "glossary".
-  return { kind: section === 'footnotes' ? 'footnotes' : 'glossary', id };
+  return url.pathname.match(GLOSSARY_PATH)?.[1] ?? null;
 }
 
 const SAFE_PROTOCOLS = ['https:', 'http:', 'mailto:'];
