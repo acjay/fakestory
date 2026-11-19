@@ -1,5 +1,7 @@
 # The Fake Story of Music
 
+> 🤖 **Agent-written.** This document was written by an AI agent.
+
 A first reading prototype for a Notion-backed site. The previous Fresh prototype is preserved on `archive/original-fresh`.
 
 ## Try the prototype
