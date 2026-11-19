@@ -4,11 +4,12 @@ A first reading prototype for a Notion-backed site. The previous Fresh prototype
 
 ## Try the prototype
 
-Requires Node 20 or later.
+Requires Node 22.18 or later (scripts run as TypeScript via Node's built-in type stripping).
 
 ```sh
 npm ci
 npm test
+npm run format:check
 npm run build
 npm run dev
 ```

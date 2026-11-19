@@ -1,43 +1,53 @@
-// The supported subset of the Notion REST API response. Other fields are ignored.
+/**
+ * The content model the reader renders.
+ *
+ * Blocks and rich text deliberately mirror the Notion REST API's shapes (only
+ * the subset we support), so an API snapshot can be rendered without a
+ * translation step. Fields we don't use are ignored.
+ */
+
+/**
+ * A run of inline content with uniform formatting. Blocks don't hold text
+ * directly: a paragraph, heading, quote, etc. carries an array of these under
+ * its type key, e.g. `block.paragraph.rich_text`.
+ */
 export type RichText = {
   type: 'text' | 'equation' | 'mention';
   plain_text: string;
   href?: string | null;
   text?: { content: string; link?: { url: string } | null };
   equation?: { expression: string };
-  annotations?: { bold?: boolean; italic?: boolean; strikethrough?: boolean; underline?: boolean; code?: boolean };
+  annotations?: {
+    bold?: boolean;
+    italic?: boolean;
+    strikethrough?: boolean;
+    underline?: boolean;
+    code?: boolean;
+  };
 };
+
+/**
+ * One node in the page's block tree. As in the Notion API, the type-specific
+ * data lives under a key named after the type: a block with
+ * `type: 'paragraph'` has a `paragraph` field.
+ */
 export type Block = {
   id: string;
   type: string;
   has_children?: boolean;
   children?: Block[];
-  [key: string]: unknown;
+  [typeKey: string]: unknown;
 };
-export type Story = {
-  title: string;
-  blocks: Block[];
-  glossary: Record<string, { name: string; definition: string }>;
+
+export type GlossaryEntry = { name: string; definition: string };
+
+/** Lookup tables for the glossary terms and footnotes that rich text links to. */
+export type References = {
+  glossary: Record<string, GlossaryEntry>;
   footnotes: Record<string, string>;
 };
 
-// Only intentional, first-party links are interpreted as prototype references.
-export function reference(href?: string | null): { kind: 'glossary' | 'footnotes'; id: string } | null {
-  if (!href) return null;
-  try {
-    const url = new URL(href);
-    if (url.protocol !== 'https:' || url.hostname !== 'fakestory.music' || url.port || url.search || url.hash) return null;
-    const match = url.pathname.match(/^\/(glossary|terminology|footnotes)\/([a-z0-9-]+)\/?$/);
-    if (!match) return null;
-    return { kind: match[1] === 'terminology' ? 'glossary' : match[1] as 'glossary' | 'footnotes', id: match[2] };
-  } catch { return null; }
-}
-
-export function safeHref(href?: string | null): string | undefined {
-  if (!href) return undefined;
-  if (href.startsWith('#')) return href;
-  try {
-    const url = new URL(href);
-    return ['https:', 'http:', 'mailto:'].includes(url.protocol) ? href : undefined;
-  } catch { return undefined; }
-}
+export type Story = References & {
+  title: string;
+  blocks: Block[];
+};

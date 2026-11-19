@@ -1,9 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES2022", "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext", "moduleResolution": "Bundler", "jsx": "react-jsx",
-    "strict": true, "skipLibCheck": true, "noEmit": true,
-    "allowSyntheticDefaultImports": true, "resolveJsonModule": true
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "types": ["node"],
+
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+
+    // Scripts run directly under Node's built-in type stripping, which
+    // requires `.ts` import extensions and only type-level TS syntax.
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   },
-  "include": ["src", "vite.config.ts"]
+  "include": ["src", "scripts", "tests", "vite.config.ts"]
 }
