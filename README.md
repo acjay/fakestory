@@ -28,9 +28,17 @@ This read-only script fetches the page's block tree, its Markdown and the commen
 
 The snapshot can contain unpublished content and expiring asset URLs. Its directory is outside the repository and the Vite web root; it is never imported by the app or included in the build. Do not share or commit it. This is an import tool, not an automated content or publishing pipeline. The script deliberately does not overwrite the last successful snapshot on failure, so do not mistake an older file for fresh data.
 
+### Preview the imported story locally
+
+```sh
+npm run dev:story
+```
+
+This runs the dev server with the snapshot from `npm run import:notion` in place of the fixture. The dev server reads the file from `~/.fakestory-private/` on each request and only listens on 127.0.0.1. Production builds never include it: the loading code is stripped from `npm run build`, and `scripts/check-build.ts` fails the build if any trace of it remains. Blocks the reader doesn't support yet show a visible "Unsupported block" notice.
+
 ## What is and isn't here
 
-- The renderer understands a small subset of Notion-shaped blocks and rich text: paragraphs, headings, columns, equations, quotes, dividers, embeds as placeholders, and links. Unsupported block types are visibly flagged.
+- The renderer understands a small subset of Notion-shaped blocks and rich text: paragraphs, headings, bulleted and numbered lists (including nested), columns, equations, quotes, dividers, embeds as placeholders, and links. Unsupported block types are visibly flagged.
 - Footnotes render as a ♪ marker after the anchored text; hovering the text or marker highlights the anchor, and the marker opens the note. The importer builds them from Notion comments.
 - The fixture demonstrates glossary definitions using explicit links and local records. This is a test convention, not a chosen authoring format. There is no glossary index or backreference system yet.
 - Notion content is not automatically loaded or published. There is no deployment configuration, private preview, dashboard, or publish action. **Do not deploy this prototype as a preview for draft content.**

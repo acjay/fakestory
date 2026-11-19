@@ -75,4 +75,23 @@ describe('Notion client', () => {
     expect(calls.map((url) => url.pathname)).toEqual(['/v1/comments', '/v1/comments']);
     expect(calls.every((url) => url.searchParams.get('block_id') === 'block-1')).toBe(true);
   });
+
+  it('reports the running total of blocks fetched', async () => {
+    const fetchImpl = async (input: string | URL | Request) =>
+      new URL(String(input)).pathname.endsWith('/root/children')
+        ? json({
+            results: [
+              { id: 'a', type: 'toggle', has_children: true },
+              { id: 'b', type: 'paragraph', has_children: false },
+            ],
+            has_more: false,
+          })
+        : json({ results: [{ id: 'a1', type: 'paragraph', has_children: false }], has_more: false });
+
+    const progress: number[] = [];
+    const client = createNotionClient({ token: 'fake', fetchImpl, sleep: noDelay });
+    await client.tree('root', (count) => progress.push(count));
+
+    expect(progress).toEqual([2, 3]);
+  });
 });
