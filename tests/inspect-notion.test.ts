@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { createNotionClient } from '../scripts/notion-client.ts';
+import { createNotionClient } from '../scripts/inspect-notion.ts';
 
 const noDelay = async () => {};
 
