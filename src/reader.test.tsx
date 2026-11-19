@@ -32,14 +32,14 @@ describe('Reader', () => {
 });
 
 describe('footnotes', () => {
-  it('renders the anchor as plain prose followed by a single marker button', () => {
+  it('renders the anchor and its marker button as one unit', () => {
     const html = renderParagraph([text('Before '), text('anchored', 'n1'), text(' after.')], {
       n1: [text('The note.')],
     });
 
     expect(html).toContain(
-      '<span class="footnote"><span class="footnote-anchor">anchored</span>' +
-        '<span class="inline-detail"><button type="button" class="footnote-marker" aria-label="Footnote" aria-expanded="false">' +
+      '<span class="footnote">anchored<span class="inline-detail">' +
+        '<button type="button" class="footnote-marker" aria-label="Footnote" aria-expanded="false">' +
         '<span aria-hidden="true">♪</span></button></span></span>',
     );
     // Closed by default: the note isn't rendered until opened.
@@ -50,7 +50,7 @@ describe('footnotes', () => {
     const bold: RichText = { ...text('bold', 'n1'), annotations: { bold: true } };
     const html = renderParagraph([text('plain ', 'n1'), bold], { n1: [text('Note.')] });
 
-    expect(html).toContain('<span class="footnote-anchor">plain <strong>bold</strong></span>');
+    expect(html).toContain('<span class="footnote">plain <strong>bold</strong><span class="inline-detail">');
     expect(html.match(/footnote-marker/g)).toHaveLength(1);
   });
 

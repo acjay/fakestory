@@ -212,20 +212,29 @@ p {
 }
 /*
  * Footnotes: the anchored text reads as normal prose. A small ♪ after it is
- * the always-visible clue; hovering the text or the marker, focusing the
- * marker, or opening the note highlights exactly which words it's attached to.
+ * the always-visible clue. The text and the ♪ act as one unit: hovering
+ * either, focusing the ♪ with the keyboard, or opening the note highlights
+ * both together, and clicking either toggles the note.
  */
-.footnote-anchor {
+.footnote {
+  cursor: pointer;
   border-radius: 3px;
+  /* Keep the rounded highlight on each line when the anchor wraps. */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
   transition:
     background-color 0.15s,
     box-shadow 0.15s;
 }
-.footnote:hover .footnote-anchor,
-.footnote:focus-within .footnote-anchor,
-.footnote:has([aria-expanded='true']) .footnote-anchor {
+.footnote:hover,
+.footnote:has(:focus-visible),
+.footnote[data-open] {
   background: #dde8df;
   box-shadow: 0 0 0 2px #dde8df;
+}
+/* The open note is not part of the highlighted unit. */
+.footnote .detail-body {
+  cursor: auto;
 }
 .footnote-marker {
   /* Raised like a footnote number, without changing the line height. */
@@ -243,8 +252,8 @@ p {
   color: #3d6b5c;
   cursor: pointer;
 }
-.footnote-marker:hover,
-.footnote-marker[aria-expanded='true'] {
+.footnote:hover .footnote-marker,
+.footnote[data-open] .footnote-marker {
   color: #244f49;
 }
 .footnote-marker:focus-visible {
@@ -356,17 +365,17 @@ footer {
     background: #28332d;
     border-color: #6a7b70;
   }
-  .footnote:hover .footnote-anchor,
-  .footnote:focus-within .footnote-anchor,
-  .footnote:has([aria-expanded='true']) .footnote-anchor {
+  .footnote:hover,
+  .footnote:has(:focus-visible),
+  .footnote[data-open] {
     background: #33443a;
     box-shadow: 0 0 0 2px #33443a;
   }
   .footnote-marker {
     color: #a5d1bb;
   }
-  .footnote-marker:hover,
-  .footnote-marker[aria-expanded='true'] {
+  .footnote:hover .footnote-marker,
+  .footnote[data-open] .footnote-marker {
     color: #d3eadc;
   }
   .footnote-marker:focus-visible {

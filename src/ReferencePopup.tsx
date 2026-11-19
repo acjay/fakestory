@@ -1,51 +1,37 @@
-import { useId, useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
+
+import { usePopup } from './usePopup';
 
 type Props = {
   /** What's shown inline, and clicked to open the popup. */
   label: ReactNode;
-
-  /** An accessible name for the button, when `label` alone isn't descriptive (e.g. an icon). */
-  ariaLabel?: string;
-
-  /** Extra class for the button, to style it differently (e.g. as an icon). */
-  triggerClassName?: string;
-
-  title?: string;
+  title: string;
   body: ReactNode;
 };
 
 /**
- * An inline button that toggles a small popup, used for glossary terms and
- * footnotes. It's a real button, so it works with keyboard and touch; Escape
- * closes it.
+ * An inline button that toggles a small popup, used for glossary terms. It's a
+ * real button, so it works with keyboard and touch. Clicking outside or
+ * pressing Escape closes it.
  */
-export function ReferencePopup({ label, ariaLabel, triggerClassName, title, body }: Props) {
-  const [open, setOpen] = useState(false);
-  const popupId = useId();
+export function ReferencePopup({ label, title, body }: Props) {
+  const { open, toggle, containerRef, popupId } = usePopup<HTMLSpanElement>();
 
   return (
-    <span
-      className="inline-detail"
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') {
-          setOpen(false);
-        }
-      }}
-    >
+    <span className="inline-detail" ref={containerRef}>
       <button
         type="button"
-        className={triggerClassName ?? 'reference-trigger'}
-        aria-label={ariaLabel}
+        className="reference-trigger"
         aria-expanded={open}
         aria-controls={open ? popupId : undefined}
-        onClick={() => setOpen(!open)}
+        onClick={toggle}
       >
         {label}
       </button>
 
       {open && (
         <span id={popupId} className="detail-body">
-          {title && <strong>{title}</strong>}
+          <strong>{title}</strong>
           <span>{body}</span>
         </span>
       )}
