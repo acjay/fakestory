@@ -25,8 +25,12 @@ The story's notes are currently Notion comments. Whether they can be migrated de
 
 - Footnotes can be imported from existing comments with exact anchors, using two public endpoints: page Markdown for the anchored spans, and the comments API for the note text.
 - The page Markdown is a second representation of the content alongside the block tree. Either render from Markdown, or use it only to locate anchors and map them back onto blocks by block ID. Undecided.
-- Resolved discussions can't be listed through the public API, so their text isn't retrievable that way. Spans for resolved discussions haven't been checked.
-- Not every comment is a footnote: some are editorial notes (e.g. "Idea: ..."). The authoring convention still has to say which comments are publishable, for example a `Footnote:` prefix, which some comments already use.
+
+### Decisions
+
+- **Only comments that start with `Footnote: ` are footnotes.** Everything else is an editorial note and is never published. The prefix is removed from the rendered note.
+- **Only a thread's first comment can be a footnote.** Replies are discussion and are never published (for example, an `Idea: ...` reply under a footnote). To be confirmed.
+- **Resolved comments are ignored.** That matches what the API returns anyway, since it only lists open comments.
 
 ## Before a real reader or preview
 
