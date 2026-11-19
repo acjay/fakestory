@@ -1,5 +1,7 @@
 # Content model and footnote investigation
 
+> 🤖 **Agent-written.** This document was written by an AI agent.
+
 ## Source page observations
 
 The story uses paragraphs with formatted rich text, headings, callouts, nested lists, inline equations, columns, synced blocks, tables, images, uploaded HTML and CodePen embeds. At least one actual top-level API response exceeded one 100-block page. Notion is a tree of blocks: rich-text spans are attributes inside a block, not separate blocks. Child block lists must be paginated and recursively retrieved. See [Working with page content](https://developers.notion.com/guides/data-apis/working-with-page-content).

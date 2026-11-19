@@ -12,6 +12,10 @@
  * The integration needs the "Read content" and "Read comments" capabilities,
  * and must be connected to the page.
  *
+ * If the result would be incomplete (e.g. a footnote that can't be placed),
+ * nothing is saved and the script exits with an error. For local preview,
+ * `npm run import:notion -- --allow-incomplete` saves it anyway.
+ *
  * Reading order: `importNotion` (the whole sequence), then its helpers, then
  * the Notion API client. The script is started at the very bottom.
  */
@@ -27,6 +31,9 @@ import { anchorFootnotes, findAnchors, selectFootnotes, type NotionComment } fro
 // committed or end up in build output.
 const SNAPSHOT_DIR = join(homedir(), '.fakestory-private');
 const STORY_FILE = join(SNAPSHOT_DIR, 'story.json');
+
+// Save a snapshot even if it's incomplete (local preview only).
+const ALLOW_INCOMPLETE = process.argv.includes('--allow-incomplete');
 
 // A page ID, with or without dashes.
 const PAGE_ID_PATTERN = /^(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
@@ -65,28 +72,57 @@ async function importNotion() {
   status.done(`Fetched ${plural(comments.length, 'comment')} from ${plural(commentedBlocks.length, 'block')}`);
 
   const footnotes = anchorFootnotes(blocks, anchors, selectFootnotes(comments));
-
-  // 3. Save, then report.
   const story: Story = { title, blocks: footnotes.blocks, glossary: {}, footnotes: footnotes.footnotes };
-  await writeStory(story);
-  status.done(`Saved ${STORY_FILE}`);
 
-  // Counts and IDs only, never story text, so the output is safe to share.
+  // 3. Report. Counts and IDs only, never story text, so the output is safe to share.
   console.log('');
   console.log('Block counts:', countBlockTypes(blocks));
   console.log(`Footnotes anchored: ${Object.keys(story.footnotes).length}.`);
 
-  if (markdown.truncated) {
-    console.warn('Warning: Notion truncated the page Markdown, so footnotes near the end may be missing.');
-  }
-  if (markdown.unknown_block_ids.length > 0) {
-    console.warn(`Warning: the page Markdown left out ${markdown.unknown_block_ids.length} block(s).`);
-  }
-  for (const problem of footnotes.problems) {
+  // 4. Save, but never pass off a partial snapshot as complete.
+  const problems = incompleteSnapshotProblems(markdown, footnotes.problems);
+  for (const problem of problems) {
     console.warn(`Problem: ${problem}`);
   }
 
+  if (problems.length > 0 && !ALLOW_INCOMPLETE) {
+    throw new Error(
+      `Import incomplete (${plural(problems.length, 'problem')}). Nothing was saved; any previous snapshot is unchanged.\n` +
+        'To save it anyway for local preview, run: npm run import:notion -- --allow-incomplete',
+    );
+  }
+
+  await writeStory(story);
+  console.log(`Saved ${STORY_FILE}`);
+  if (problems.length > 0) {
+    console.warn('Warning: saved an INCOMPLETE snapshot (--allow-incomplete). Use it for local preview only.');
+  }
   console.log('This file is not used by the app or deployment. Never commit or share it.');
+}
+
+/**
+ * Everything that makes a snapshot incomplete. The block tree itself is
+ * always complete: any failure while fetching it stops the import. But the
+ * footnotes depend on the page Markdown, which Notion may cut short or which
+ * may leave out blocks it can't express, and on anchors being placed.
+ */
+export function incompleteSnapshotProblems(
+  markdown: Pick<PageMarkdown, 'truncated' | 'unknown_block_ids'>,
+  footnoteProblems: string[],
+): string[] {
+  const problems: string[] = [];
+
+  if (markdown.truncated) {
+    problems.push('Notion truncated the page Markdown, so footnotes near the end may be missing.');
+  }
+  if (markdown.unknown_block_ids.length > 0) {
+    problems.push(
+      `The page Markdown left out ${plural(markdown.unknown_block_ids.length, 'block')}, ` +
+        `so footnotes in them may be missing: ${markdown.unknown_block_ids.join(', ')}`,
+    );
+  }
+
+  return [...problems, ...footnoteProblems];
 }
 
 /**
@@ -173,8 +209,11 @@ const NOTION_VERSION = '2025-09-03';
 /** Pause before every request, to average just under 3 requests/second. */
 const REQUEST_SPACING_MS = 350;
 
-/** One initial attempt plus up to three retries after a 429. */
-const MAX_ATTEMPTS = 4;
+/** One initial attempt plus up to four retries, for temporary failures only. */
+const MAX_ATTEMPTS = 5;
+
+/** Rate limits and server-side errors: worth retrying, unlike 4xx access errors. */
+const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
 
 /** Never honor a `Retry-After` longer than this. */
 const MAX_RETRY_AFTER_SECONDS = 60;
@@ -198,14 +237,14 @@ type ListPage<T> = {
   next_cursor?: string | null;
 };
 
-type PageMarkdown = {
+export type PageMarkdown = {
   markdown: string;
   truncated: boolean;
   unknown_block_ids: string[];
 };
 
 type PageProperties = {
-  properties: Record<string, { type: string; title?: RichText[] }>;
+  properties?: Record<string, { type: string; title?: RichText[] }>;
 };
 
 export type NotionClientOptions = {
@@ -224,33 +263,48 @@ export function createNotionClient({ token, fetchImpl = fetch, sleep = delay }: 
     throw new Error('NOTION_API_TOKEN is required.');
   }
 
-  /** GET an API path, retrying only on rate limits (HTTP 429). */
+  /**
+   * GET an API path. Temporary failures (rate limits, server errors and
+   * dropped connections) are retried with backoff; anything else, such as a
+   * missing page or a bad token, fails immediately.
+   */
   async function get<T>(path: string): Promise<T> {
-    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    for (let attempt = 1; ; attempt++) {
       await sleep(REQUEST_SPACING_MS);
+      const canRetry = attempt < MAX_ATTEMPTS;
 
-      const response = await fetchImpl(`${NOTION_API}/${path}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Notion-Version': NOTION_VERSION,
-        },
-      });
+      let response: Response;
+      try {
+        response = await fetchImpl(`${NOTION_API}/${path}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Notion-Version': NOTION_VERSION,
+          },
+        });
+      } catch {
+        // Network failure: no response at all.
+        if (canRetry) {
+          await sleep(backoffMs(attempt));
+          continue;
+        }
+        throw new Error(`Could not reach Notion after ${MAX_ATTEMPTS} attempts. Check your connection.`);
+      }
 
-      const isLastAttempt = attempt === MAX_ATTEMPTS - 1;
-      if (response.status === 429 && !isLastAttempt) {
+      if (RETRYABLE_STATUSES.has(response.status) && canRetry) {
         await sleep(retryDelayMs(response, attempt));
         continue;
       }
 
       // Deliberately vague: error bodies can echo request details.
       if (!response.ok) {
-        throw new Error(`Notion request failed (HTTP ${response.status}). Check integration access and capabilities.`);
+        const advice = RETRYABLE_STATUSES.has(response.status)
+          ? ` after ${MAX_ATTEMPTS} attempts. Notion may be having trouble; try again later.`
+          : '. Check integration access and capabilities.';
+        throw new Error(`Notion request failed (HTTP ${response.status})${advice}`);
       }
 
       return (await response.json()) as T;
     }
-
-    throw new Error('Notion rate limit retry budget exhausted.');
   }
 
   /** GET every item of a paginated list, following cursors. */
@@ -315,7 +369,7 @@ export function createNotionClient({ token, fetchImpl = fetch, sleep = delay }: 
   /** The page's title, as plain text. */
   async function pageTitle(pageId: string): Promise<string> {
     const page = await get<PageProperties>(`pages/${encodeURIComponent(pageId)}`);
-    const title = Object.values(page.properties).find((property) => property.type === 'title')?.title ?? [];
+    const title = Object.values(page.properties ?? {}).find((property) => property.type === 'title')?.title ?? [];
 
     return title.map((run) => run.plain_text).join('');
   }
@@ -341,7 +395,12 @@ function retryDelayMs(response: Response, attempt: number): number {
     return Math.min(seconds, MAX_RETRY_AFTER_SECONDS) * 1000;
   }
 
-  return 1000 * 2 ** attempt;
+  return backoffMs(attempt);
+}
+
+/** 1s, 2s, 4s, 8s, … after the first, second, third, fourth failure. */
+function backoffMs(attempt: number): number {
+  return 1000 * 2 ** (attempt - 1);
 }
 
 // ---------------------------------------------------------------------------
@@ -352,6 +411,10 @@ if (import.meta.main) {
   try {
     await importNotion();
   } catch (error) {
+    // Clear any in-progress status line, so the error starts on its own line.
+    if (process.stderr.isTTY) {
+      process.stderr.write('\r\x1b[2K');
+    }
     console.error(error instanceof Error ? error.message : 'Notion import failed.');
     process.exitCode = 1;
   }

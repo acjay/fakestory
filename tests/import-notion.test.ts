@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { createNotionClient } from '../scripts/import-notion.ts';
+import { createNotionClient, incompleteSnapshotProblems } from '../scripts/import-notion.ts';
 
 const noDelay = async () => {};
 
@@ -93,5 +93,82 @@ describe('Notion client', () => {
     await client.tree('root', (count) => progress.push(count));
 
     expect(progress).toEqual([2, 3]);
+  });
+
+  it('retries server errors and dropped connections, then succeeds', async () => {
+    const outcomes = ['503', 'network', '502', 'ok'];
+    let requests = 0;
+
+    const fetchImpl = async () => {
+      const outcome = outcomes[requests++];
+      if (outcome === 'network') throw new TypeError('fetch failed');
+      if (outcome === 'ok')
+        return json({ results: [{ id: 'a', type: 'paragraph', has_children: false }], has_more: false });
+      return new Response('', { status: Number(outcome) });
+    };
+
+    const client = createNotionClient({ token: 'fake', fetchImpl, sleep: noDelay });
+
+    expect((await client.tree('root')).map((block) => block.id)).toEqual(['a']);
+    expect(requests).toBe(4);
+  });
+
+  it('gives up on persistent server errors after five attempts', async () => {
+    let requests = 0;
+    const fetchImpl = async () => {
+      requests++;
+      return new Response('', { status: 503 });
+    };
+
+    const client = createNotionClient({ token: 'fake', fetchImpl, sleep: noDelay });
+
+    await expect(client.tree('root')).rejects.toThrow(/HTTP 503\) after 5 attempts/);
+    expect(requests).toBe(5);
+  });
+
+  it('gives up on persistent network failures after five attempts', async () => {
+    let requests = 0;
+    const fetchImpl = async () => {
+      requests++;
+      throw new TypeError('fetch failed');
+    };
+
+    const client = createNotionClient({ token: 'fake', fetchImpl, sleep: noDelay });
+
+    await expect(client.tree('root')).rejects.toThrow(/Could not reach Notion after 5 attempts/);
+    expect(requests).toBe(5);
+  });
+
+  it('does not retry access errors', async () => {
+    let requests = 0;
+    const fetchImpl = async () => {
+      requests++;
+      return new Response('', { status: 404 });
+    };
+
+    const client = createNotionClient({ token: 'fake', fetchImpl, sleep: noDelay });
+
+    await expect(client.tree('root')).rejects.toThrow(/HTTP 404\)\. Check integration access/);
+    expect(requests).toBe(1);
+  });
+});
+
+describe('incompleteSnapshotProblems', () => {
+  const complete = { truncated: false, unknown_block_ids: [] };
+
+  it('finds nothing wrong with a complete import', () => {
+    expect(incompleteSnapshotProblems(complete, [])).toEqual([]);
+  });
+
+  it('flags truncated Markdown, omitted blocks and unplaced footnotes', () => {
+    const problems = incompleteSnapshotProblems({ truncated: true, unknown_block_ids: ['b1', 'b2'] }, [
+      'Footnote f1: no anchored text found in the page Markdown.',
+    ]);
+
+    expect(problems).toEqual([
+      'Notion truncated the page Markdown, so footnotes near the end may be missing.',
+      'The page Markdown left out 2 blocks, so footnotes in them may be missing: b1, b2',
+      'Footnote f1: no anchored text found in the page Markdown.',
+    ]);
   });
 });
