@@ -203,12 +203,53 @@ p {
   font-size: 15px;
   line-height: 1.5;
 }
-.detail-body strong,
-.detail-body span {
+.detail-body > strong,
+.detail-body > span {
   display: block;
 }
-.detail-body strong {
+.detail-body > strong {
   margin-bottom: 6px;
+}
+/*
+ * Footnotes: the anchored text reads as normal prose. A small ♪ after it is
+ * the always-visible clue; hovering the text or the marker, focusing the
+ * marker, or opening the note highlights exactly which words it's attached to.
+ */
+.footnote-anchor {
+  border-radius: 3px;
+  transition:
+    background-color 0.15s,
+    box-shadow 0.15s;
+}
+.footnote:hover .footnote-anchor,
+.footnote:focus-within .footnote-anchor,
+.footnote:has([aria-expanded='true']) .footnote-anchor {
+  background: #dde8df;
+  box-shadow: 0 0 0 2px #dde8df;
+}
+.footnote-marker {
+  /* Raised like a footnote number, without changing the line height. */
+  position: relative;
+  top: -0.35em;
+  margin-left: 0.05em;
+  padding: 0 0.12em;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  font: inherit;
+  font-size: 1.05em;
+  font-weight: 700;
+  line-height: 1;
+  color: #3d6b5c;
+  cursor: pointer;
+}
+.footnote-marker:hover,
+.footnote-marker[aria-expanded='true'] {
+  color: #244f49;
+}
+.footnote-marker:focus-visible {
+  outline: 2px solid #4c6c60;
+  outline-offset: 1px;
 }
 .math {
   white-space: nowrap;
@@ -314,6 +355,22 @@ footer {
   .detail-body {
     background: #28332d;
     border-color: #6a7b70;
+  }
+  .footnote:hover .footnote-anchor,
+  .footnote:focus-within .footnote-anchor,
+  .footnote:has([aria-expanded='true']) .footnote-anchor {
+    background: #33443a;
+    box-shadow: 0 0 0 2px #33443a;
+  }
+  .footnote-marker {
+    color: #a5d1bb;
+  }
+  .footnote-marker:hover,
+  .footnote-marker[aria-expanded='true'] {
+    color: #d3eadc;
+  }
+  .footnote-marker:focus-visible {
+    outline-color: #a5d1bb;
   }
   .unsupported {
     background: #45382b;

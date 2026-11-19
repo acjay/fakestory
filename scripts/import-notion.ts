@@ -1,14 +1,18 @@
 /**
- * Read-only inspection of the real story in Notion.
+ * Read-only import of the real story from Notion.
  *
- * Downloads the page's complete block tree, exactly as the API returns it, into
- * a private local file, and prints how many blocks of each type it contains.
- * This is for studying the API's shape. It is not the app's content source:
- * the app renders `src/fixture.ts`.
+ * Fetches the page's complete block tree, plus the page Markdown and comments
+ * needed to find footnotes, and writes the result as a private local story
+ * file in the same shape the reader renders (see `src/model.ts`). It prints
+ * counts and problems, never story text. The app does not load this file: it
+ * renders `src/fixture.ts`.
  *
- *   NOTION_API_TOKEN=... NOTION_PAGE_ID=... npm run inspect:notion
+ *   NOTION_API_TOKEN=... NOTION_PAGE_ID=... npm run import:notion
  *
- * Reading order: `inspectNotion` (the whole sequence), then its helpers, then
+ * The integration needs the "Read content" and "Read comments" capabilities,
+ * and must be connected to the page.
+ *
+ * Reading order: `importNotion` (the whole sequence), then its helpers, then
  * the Notion API client. The script is started at the very bottom.
  */
 
@@ -16,27 +20,60 @@ import { mkdir, rename, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
+import type { Block, RichText, Story } from '../src/model.ts';
+import { anchorFootnotes, findAnchors, selectFootnotes, type NotionComment } from './footnotes.ts';
+
 // Outside the repository and Vite's web root, so draft content can't be
 // committed or end up in build output.
 const SNAPSHOT_DIR = join(homedir(), '.fakestory-private');
-const SNAPSHOT_FILE = join(SNAPSHOT_DIR, 'notion-blocks.json');
+const STORY_FILE = join(SNAPSHOT_DIR, 'story.json');
 
 // A page ID, with or without dashes.
 const PAGE_ID_PATTERN = /^(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
 
-async function inspectNotion() {
+async function importNotion() {
   const pageId = process.env.NOTION_PAGE_ID;
   if (!pageId || !PAGE_ID_PATTERN.test(pageId)) {
     throw new Error('Set NOTION_PAGE_ID to a page UUID.');
   }
 
   const client = createNotionClient({ token: process.env.NOTION_API_TOKEN });
+
+  // 1. The content itself: the title and the full block tree.
+  const title = await client.pageTitle(pageId);
   const blocks = await client.tree(pageId);
 
-  await writeSnapshot({ pageId, blocks });
+  // 2. Footnotes: anchors come from the page Markdown, note text from the
+  //    comments on each anchored block.
+  const markdown = await client.pageMarkdown(pageId);
+  const anchors = findAnchors(markdown.markdown);
 
-  // Print counts only, never story text, so the output is safe to share.
-  console.log('Saved a private local block snapshot. Block counts:', countBlockTypes(blocks));
+  const comments: NotionComment[] = [];
+  for (const blockId of new Set(anchors.map((anchor) => anchor.blockId))) {
+    comments.push(...(await client.comments(blockId)));
+  }
+
+  const footnotes = anchorFootnotes(blocks, anchors, selectFootnotes(comments));
+
+  // 3. Save, then report.
+  const story: Story = { title, blocks: footnotes.blocks, glossary: {}, footnotes: footnotes.footnotes };
+  await writeStory(story);
+
+  // Counts and IDs only, never story text, so the output is safe to share.
+  console.log('Saved a private local story snapshot.');
+  console.log('Block counts:', countBlockTypes(blocks));
+  console.log(`Commented spans: ${anchors.length}. Footnotes anchored: ${Object.keys(story.footnotes).length}.`);
+
+  if (markdown.truncated) {
+    console.warn('Warning: Notion truncated the page Markdown, so footnotes near the end may be missing.');
+  }
+  if (markdown.unknown_block_ids.length > 0) {
+    console.warn(`Warning: the page Markdown left out ${markdown.unknown_block_ids.length} block(s).`);
+  }
+  for (const problem of footnotes.problems) {
+    console.warn(`Problem: ${problem}`);
+  }
+
   console.log('This file is not used by the app or deployment. Never commit or share it.');
 }
 
@@ -45,17 +82,17 @@ async function inspectNotion() {
  * so a failed or interrupted run never leaves a half-written snapshot, and the
  * last good snapshot survives until a new one is complete.
  */
-async function writeSnapshot(snapshot: { pageId: string; blocks: NotionBlock[] }) {
-  const tempFile = `${SNAPSHOT_FILE}.tmp`;
+async function writeStory(story: Story) {
+  const tempFile = `${STORY_FILE}.tmp`;
 
   // Readable by the current user only.
   await mkdir(SNAPSHOT_DIR, { recursive: true, mode: 0o700 });
-  await writeFile(tempFile, JSON.stringify(snapshot, null, 2), { mode: 0o600 });
+  await writeFile(tempFile, JSON.stringify(story, null, 2), { mode: 0o600 });
 
-  await rename(tempFile, SNAPSHOT_FILE);
+  await rename(tempFile, STORY_FILE);
 }
 
-function countBlockTypes(blocks: NotionBlock[], counts: Record<string, number> = {}) {
+function countBlockTypes(blocks: Block[], counts: Record<string, number> = {}) {
   for (const block of blocks) {
     counts[block.type] = (counts[block.type] ?? 0) + 1;
 
@@ -70,13 +107,15 @@ function countBlockTypes(blocks: NotionBlock[], counts: Record<string, number> =
 // ---------------------------------------------------------------------------
 // Notion API client
 //
-// A minimal, read-only client that only knows how to fetch a block tree: a
-// page's children, their children, and so on. Requests are made one at a time
-// to stay under Notion's rate limit (an average of ~3 requests per second).
+// A minimal, read-only client for the few endpoints the import needs.
+// Requests are made one at a time to stay under Notion's rate limit (an
+// average of ~3 requests per second).
 // ---------------------------------------------------------------------------
 
 const NOTION_API = 'https://api.notion.com/v1';
-const NOTION_VERSION = '2022-06-28';
+
+// The page Markdown endpoint needs a recent API version.
+const NOTION_VERSION = '2025-09-03';
 
 /** Pause before every request, to average just under 3 requests/second. */
 const REQUEST_SPACING_MS = 350;
@@ -87,25 +126,33 @@ const MAX_ATTEMPTS = 4;
 /** Never honor a `Retry-After` longer than this. */
 const MAX_RETRY_AFTER_SECONDS = 60;
 
-/** The API's maximum page size for block children. */
+/** The API's maximum page size for paginated lists. */
 const PAGE_SIZE = '100';
 
 /**
  * The parts of a Notion block we rely on. The rest of the API response is
  * kept as-is, so the snapshot stays a faithful copy of what Notion returned.
  */
-export type NotionBlock = {
-  id: string;
-  type: string;
+export type NotionBlock = Block & {
   has_children: boolean;
   children?: NotionBlock[];
-  [field: string]: unknown;
 };
 
-type ChildrenPage = {
-  results: NotionBlock[];
+/** One page of a paginated list endpoint. */
+type ListPage<T> = {
+  results: T[];
   has_more: boolean;
   next_cursor?: string | null;
+};
+
+type PageMarkdown = {
+  markdown: string;
+  truncated: boolean;
+  unknown_block_ids: string[];
+};
+
+type PageProperties = {
+  properties: Record<string, { type: string; title?: RichText[] }>;
 };
 
 export type NotionClientOptions = {
@@ -153,20 +200,20 @@ export function createNotionClient({ token, fetchImpl = fetch, sleep = delay }: 
     throw new Error('Notion rate limit retry budget exhausted.');
   }
 
-  /** Fetch every direct child of a block, following pagination cursors. */
-  async function children(blockId: string): Promise<NotionBlock[]> {
-    const all: NotionBlock[] = [];
+  /** GET every item of a paginated list, following cursors. */
+  async function getAll<T>(path: string, params: Record<string, string> = {}): Promise<T[]> {
+    const all: T[] = [];
     let cursor: string | null = null;
 
     do {
-      const query = new URLSearchParams({ page_size: PAGE_SIZE });
+      const query = new URLSearchParams({ ...params, page_size: PAGE_SIZE });
       if (cursor) {
         query.set('start_cursor', cursor);
       }
 
-      const page = await get<ChildrenPage>(`blocks/${encodeURIComponent(blockId)}/children?${query}`);
+      const page = await get<ListPage<T>>(`${path}?${query}`);
 
-      // Fail loudly on a malformed response, rather than return a partial tree.
+      // Fail loudly on a malformed response, rather than return a partial list.
       if (!Array.isArray(page.results)) {
         throw new Error('Unexpected response: results missing.');
       }
@@ -192,7 +239,7 @@ export function createNotionClient({ token, fetchImpl = fetch, sleep = delay }: 
     }
     const path = new Set(ancestors).add(blockId);
 
-    const blocks = await children(blockId);
+    const blocks = await getAll<NotionBlock>(`blocks/${encodeURIComponent(blockId)}/children`);
     for (const block of blocks) {
       if (block.has_children) {
         block.children = await tree(block.id, path);
@@ -202,7 +249,25 @@ export function createNotionClient({ token, fetchImpl = fetch, sleep = delay }: 
     return blocks;
   }
 
-  return { tree };
+  /** The page's title, as plain text. */
+  async function pageTitle(pageId: string): Promise<string> {
+    const page = await get<PageProperties>(`pages/${encodeURIComponent(pageId)}`);
+    const title = Object.values(page.properties).find((property) => property.type === 'title')?.title ?? [];
+
+    return title.map((run) => run.plain_text).join('');
+  }
+
+  /** The whole page as Notion-flavored Markdown, which includes comment anchors. */
+  async function pageMarkdown(pageId: string): Promise<PageMarkdown> {
+    return get<PageMarkdown>(`pages/${encodeURIComponent(pageId)}/markdown`);
+  }
+
+  /** The open (unresolved) comments on a block. */
+  async function comments(blockId: string): Promise<NotionComment[]> {
+    return getAll<NotionComment>('comments', { block_id: blockId });
+  }
+
+  return { tree, pageTitle, pageMarkdown, comments };
 }
 
 /** Prefer the server's `Retry-After`; otherwise back off exponentially. */
@@ -222,9 +287,9 @@ function retryDelayMs(response: Response, attempt: number): number {
 
 if (import.meta.main) {
   try {
-    await inspectNotion();
+    await importNotion();
   } catch (error) {
-    console.error(error instanceof Error ? error.message : 'Notion inspection failed.');
+    console.error(error instanceof Error ? error.message : 'Notion import failed.');
     process.exitCode = 1;
   }
 }

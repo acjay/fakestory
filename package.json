@@ -10,7 +10,7 @@
     "typecheck": "tsc -b",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "inspect:notion": "node scripts/inspect-notion.ts"
+    "import:notion": "node scripts/import-notion.ts"
   },
   "dependencies": {
     "katex": "^0.16.22",
