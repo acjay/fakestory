@@ -64,6 +64,61 @@ describe('lists', () => {
   });
 });
 
+describe('tables, callouts and synced blocks', () => {
+  const render = (blocks: Block[]) => renderToStaticMarkup(<Reader story={{ ...fixture, blocks }} />);
+  const row = (id: string, ...cells: string[]): Block => ({
+    id,
+    type: 'table_row',
+    table_row: { cells: cells.map((cell) => [text(cell)]) },
+  });
+
+  it('renders a table with column and row headers', () => {
+    const html = render([
+      {
+        id: 't',
+        type: 'table',
+        table: { has_column_header: true, has_row_header: true },
+        children: [row('h', 'Name', 'Ratio'), row('r', 'Octave', '2:1')],
+      },
+    ]);
+
+    expect(html).toContain(
+      '<thead><tr><th scope="col">Name</th><th scope="col">Ratio</th></tr></thead>' +
+        '<tbody><tr><th scope="row">Octave</th><td>2:1</td></tr></tbody>',
+    );
+  });
+
+  it('renders a table without headers as plain cells', () => {
+    const html = render([{ id: 't', type: 'table', table: {}, children: [row('r', 'A', 'B')] }]);
+
+    expect(html).toContain('<table><tbody><tr><td>A</td><td>B</td></tr></tbody></table>');
+  });
+
+  it('renders a callout with its emoji and color', () => {
+    const html = render([
+      {
+        id: 'c',
+        type: 'callout',
+        callout: { rich_text: [text('Heads up')], icon: { type: 'emoji', emoji: '💡' }, color: 'blue_background' },
+      },
+    ]);
+
+    expect(html).toContain(
+      '<aside class="callout" data-color="blue_background"><span class="callout-icon" aria-hidden="true">💡</span>' +
+        '<div class="callout-body"><p>Heads up</p></div></aside>',
+    );
+  });
+
+  it('renders a synced block as its content, or a notice if it has none', () => {
+    const paragraph: Block = { id: 'p', type: 'paragraph', paragraph: { rich_text: [text('Shared')] } };
+
+    expect(render([{ id: 's', type: 'synced_block', synced_block: {}, children: [paragraph] }])).toContain(
+      '<div class="reading"><p>Shared</p></div>',
+    );
+    expect(render([{ id: 's', type: 'synced_block', synced_block: {} }])).toContain('Synced block with no content');
+  });
+});
+
 describe('footnotes', () => {
   it('renders the anchor and its marker button as one unit', () => {
     const html = renderParagraph([text('Before '), text('anchored', 'n1'), text(' after.')], {

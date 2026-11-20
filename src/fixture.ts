@@ -13,6 +13,11 @@ const equation = (expression: string): RichText => ({
   plain_text: expression,
   equation: { expression },
 });
+const row = (id: string, cells: string[]): Block => ({
+  id,
+  type: 'table_row',
+  table_row: { cells: cells.map((cell) => [text(cell)]) },
+});
 const block = (id: string, type: string, rich_text: RichText[], children?: Block[]): Block => ({
   id,
   type,
@@ -73,6 +78,36 @@ export const fixture: Story = {
           column: {},
           children: [{ id: 'demo', type: 'embed', embed: { url: 'https://example.com/demo/octave' } }],
         },
+      ],
+    },
+    {
+      id: 'tip',
+      type: 'callout',
+      has_children: false,
+      callout: {
+        rich_text: [text('Try it: hum a note, then hum the same note higher. That jump is the octave.')],
+        icon: { type: 'emoji', emoji: '💡' },
+        color: 'yellow_background',
+      },
+    },
+    {
+      id: 'ratios',
+      type: 'table',
+      has_children: true,
+      table: { table_width: 3, has_column_header: true, has_row_header: true },
+      children: [
+        row('ratios-head', ['Interval', 'Ratio', 'Example']),
+        row('ratios-octave', ['Octave', '2:1', '220 Hz → 440 Hz']),
+        row('ratios-fifth', ['Fifth', '3:2', '220 Hz → 330 Hz']),
+      ],
+    },
+    {
+      id: 'shared',
+      type: 'synced_block',
+      has_children: true,
+      synced_block: { synced_from: null },
+      children: [
+        block('shared-p', 'paragraph', [text('This paragraph lives in a synced block, shared with other pages.')]),
       ],
     },
     block('next', 'heading_2', [text('Building from here')]),
