@@ -1,0 +1,46 @@
+    #container {
+      width: 600px;
+      height: 160px;
+    }
+    .main-line {
+      stroke: black;
+      stroke-width: 2;
+      marker-start: url(#arrowhead-left);
+      marker-end: url(#arrowhead-right);
+    }
+    .tick-line {
+      stroke: black;
+      stroke-width: 2;
+    }
+    .circle-default {
+      fill: black;
+    }
+    .circle-highlight {
+      fill: blue;
+    }
+    .tick-label {
+      font-family: sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      fill: white; /* White text on black or blue circles */
+      cursor: pointer;
+    }
+    .cents-label {
+      font-family: sans-serif;
+      font-size: 16px;
+      text-anchor: middle;
+      dominant-baseline: hanging; /* Positions text below the line */
+      fill: black;
+    }
+
+    .interval-label {
+      font-family: sans-serif;
+      font-size: 13px;
+      font-style: italic;
+      stroke: #999;
+      text-anchor: middle;
+      dominant-baseline: hanging; /* Positions text below the line */
+      fill: black;
+    }
