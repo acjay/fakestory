@@ -1,0 +1,28 @@
+table {
+  border-collapse: collapse;
+  margin: 20px;
+}
+td {
+  padding: 25px;
+  border: 1px solid #bbb;
+  position: relative;
+  text-align: center;
+}
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.annotation {
+  font-size: 14px;
+  fill: black;
+  pointer-events: none;
+}
+.annotation-background {
+  stroke: black;
+  fill: #33FF33;
+  cursor: pointer;
+}
+.container {
+  margin-top: 100px;
+}
