@@ -272,24 +272,74 @@ function markAnchor(block: Block | undefined, anchor: MarkdownAnchor, footnoteId
     return 'block not found.';
   }
 
-  const data = block[block.type] as { rich_text?: RichText[] } | undefined;
-  if (!data?.rich_text) {
+  const slots = textSlots(block);
+  if (slots.length === 0) {
     return `block type "${block.type}" has no rich text.`;
   }
-
-  // Locate the anchor within the block's text.
-  const text = data.rich_text.map((run) => run.plain_text).join('');
-  const start = nthIndexOf(text, anchor.text, anchor.occurrence);
-  if (!anchor.text || start === -1) {
+  if (!anchor.text) {
     return 'anchored text not found in the block.';
   }
-  const end = start + anchor.text.length;
 
-  // Split runs at the anchor's edges, then mark every run inside it.
-  const runs = splitRunsAt(splitRunsAt(data.rich_text, start), end);
+  // Find the right occurrence of the anchored text. Matches are counted in
+  // order across the block's slots (e.g. a table row's cells), but a single
+  // match never crosses from one slot into the next.
+  let remaining = anchor.occurrence;
+  for (const slot of slots) {
+    const text = slot.runs.map((run) => run.plain_text).join('');
+    const matches = countOccurrences(text, anchor.text);
+
+    if (remaining >= matches) {
+      remaining -= matches;
+      continue;
+    }
+
+    const start = nthIndexOf(text, anchor.text, remaining);
+    const result = markRuns(slot.runs, start, start + anchor.text.length, footnoteId);
+    if (typeof result === 'string') {
+      return result;
+    }
+
+    slot.replace(result);
+    return null;
+  }
+
+  return 'anchored text not found in the block.';
+}
+
+/** A rich-text array somewhere inside a block, with a way to replace it. */
+type TextSlot = { runs: RichText[]; replace: (runs: RichText[]) => void };
+
+/**
+ * Where a block keeps its text. Most blocks have one `rich_text` array; a
+ * table row has one per cell; and a table holds its rows' cells, in case
+ * Notion attributes an anchor to the table rather than to the row.
+ */
+function textSlots(block: Block): TextSlot[] {
+  if (block.type === 'table') {
+    return (block.children ?? []).flatMap(textSlots);
+  }
+
+  if (block.type === 'table_row') {
+    const cells = (block.table_row as { cells?: RichText[][] } | undefined)?.cells ?? [];
+    return cells.map((runs, index) => ({ runs, replace: (updated) => (cells[index] = updated) }));
+  }
+
+  const data = block[block.type] as { rich_text?: RichText[] } | undefined;
+  if (!data?.rich_text) {
+    return [];
+  }
+  return [{ runs: data.rich_text, replace: (updated) => (data.rich_text = updated) }];
+}
+
+/**
+ * Split runs at an anchor's edges and mark every run inside it. Returns the
+ * new runs, or a problem if the anchor overlaps a different footnote.
+ */
+function markRuns(runs: RichText[], start: number, end: number, footnoteId: string): RichText[] | string {
+  const split = splitRunsAt(splitRunsAt(runs, start), end);
 
   let offset = 0;
-  for (const run of runs) {
+  for (const run of split) {
     const runStart = offset;
     offset += run.plain_text.length;
 
@@ -304,8 +354,7 @@ function markAnchor(block: Block | undefined, anchor: MarkdownAnchor, footnoteId
     run.footnote = footnoteId;
   }
 
-  data.rich_text = runs;
-  return null;
+  return split;
 }
 
 /**

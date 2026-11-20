@@ -208,4 +208,62 @@ describe('anchorFootnotes', () => {
 
     expect(result.problems).toEqual([`Footnote ${discussionId}: no anchored text found in the page Markdown.`]);
   });
+
+  describe('in tables', () => {
+    const row = (id: string, ...cells: string[]): Block => ({
+      id,
+      type: 'table_row',
+      table_row: { cells: cells.map((cell) => [text(cell)]) },
+    });
+    const cellsOf = (block: Block) =>
+      (block.table_row as { cells: RichText[][] }).cells.map((cell) =>
+        cell.map((run) => [run.plain_text, run.footnote]),
+      );
+
+    it('anchors within a table row cell', () => {
+      const table: Block = {
+        id: 'table',
+        type: 'table',
+        table: { table_width: 2 },
+        children: [row(BLOCK, 'Octave', 'Ratio 2:1')],
+      };
+
+      const result = anchorFootnotes([table], [anchor('2:1')], { [discussionId]: note });
+
+      expect(result.problems).toEqual([]);
+      expect(cellsOf(result.blocks[0].children![0])).toEqual([
+        [['Octave', undefined]],
+        [
+          ['Ratio ', undefined],
+          ['2:1', discussionId],
+        ],
+      ]);
+    });
+
+    it('counts occurrences across cells, without matching across a cell boundary', () => {
+      const blocks = [row(BLOCK, 'fifth', 'fifth and fifth')];
+
+      const result = anchorFootnotes(blocks, [anchor('fifth', 2)], { [discussionId]: note });
+
+      expect(cellsOf(result.blocks[0])).toEqual([
+        [['fifth', undefined]],
+        [
+          ['fifth and ', undefined],
+          ['fifth', discussionId],
+        ],
+      ]);
+    });
+
+    it('finds an anchor attributed to the table rather than the row', () => {
+      const table: Block = { id: BLOCK, type: 'table', table: {}, children: [row('r1', 'A', 'B note')] };
+
+      const result = anchorFootnotes([table], [anchor('note')], { [discussionId]: note });
+
+      expect(result.problems).toEqual([]);
+      expect(cellsOf(result.blocks[0].children![0])[1]).toEqual([
+        ['B ', undefined],
+        ['note', discussionId],
+      ]);
+    });
+  });
 });

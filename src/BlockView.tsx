@@ -1,6 +1,7 @@
 import { MathExpression } from './MathExpression';
 import type { Block, RichText } from './model';
 import { RichTextView } from './RichTextView';
+import { TableView } from './TableView';
 
 /**
  * Renders a list of sibling blocks.
@@ -60,7 +61,9 @@ function groupListItems(blocks: Block[]): BlockGroup[] {
  */
 export function BlockView({ block }: { block: Block }) {
   const data = typeData(block);
-  const text = <RichTextView values={(data.rich_text as RichText[] | undefined) ?? []} />;
+  const richText = (data.rich_text as RichText[] | undefined) ?? [];
+  const hasText = richText.length > 0;
+  const text = <RichTextView values={richText} />;
   const children = block.children?.length ? <Blocks blocks={block.children} /> : null;
 
   switch (block.type) {
@@ -114,6 +117,43 @@ export function BlockView({ block }: { block: Block }) {
           {text}
           {children}
         </blockquote>
+      );
+
+    // A highlighted aside, with an optional emoji icon. Only emoji icons are
+    // shown: image icons would mean loading files from Notion.
+    case 'callout': {
+      const icon = data.icon as { type?: string; emoji?: string } | undefined;
+      const color = typeof data.color === 'string' ? data.color : 'default';
+
+      return (
+        <aside className="callout" data-color={color}>
+          {icon?.type === 'emoji' && (
+            <span className="callout-icon" aria-hidden="true">
+              {icon.emoji}
+            </span>
+          )}
+          <div className="callout-body">
+            {hasText && <p>{text}</p>}
+            {children}
+          </div>
+        </aside>
+      );
+    }
+
+    case 'table':
+      return <TableView block={block} />;
+
+    // Content shared between several places in Notion. Its children are the
+    // shared content, so it renders as if they were written here. If they're
+    // missing (e.g. the original is on a page the integration can't read),
+    // say so rather than silently showing nothing.
+    case 'synced_block':
+      return (
+        children ?? (
+          <div className="unsupported" role="note">
+            Synced block with no content
+          </div>
+        )
       );
 
     case 'column_list':

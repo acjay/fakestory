@@ -282,6 +282,72 @@ li > p {
   outline: 2px solid #4c6c60;
   outline-offset: 1px;
 }
+/* Callouts: a tinted aside with an optional emoji. */
+.callout {
+  display: flex;
+  gap: 14px;
+  max-width: 680px;
+  margin: 0 0 24px;
+  padding: 18px 20px;
+  border-radius: 8px;
+  background: var(--callout-bg, #eef1ec);
+}
+.callout-icon {
+  font-size: 22px;
+  line-height: 1.6;
+}
+.callout-body > :last-child {
+  margin-bottom: 0;
+}
+.callout[data-color^='gray'] {
+  --callout-bg: #eceeeb;
+}
+.callout[data-color^='brown'] {
+  --callout-bg: #f1ebe5;
+}
+.callout[data-color^='orange'] {
+  --callout-bg: #f8ebdf;
+}
+.callout[data-color^='yellow'] {
+  --callout-bg: #f8f1d8;
+}
+.callout[data-color^='green'] {
+  --callout-bg: #e3efe6;
+}
+.callout[data-color^='blue'] {
+  --callout-bg: #e3edf5;
+}
+.callout[data-color^='purple'] {
+  --callout-bg: #eee8f4;
+}
+.callout[data-color^='pink'] {
+  --callout-bg: #f6e6ee;
+}
+.callout[data-color^='red'] {
+  --callout-bg: #f8e5e2;
+}
+/* Tables scroll sideways on narrow screens rather than squeezing columns. */
+.table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0 0 24px;
+}
+table {
+  border-collapse: collapse;
+  font-size: 16px;
+  line-height: 1.5;
+}
+th,
+td {
+  padding: 8px 14px;
+  border: 1px solid #d4d6cf;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #eef1ec;
+  font-weight: 600;
+}
 .math {
   white-space: nowrap;
 }
@@ -402,6 +468,19 @@ footer {
   }
   .footnote-marker:focus-visible {
     outline-color: #a5d1bb;
+  }
+  .callout {
+    --callout-bg: #28342d;
+  }
+  .callout[data-color] {
+    --callout-bg: #28342d;
+  }
+  th,
+  td {
+    border-color: #46524b;
+  }
+  th {
+    background: #28342d;
   }
   .unsupported {
     background: #45382b;
