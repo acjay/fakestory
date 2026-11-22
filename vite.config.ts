@@ -1,6 +1,7 @@
+import { readdirSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 import react from '@vitejs/plugin-react';
 import { defineConfig, type Plugin } from 'vite';
@@ -11,7 +12,22 @@ const LOCAL_STORY_FILE = join(homedir(), '.fakestory-private', 'story.json');
 /** The dev-server URL the app fetches it from (see src/loadStory.ts). */
 const LOCAL_STORY_URL = '/__local/story.json';
 
-export default defineConfig({ plugins: [react(), localStory()] });
+export default defineConfig({
+  plugins: [react(), localStory()],
+  build: {
+    rollupOptions: {
+      // The reading page, plus one standalone page per demo (demos/<slug>/index.html).
+      // The dev-only harness pages are deliberately not listed.
+      input: { main: resolve('index.html'), ...demoPages() },
+    },
+  },
+});
+
+/** Every demos/<slug>/index.html, keyed for the build as demos/<slug>. */
+function demoPages(): Record<string, string> {
+  const slugs = readdirSync('demos', { withFileTypes: true }).filter((entry) => entry.isDirectory());
+  return Object.fromEntries(slugs.map((entry) => [`demos/${entry.name}`, resolve('demos', entry.name, 'index.html')]));
+}
 
 /**
  * Serves the private story snapshot to the local dev server, so the real

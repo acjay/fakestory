@@ -16,13 +16,24 @@
  * The browser APIs are injectable, so the lifecycle is tested with fakes.
  */
 
-import { DEFAULT_VOICE, envelopeFor, harmonicAmplitudes, loudnessScale, partialsOf, type Voice } from './voices';
+import {
+  DEFAULT_VOICE,
+  envelopeFor,
+  harmonicAmplitudes,
+  loudnessScale,
+  partialsOf,
+  type Envelope,
+  type Voice,
+} from './voices';
 
 /** How long the fade out takes when a sound is stopped early, in seconds. */
 const STOP_FADE = 0.03;
 
 /** Start slightly in the future, so the first scheduled values aren't missed. */
 const SCHEDULE_AHEAD = 0.01;
+
+/** Time constant for gliding to new values in `update`, in seconds. */
+const GLIDE = 0.012;
 
 const CHANNEL_NAME = 'fakestory-audio';
 
@@ -42,6 +53,13 @@ export type PlayOptions = {
 /** A playing sound. */
 export type Sound = {
   stop(): void;
+
+  /**
+   * Change a sustained sound while it plays, e.g. as the reader drags a
+   * slider. Frequencies and partial levels glide to their new values, so the
+   * change is smooth. Pass the same number of frequencies as were played.
+   */
+  update(frequencies: number[], voice: Voice): void;
 
   /** Resolves once the sound has fully ended, whether stopped or finished. */
   finished: Promise<void>;
@@ -118,35 +136,47 @@ export class AudioEngine {
     this.channel?.postMessage({ type: 'started', engine: this.id } satisfies StartedMessage);
 
     const start = context.currentTime + SCHEDULE_AHEAD;
+
     // One gain for everything sounding together, so a chord as a whole is
     // as loud as a single note, and every voice sounds equally loud.
     const scale = loudnessScale(frequencies.flatMap((frequency) => partialsOf(voice, frequency)));
     const notes = frequencies.map((frequency) => this.startNote(context, frequency, voice, scale, start, duration));
+    const oscillators = notes.flatMap((n) => n.partials.map((partial) => partial.oscillator));
 
     let resolveFinished!: () => void;
     const finished = new Promise<void>((resolve) => (resolveFinished = resolve));
 
-    let remaining = notes.length;
-    for (const { oscillator, gain } of notes) {
+    // Once every oscillator has ended, disconnect everything.
+    let remaining = oscillators.length;
+    for (const oscillator of oscillators) {
       oscillator.onended = () => {
-        oscillator.disconnect();
-        gain.disconnect();
-
         remaining--;
-        if (remaining === 0) {
-          this.sounds.delete(sound);
-          resolveFinished();
+        if (remaining > 0) {
+          return;
         }
+
+        for (const n of notes) {
+          n.envelope.disconnect();
+          for (const partial of n.partials) {
+            partial.oscillator.disconnect();
+            partial.gain.disconnect();
+          }
+        }
+        this.sounds.delete(sound);
+        resolveFinished();
       };
     }
 
     const sound: ActiveSound = {
       owner,
       finished,
+
       stop: () => {
         const now = context.currentTime;
-        for (const { oscillator, gain } of notes) {
-          fadeOut(gain.gain, now);
+        for (const n of notes) {
+          fadeOut(n.envelope.gain, now);
+        }
+        for (const oscillator of oscillators) {
           try {
             oscillator.stop(now + STOP_FADE + 0.01);
           } catch {
@@ -154,10 +184,28 @@ export class AudioEngine {
           }
         }
       },
+
+      update: (newFrequencies, newVoice) => {
+        const now = context.currentTime;
+        const newScale = loudnessScale(newFrequencies.flatMap((frequency) => partialsOf(newVoice, frequency)));
+
+        notes.forEach((n, i) => {
+          const frequency = newFrequencies[i];
+          if (frequency === undefined) {
+            return;
+          }
+
+          const amplitudes = harmonicAmplitudes(newVoice, frequency);
+          n.partials.forEach((partial, p) => {
+            partial.oscillator.frequency.setTargetAtTime(frequency * (p + 1), now, GLIDE);
+            partial.gain.gain.setTargetAtTime((amplitudes[p] ?? 0) * newScale, now, GLIDE);
+          });
+        });
+      },
     };
 
     this.sounds.add(sound);
-    if (notes.length === 0) {
+    if (oscillators.length === 0) {
       this.sounds.delete(sound);
       resolveFinished();
     }
@@ -198,7 +246,12 @@ export class AudioEngine {
     return this.context;
   }
 
-  /** One oscillator, shaped by the voice's harmonics, through an enveloped gain. */
+  /**
+   * One note: a sine oscillator per harmonic, each through its own gain (its
+   * amplitude, loudness-scaled), all into one envelope gain that shapes the
+   * note's volume over time. Separate partials let `update` change each one
+   * smoothly, and let demos switch individual partials on and off.
+   */
   private startNote(
     context: AudioContext,
     frequency: number,
@@ -207,50 +260,68 @@ export class AudioEngine {
     start: number,
     duration: number | undefined,
   ) {
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
+    const envelope = context.createGain();
+    envelope.connect(context.destination);
 
-    // The harmonics become one custom waveform. Sine terms go in `imag`;
-    // index 0 is the constant (DC) term, which stays zero. The browser's
-    // normalization is off: it would match peaks, but loudness is matched
-    // by `scale` instead.
-    const amplitudes = harmonicAmplitudes(voice, frequency);
-    const imag = new Float32Array([0, ...amplitudes]);
-    const real = new Float32Array(imag.length);
-    oscillator.setPeriodicWave(context.createPeriodicWave(real, imag, { disableNormalization: true }));
-    oscillator.frequency.value = frequency;
+    const partials = harmonicAmplitudes(voice, frequency).map((amplitude, i) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
 
-    // Shape the volume over time, peaking at the loudness-matched scale.
-    const peak = scale;
-    const envelope = envelopeFor(voice);
-    const param = gain.gain;
-    param.setValueAtTime(0, start);
-    param.linearRampToValueAtTime(peak, start + envelope.attack);
+      oscillator.type = 'sine';
+      oscillator.frequency.value = frequency * (i + 1);
 
-    let end: number | undefined;
-    if (envelope.kind === 'pluck') {
-      // Strike, quick partial decay, then a long fade to silence.
-      param.exponentialRampToValueAtTime(peak * 0.6, start + 0.03);
-      param.exponentialRampToValueAtTime(peak * 0.3, start + 0.1);
-      param.setTargetAtTime(0, start + 0.1, (envelope.duration - 0.1) / 5);
-      end = start + envelope.duration;
-    } else if (duration !== undefined) {
-      // Hold, then fade out by the end of the duration.
-      const releaseStart = Math.max(start + envelope.attack, start + duration - envelope.release);
-      param.setValueAtTime(peak, releaseStart);
-      param.linearRampToValueAtTime(0, start + duration);
-      end = start + duration;
+      // Negative amplitudes (the triangle recipe) flip the partial's phase.
+      gain.gain.value = amplitude * scale;
+
+      oscillator.connect(gain);
+      gain.connect(envelope);
+      return { oscillator, gain };
+    });
+
+    // Shape the volume over time, from silence up to full and back.
+    const end = scheduleEnvelope(envelope.gain, envelopeFor(voice), start, duration);
+
+    for (const { oscillator } of partials) {
+      oscillator.start(start);
+      if (end !== undefined) {
+        oscillator.stop(end + 0.01);
+      }
     }
 
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start(start);
-    if (end !== undefined) {
-      oscillator.stop(end + 0.01);
-    }
-
-    return { oscillator, gain };
+    return { envelope, partials };
   }
+}
+
+/**
+ * Schedule a note's envelope on its gain (1 = full level). Returns when the
+ * note ends, or undefined if it sustains until stopped.
+ */
+function scheduleEnvelope(
+  param: AudioParam,
+  envelope: Envelope,
+  start: number,
+  duration: number | undefined,
+): number | undefined {
+  param.setValueAtTime(0, start);
+  param.linearRampToValueAtTime(1, start + envelope.attack);
+
+  if (envelope.kind === 'pluck') {
+    // Strike, quick partial decay, then a long fade to silence.
+    param.exponentialRampToValueAtTime(0.6, start + 0.03);
+    param.exponentialRampToValueAtTime(0.3, start + 0.1);
+    param.setTargetAtTime(0, start + 0.1, (envelope.duration - 0.1) / 5);
+    return start + envelope.duration;
+  }
+
+  if (duration !== undefined) {
+    // Hold, then fade out by the end of the duration.
+    const releaseStart = Math.max(start + envelope.attack, start + duration - envelope.release);
+    param.setValueAtTime(1, releaseStart);
+    param.linearRampToValueAtTime(0, start + duration);
+    return start + duration;
+  }
+
+  return undefined;
 }
 
 /** Fade a gain to silence from wherever it is now, without a click. */

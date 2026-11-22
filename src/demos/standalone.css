@@ -1,0 +1,26 @@
+/* A demo on its own page, e.g. embedded in Notion: no page chrome, a little breathing room. */
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  padding: 16px;
+  background: #f8f7f3;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #191d1b;
+  }
+}
+
+#root {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+#root .demo {
+  margin: 0;
+}

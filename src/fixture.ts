@@ -110,6 +110,12 @@ export const fixture: Story = {
         block('shared-p', 'paragraph', [text('This paragraph lives in a synced block, shared with other pages.')]),
       ],
     },
+    block('harmonics', 'paragraph', [
+      text(
+        'A tone from a real instrument is a stack of these relationships: a fundamental, plus harmonics at whole-number multiples of it.',
+      ),
+    ]),
+    { id: 'harmonic-demo', type: 'embed', embed: { url: 'https://fakestory.music/demos/harmonic-tone/' } },
     block('next', 'heading_2', [text('Building from here')]),
     block('next-intro', 'paragraph', [text('Two ways to compare sounds:')]),
     block(

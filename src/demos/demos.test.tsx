@@ -1,0 +1,87 @@
+import { renderToStaticMarkup } from 'react-dom/server';
+import { describe, expect, it } from 'vitest';
+
+import { fixture } from '../fixture';
+import type { Block } from '../model';
+import { Reader } from '../Reader';
+import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
+import { demoFromUrl } from './registry';
+
+describe('demo URLs', () => {
+  it('recognize our demos, with their configuration', () => {
+    const demo = demoFromUrl('https://fakestory.music/demos/harmonic-tone/?through=1');
+
+    expect(demo?.slug).toBe('harmonic-tone');
+    expect(demo?.params.get('through')).toBe('1');
+    expect(demoFromUrl('https://fakestory.music/demos/harmonic-tone')?.slug).toBe('harmonic-tone');
+  });
+
+  it('recognize the page’s own host, for local development', () => {
+    expect(demoFromUrl('http://localhost:5173/demos/harmonic-tone/', 'localhost:5173')?.slug).toBe('harmonic-tone');
+  });
+
+  it('never treat other sites, unknown demos or other schemes as ours', () => {
+    expect(demoFromUrl('https://example.com/demos/harmonic-tone/', 'localhost:5173')).toBeNull();
+    expect(demoFromUrl('https://fakestory.music/demos/no-such-demo/')).toBeNull();
+    expect(demoFromUrl('https://fakestory.music/other/harmonic-tone/')).toBeNull();
+    expect(demoFromUrl('ftp://fakestory.music/demos/harmonic-tone/')).toBeNull();
+    expect(demoFromUrl('https://codepen.io/acjay/embed/WNVQWKx')).toBeNull();
+    expect(demoFromUrl(undefined)).toBeNull();
+  });
+});
+
+describe('demos in the story', () => {
+  const render = (url: string) => {
+    const embed: Block = { id: 'e', type: 'embed', embed: { url } };
+    return renderToStaticMarkup(<Reader story={{ ...fixture, blocks: [embed] }} />);
+  };
+
+  it('render our demo in place of the embed', () => {
+    const html = render('https://fakestory.music/demos/harmonic-tone/');
+
+    expect(html).toContain('class="demo-embed"');
+    expect(html).toContain('Play tone');
+    expect(html).not.toContain('Not yet implemented');
+  });
+
+  it('show a placeholder for any other embed, without loading it', () => {
+    const html = render('https://codepen.io/acjay/embed/WNVQWKx');
+
+    expect(html).toContain('Not yet implemented');
+    expect(html).not.toContain('codepen');
+  });
+});
+
+describe('harmonic tone demo', () => {
+  const render = (query = '') => renderToStaticMarkup(<HarmonicToneDemo params={new URLSearchParams(query)} />);
+
+  it('starts at 200 Hz with harmonics 1–4 and 8 rows', () => {
+    const html = render();
+
+    expect(html).toContain('value="200"');
+    expect(html).toContain('4 partials enabled');
+    expect(html.match(/<li class="harmonic-row/g)).toHaveLength(8);
+    expect(html).toContain('Show all 16 harmonics');
+    expect(html).toContain('Audio stopped');
+  });
+
+  it('marks the active preset', () => {
+    expect(render()).toMatch(/aria-pressed="true"[^>]*>4</);
+  });
+
+  it('shows all 16 rows when configured through harmonic 16', () => {
+    const html = render('through=16');
+
+    expect(html.match(/<li class="harmonic-row/g)).toHaveLength(16);
+    expect(html).not.toContain('Show all 16 harmonics');
+  });
+
+  it('labels every control and graph for screen readers', () => {
+    const html = render();
+
+    expect(html).toContain('aria-label="Fundamental frequency in hertz"');
+    expect(html).toContain('aria-label="Hear partial 1 alone"');
+    expect(html).toContain('role="img" aria-label="Combined waveform of 4 enabled partials at 200 hertz');
+    expect(html).toContain('aria-label="Partial 5 at 1000 hertz, amplitude 0.2, not included."');
+  });
+});

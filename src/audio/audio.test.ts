@@ -142,6 +142,7 @@ class FakeNode {
 }
 
 class FakeOscillator extends FakeNode {
+  type = 'sine';
   frequency = new FakeParam();
   wave: { real: Float32Array; imag: Float32Array; normalized: boolean } | null = null;
   startedAt: number | null = null;
@@ -295,25 +296,44 @@ describe('audio engine', () => {
     await expect(engine.play([200], { owner: 'a' })).rejects.toThrow(/unavailable in this browser/);
   });
 
-  it('plays each frequency through its own shaped oscillator to the speakers', async () => {
-    await env.engine.play([200, 300], { owner: 'a' });
+  it('plays each harmonic as its own sine, through an envelope, to the speakers', async () => {
+    await env.engine.play([200], { owner: 'a' });
 
-    const [low, high] = env.context.oscillators;
-    expect(low.frequency.value).toBe(200);
-    expect(high.frequency.value).toBe(300);
+    // The default voice: 16 harmonics at 200, 400, … 3200 Hz.
+    const oscillators = env.context.oscillators;
+    expect(oscillators).toHaveLength(16);
+    expect(oscillators.map((o) => o.frequency.value)).toEqual(Array.from({ length: 16 }, (_, i) => 200 * (i + 1)));
+    expect(oscillators.every((o) => o.type === 'sine')).toBe(true);
+    expect(oscillators[0].startedAt).toBeCloseTo(10.01);
 
-    // The default voice's 16 harmonics, as sine terms after a zero DC term.
-    expect(low.wave?.imag).toHaveLength(17);
-    expect(low.wave?.imag[0]).toBe(0);
-    expect(low.wave?.imag[2]).toBeCloseTo(0.5);
+    // Gains: the note's envelope first, then one per harmonic, at its
+    // amplitude times the loudness-matched scale.
+    const [envelope, first, second] = env.context.gains;
+    const scale = loudnessScale(partialsOf(DEFAULT_VOICE, 200));
+    expect(first.gain.value).toBeCloseTo(1 * scale, 12);
+    expect(second.gain.value).toBeCloseTo(0.5 * scale, 12);
 
-    // Loudness is matched by the engine, not by the browser's peak normalization.
-    expect(low.wave?.normalized).toBe(false);
+    expect(oscillators[0].connectedTo).toBe(first);
+    expect(first.connectedTo).toBe(envelope);
+    expect(envelope.connectedTo).toBe(env.context.destination);
+  });
 
-    const [lowGain] = env.context.gains;
-    expect(low.connectedTo).toBe(lowGain);
-    expect(lowGain.connectedTo).toBe(env.context.destination);
-    expect(low.startedAt).toBeCloseTo(10.01);
+  it('flips the phase of negative partials (the triangle recipe)', async () => {
+    await env.engine.play([200], { owner: 'a', voice: { kind: 'harmonic', profile: 'triangle', partials: 3 } });
+
+    const [, first, second, third] = env.context.gains;
+    expect(first.gain.value).toBeGreaterThan(0);
+    expect(second.gain.value).toBe(0);
+    expect(third.gain.value).toBeLessThan(0);
+  });
+
+  it('plays any mix of partials', async () => {
+    await env.engine.play([100], { owner: 'a', voice: { kind: 'partials', amplitudes: [0, 1, 0, 0.25] } });
+
+    const levels = env.context.gains.slice(1).map((gain) => gain.gain.value);
+    expect(levels[0]).toBe(0);
+    expect(levels[1]).toBeGreaterThan(0);
+    expect(levels[3]).toBeCloseTo(levels[1] / 4, 12);
   });
 
   it('fades in from silence, so starts never click', async () => {
@@ -326,32 +346,54 @@ describe('audio engine', () => {
   });
 
   it('sustains until stopped, then fades out, stops and cleans up', async () => {
-    const sound = await env.engine.play([200], { owner: 'a' });
-    const [oscillator] = env.context.oscillators;
-    const [gain] = env.context.gains;
+    const sound = await env.engine.play([200], {
+      owner: 'a',
+      voice: { kind: 'harmonic', profile: 'sawtooth', partials: 2 },
+    });
+    const oscillators = env.context.oscillators;
+    const [envelope, ...partialGains] = env.context.gains;
 
     // Sustained: nothing scheduled to stop it yet.
-    expect(oscillator.stoppedAt).toBeNull();
+    expect(oscillators.every((o) => o.stoppedAt === null)).toBe(true);
 
     env.context.currentTime = 12;
     sound.stop();
 
-    expect(gain.gain.events.slice(-2)).toEqual([
+    expect(envelope.gain.events.slice(-2)).toEqual([
       ['cancelAndHold', 12],
       ['linear', 0, expect.closeTo(12.03)],
     ]);
-    expect(oscillator.stoppedAt).toBeCloseTo(12.04);
+    expect(oscillators.map((o) => o.stoppedAt)).toEqual([expect.closeTo(12.04), expect.closeTo(12.04)]);
 
     let finished = false;
     void sound.finished.then(() => (finished = true));
+
+    // Not finished until every oscillator has ended.
+    oscillators[0].end();
     await settle();
     expect(finished).toBe(false);
 
-    oscillator.end();
+    oscillators[1].end();
     await settle();
     expect(finished).toBe(true);
-    expect(oscillator.disconnected).toBe(true);
-    expect(gain.disconnected).toBe(true);
+    expect([...oscillators, envelope, ...partialGains].every((node) => node.disconnected)).toBe(true);
+  });
+
+  it('glides a playing sound to new frequencies and partial levels', async () => {
+    const voice: Voice = { kind: 'partials', amplitudes: [1, 0.5] };
+    const sound = await env.engine.play([200], { owner: 'a', voice });
+    const [low, high] = env.context.oscillators;
+    const [, lowGain, highGain] = env.context.gains;
+
+    env.context.currentTime = 11;
+    const newVoice: Voice = { kind: 'partials', amplitudes: [1, 0] };
+    sound.update([300], newVoice);
+
+    const scale = loudnessScale(partialsOf(newVoice, 300));
+    expect(low.frequency.events.at(-1)).toEqual(['target', 300, 11, 0.012]);
+    expect(high.frequency.events.at(-1)).toEqual(['target', 600, 11, 0.012]);
+    expect(lowGain.gain.events.at(-1)).toEqual(['target', expect.closeTo(scale, 12), 11, 0.012]);
+    expect(highGain.gain.events.at(-1)).toEqual(['target', 0, 11, 0.012]);
   });
 
   it('ends on its own after a duration, fading out first', async () => {
@@ -403,8 +445,9 @@ describe('audio engine', () => {
     await embedB.play([300], { owner: 'b' });
     expect(context.oscillators[0].stoppedAt).not.toBeNull();
 
-    // An engine ignores its own announcement.
-    expect(context.oscillators[1].stoppedAt).toBeNull();
+    // An engine ignores its own announcement: B's sound (the second note's
+    // 16 oscillators) keeps playing.
+    expect(context.oscillators[16].stoppedAt).toBeNull();
   });
 
   it('stops everything when the page is hidden', async () => {
@@ -434,12 +477,12 @@ describe('audio engine', () => {
     expect(env.context.oscillators[0].stoppedAt).not.toBeNull();
   });
 
-  it('plays a chord at the same loudness-matched level as computed for all its notes together', async () => {
-    await env.engine.play([200, 300], { owner: 'a' });
+  it('scales a chord as one sound, so it is as loud as a single note', async () => {
+    const voice: Voice = { kind: 'harmonic', profile: 'sawtooth', partials: 2 };
+    await env.engine.play([200, 300], { owner: 'a', voice });
 
-    const expected = loudnessScale([...partialsOf(DEFAULT_VOICE, 200), ...partialsOf(DEFAULT_VOICE, 300)]);
-    const peak = (gain: FakeGain) => gain.gain.events[1][1];
-    expect(peak(env.context.gains[0])).toBeCloseTo(expected, 9);
-    expect(peak(env.context.gains[1])).toBeCloseTo(expected, 9);
+    const scale = loudnessScale([...partialsOf(voice, 200), ...partialsOf(voice, 300)]);
+    const fundamentals = env.context.gains.filter((_, i) => i % 3 === 1).map((gain) => gain.gain.value);
+    expect(fundamentals).toEqual([expect.closeTo(scale, 12), expect.closeTo(scale, 12)]);
   });
 });

@@ -14,7 +14,9 @@ export type Voice =
   /** A sustained tone built from `partials` harmonics in a classic recipe. */
   | { kind: 'harmonic'; profile: HarmonicProfile; partials: number }
   /** A plucked, guitar-like tone that fades on its own (the Part 2 CodePen sound). */
-  | { kind: 'pluck' };
+  | { kind: 'pluck' }
+  /** Any mix of harmonics, by amplitude (index 0 is the fundamental). Sustained, like `harmonic`. */
+  | { kind: 'partials'; amplitudes: number[] };
 
 /** The default voice for every demo: all harmonics at 1/n, 16 of them. */
 export const DEFAULT_VOICE: Voice = { kind: 'harmonic', profile: 'sawtooth', partials: 16 };
@@ -38,12 +40,18 @@ export const MAX_PARTIAL_FREQUENCY = 16000;
  * Harmonics above MAX_PARTIAL_FREQUENCY are set to zero.
  */
 export function harmonicAmplitudes(voice: Voice, frequency: number): number[] {
-  const amplitudes = voice.kind === 'pluck' ? pluckAmplitudes() : profileAmplitudes(voice.profile, voice.partials);
+  const amplitudes =
+    voice.kind === 'pluck'
+      ? pluckAmplitudes()
+      : voice.kind === 'partials'
+        ? voice.amplitudes
+        : profileAmplitudes(voice.profile, voice.partials);
 
   return amplitudes.map((amplitude, i) => ((i + 1) * frequency > MAX_PARTIAL_FREQUENCY ? 0 : amplitude));
 }
 
-function profileAmplitudes(profile: HarmonicProfile, partials: number): number[] {
+/** The amplitudes of a classic recipe, fundamental first. */
+export function profileAmplitudes(profile: HarmonicProfile, partials: number): number[] {
   return Array.from({ length: partials }, (_, i) => {
     const n = i + 1;
     const isOdd = n % 2 === 1;
