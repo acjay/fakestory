@@ -13,7 +13,7 @@ import './standalone.css';
 
 const root = document.getElementById('root')!;
 const slug = root.dataset.demo ?? '';
-const Demo = DEMOS[slug];
+const Demo = DEMOS[slug]?.Component;
 
 createRoot(root).render(
   <StrictMode>

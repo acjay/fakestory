@@ -8,6 +8,9 @@ import {
   loudnessScale,
   MAX_PARTIAL_FREQUENCY,
   partialsOf,
+  STRUCK,
+  struckDecayTime,
+  struckEnvelopeAt,
   type Voice,
 } from './voices';
 
@@ -101,6 +104,48 @@ describe('loudness matching', () => {
 
   it('is silent for silence', () => {
     expect(loudnessScale([])).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The struck envelope
+// ---------------------------------------------------------------------------
+
+describe('struck envelope', () => {
+  it('rises to the boosted strike, then decays to silence by the end', () => {
+    expect(struckEnvelopeAt(1, 0)).toBe(0);
+    expect(struckEnvelopeAt(1, STRUCK.attack)).toBeCloseTo(STRUCK.boost, 12);
+    expect(struckEnvelopeAt(1, 0.5)).toBeLessThan(1);
+    expect(struckEnvelopeAt(1, 1)).toBe(0);
+  });
+
+  it('joins the decay curve smoothly after the strike', () => {
+    const atSettle = struckEnvelopeAt(1, STRUCK.settle);
+    const justAfter = struckEnvelopeAt(1, STRUCK.settle + 1e-9);
+
+    expect(atSettle).toBeCloseTo(justAfter, 6);
+  });
+
+  it('fades higher harmonics faster, so the tone darkens', () => {
+    expect(struckDecayTime(1)).toBeCloseTo(1.1, 12);
+    expect(struckDecayTime(8)).toBeLessThan(struckDecayTime(2));
+    expect(struckEnvelopeAt(8, 0.5)).toBeLessThan(struckEnvelopeAt(1, 0.5));
+  });
+
+  it('is loudness-matched to a sustained tone, accounting for the decay', () => {
+    const partials = partialsOf(DEFAULT_VOICE, 200);
+
+    // Decaying harmonics carry less energy, so a struck tone gets more gain.
+    expect(loudnessScale(partials, 'struck')).toBeGreaterThan(loudnessScale(partials, 'sustain'));
+  });
+
+  it('leaves room for the strike in the peak cap', () => {
+    const loud: Voice = { kind: 'harmonic', profile: 'square', partials: 16 };
+    const partials = [100, 150, 200, 250].flatMap((frequency) => partialsOf(loud, frequency));
+    const worstPeak =
+      loudnessScale(partials, 'struck') * STRUCK.boost * partials.reduce((sum, p) => sum + Math.abs(p.amplitude), 0);
+
+    expect(worstPeak).toBeLessThanOrEqual(0.9 + 1e-9);
   });
 });
 
@@ -484,5 +529,33 @@ describe('audio engine', () => {
     const scale = loudnessScale([...partialsOf(voice, 200), ...partialsOf(voice, 300)]);
     const fundamentals = env.context.gains.filter((_, i) => i % 3 === 1).map((gain) => gain.gain.value);
     expect(fundamentals).toEqual([expect.closeTo(scale, 12), expect.closeTo(scale, 12)]);
+  });
+
+  it('plays a struck tone with each harmonic on its own decay, ending after its duration', async () => {
+    const voice: Voice = { kind: 'harmonic', profile: 'sawtooth', partials: 2 };
+    await env.engine.play([200], { owner: 'a', voice, articulation: 'struck' });
+
+    const [envelope, first, second] = env.context.gains;
+    const scale = loudnessScale(partialsOf(voice, 200), 'struck');
+    const start = 10.01;
+
+    // The note's envelope just stays at full level.
+    expect(envelope.gain.events).toEqual([['set', 1, start]]);
+
+    // Each harmonic: strike, settle, decay at its own rate, fade out.
+    expect(first.gain.events.map(([kind]) => kind)).toEqual([
+      'set',
+      'linear',
+      'exponential',
+      'target',
+      'set',
+      'linear',
+    ]);
+    expect(first.gain.events[1]).toEqual(['linear', expect.closeTo(scale * 1.5, 12), expect.closeTo(start + 0.003)]);
+    expect(first.gain.events[3]).toEqual(['target', 0, expect.closeTo(start + 0.04), struckDecayTime(1)]);
+    expect(second.gain.events[3]).toEqual(['target', 0, expect.closeTo(start + 0.04), struckDecayTime(2)]);
+    expect(first.gain.events.at(-1)).toEqual(['linear', 0, expect.closeTo(start + 1)]);
+
+    expect(env.context.oscillators.map((o) => o.stoppedAt)).toEqual([expect.closeTo(11.02), expect.closeTo(11.02)]);
   });
 });

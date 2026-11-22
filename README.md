@@ -72,7 +72,9 @@ The shared code every rebuilt demo will use (see the demo design notes in Notion
 
 Rebuilt demos live in `src/demos/`, one folder each, sharing the audio engine and `src/demos/demo.css`. Each has its own page at `/demos/<slug>/` (from `demos/<slug>/index.html`), which can be embedded in Notion. When the story embeds one of those URLs, the reader renders the demo directly; any other embed shows a placeholder and is never loaded. Query parameters on the URL configure the demo, so variants are set up in Notion.
 
-- `/demos/harmonic-tone/`: build a tone from up to 16 harmonics. Parameters: `fundamental` (80–400 Hz, default 200), `profile` (`sawtooth`, `square` or `triangle`), `through` (1, 2, 4, 8 or 16 harmonics, default 4).
+`/demos/` lists every demo with its embed URL and parameters; it's generated from `src/demos/registry.ts`, where each demo is registered.
+
+- `/demos/harmonic-tone/`: build a tone from up to 16 harmonics. "Play tone" plays a struck tone, each harmonic dying away at its own rate, as in the original demo. Parameters: `fundamental` (80–400 Hz, default 200), `profile` (`sawtooth`, `square` or `triangle`), `through` (1, 2, 4, 8 or 16 harmonics, default 4).
 
 To try the engine by hand, run `npm run dev` and open `/harness/audio.html`. The harness is for development only and is not part of the build.
 

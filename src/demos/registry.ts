@@ -16,8 +16,34 @@ import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
 
 export type DemoComponent = ComponentType<{ params: URLSearchParams }>;
 
-export const DEMOS: Record<string, DemoComponent> = {
-  'harmonic-tone': HarmonicToneDemo,
+export type DemoEntry = {
+  title: string;
+
+  /** One line on what the reader can do with it, for the demo index. */
+  description: string;
+
+  /** The URL parameters it accepts, for authors setting up variants. */
+  parameters: { name: string; values: string; description: string }[];
+
+  Component: DemoComponent;
+};
+
+export const DEMOS: Record<string, DemoEntry> = {
+  'harmonic-tone': {
+    title: 'Harmonic tone',
+    description:
+      'Build a tone from up to 16 harmonics of a fundamental: hear it, see its waveform, and switch harmonics on, off or solo.',
+    parameters: [
+      { name: 'fundamental', values: '80–400', description: 'Starting fundamental in hertz. Default 200.' },
+      {
+        name: 'profile',
+        values: 'sawtooth, square, triangle',
+        description: 'Harmonic recipe: all harmonics at 1/n, odd at 1/n, or odd at 1/n². Default sawtooth.',
+      },
+      { name: 'through', values: '1, 2, 4, 8, 16', description: 'Include harmonics up to this one. Default 4.' },
+    ],
+    Component: HarmonicToneDemo,
+  },
 };
 
 /**
@@ -51,7 +77,7 @@ export function demoFromUrl(
   }
 
   const slug = parsed.pathname.match(DEMO_PATH)?.[1];
-  const Demo = slug ? DEMOS[slug] : undefined;
+  const Demo = slug ? DEMOS[slug]?.Component : undefined;
   if (!slug || !Demo) {
     return null;
   }

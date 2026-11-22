@@ -10,7 +10,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { audioEngine, AudioUnavailableError, type Sound } from '../../audio/engine';
-import type { HarmonicProfile, Voice } from '../../audio/voices';
+import type { Articulation, HarmonicProfile, Voice } from '../../audio/voices';
 import { WaveformPlot } from '../views/WaveformPlot';
 import {
   activePreset,
@@ -34,9 +34,6 @@ import {
 } from './model';
 
 import '../demo.css';
-
-/** How long "Play tone" sounds, in seconds. */
-const TONE_DURATION = 1;
 
 type Playback = { mode: 'idle' } | { mode: 'tone' } | { mode: 'continuous' } | { mode: 'solo'; harmonic: number };
 
@@ -68,12 +65,12 @@ export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
   // --- Playback -------------------------------------------------------------
 
   /** Start a sound, and return to idle when it ends (however it ends). */
-  async function start(voice: Voice, next: Playback, duration?: number) {
+  async function start(voice: Voice, next: Playback, articulation: Articulation = 'sustain') {
     sound.current?.stop();
     setError(null);
 
     try {
-      const started = await audioEngine().play([fundamental], { owner, voice, duration });
+      const started = await audioEngine().play([fundamental], { owner, voice, articulation });
       sound.current = started;
       setPlayback(next);
 
@@ -103,7 +100,8 @@ export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
     sound.current?.stop();
   }
 
-  const playTone = () => void start(mixVoice(settings), { mode: 'tone' }, TONE_DURATION);
+  // A one-second struck tone: each harmonic dies away at its own rate.
+  const playTone = () => void start(mixVoice(settings), { mode: 'tone' }, 'struck');
 
   const toggleContinuous = () => (playback.mode === 'continuous' ? stop() : sustain({ mode: 'continuous' }));
 

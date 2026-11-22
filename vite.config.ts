@@ -16,9 +16,9 @@ export default defineConfig({
   plugins: [react(), localStory()],
   build: {
     rollupOptions: {
-      // The reading page, plus one standalone page per demo (demos/<slug>/index.html).
+      // The reading page, the demo index, and one standalone page per demo (demos/<slug>/index.html).
       // The dev-only harness pages are deliberately not listed.
-      input: { main: resolve('index.html'), ...demoPages() },
+      input: { main: resolve('index.html'), demos: resolve('demos/index.html'), ...demoPages() },
     },
   },
 });

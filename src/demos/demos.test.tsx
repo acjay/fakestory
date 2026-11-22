@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { fixture } from '../fixture';
 import type { Block } from '../model';
 import { Reader } from '../Reader';
+import { DemoIndex } from './DemoIndex';
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
 import { demoFromUrl } from './registry';
 
@@ -83,5 +84,15 @@ describe('harmonic tone demo', () => {
     expect(html).toContain('aria-label="Hear partial 1 alone"');
     expect(html).toContain('role="img" aria-label="Combined waveform of 4 enabled partials at 200 hertz');
     expect(html).toContain('aria-label="Partial 5 at 1000 hertz, amplitude 0.2, not included."');
+  });
+});
+
+describe('demo index', () => {
+  it('lists every demo with its page, embed URL and parameters', () => {
+    const html = renderToStaticMarkup(<DemoIndex origin="https://fakestory.music" />);
+
+    expect(html).toContain('<a href="/demos/harmonic-tone/">Harmonic tone</a>');
+    expect(html).toContain('<code>https://fakestory.music/demos/harmonic-tone/</code>');
+    expect(html).toContain('<code>through</code>');
   });
 });

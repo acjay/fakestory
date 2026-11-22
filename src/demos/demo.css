@@ -217,6 +217,73 @@
   stroke-dasharray: 4 4;
 }
 
+/* --- Demo index ---------------------------------------------------------- */
+
+.demo-index h1 {
+  font-size: 32px;
+  margin: 8px 0 8px;
+}
+
+.demo-index-intro {
+  color: var(--demo-muted);
+  max-width: 640px;
+}
+
+.demo-index-list {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+}
+
+.demo-index-list h2 {
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+
+.demo-index-list a {
+  color: var(--demo-accent);
+}
+
+.demo-index-url {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.demo-index-url code {
+  overflow-wrap: anywhere;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--demo-surface);
+}
+
+.demo-index-parameters {
+  margin-top: 16px;
+  border-collapse: collapse;
+  font-size: 14px;
+  width: 100%;
+}
+
+.demo-index-parameters caption {
+  text-align: left;
+  font-weight: 600;
+  padding-bottom: 6px;
+}
+
+.demo-index-parameters th,
+.demo-index-parameters td {
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 12px 6px 0;
+  border-top: 1px solid var(--demo-border);
+}
+
+.demo-index-parameters thead th {
+  color: var(--demo-muted);
+  font-weight: 600;
+}
+
 /* --- Harmonic tone demo -------------------------------------------------- */
 
 .harmonic-rows {

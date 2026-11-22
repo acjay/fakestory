@@ -22,6 +22,8 @@ import {
   harmonicAmplitudes,
   loudnessScale,
   partialsOf,
+  struckDecayTime,
+  type Articulation,
   type Envelope,
   type Voice,
 } from './voices';
@@ -48,6 +50,13 @@ export type PlayOptions = {
 
   /** Seconds. Harmonic voices sustain until stopped if omitted; plucks always fade on their own. */
   duration?: number;
+
+  /**
+   * How a harmonic voice is played: steady (`sustain`, the default) or like
+   * a struck string (`struck`), each harmonic dying away at its own rate.
+   * A struck sound lasts `duration`, 1 second by default.
+   */
+  articulation?: Articulation;
 };
 
 /** A playing sound. */
@@ -124,7 +133,10 @@ export class AudioEngine {
    * Play one or more frequencies together. Call this from a user action
    * (e.g. a click handler), or the browser may refuse to start audio.
    */
-  async play(frequencies: number[], { owner, voice = DEFAULT_VOICE, duration }: PlayOptions): Promise<Sound> {
+  async play(
+    frequencies: number[],
+    { owner, voice = DEFAULT_VOICE, duration, articulation = 'sustain' }: PlayOptions,
+  ): Promise<Sound> {
     const context = await this.readyContext();
 
     // One demo at a time.
@@ -139,8 +151,15 @@ export class AudioEngine {
 
     // One gain for everything sounding together, so a chord as a whole is
     // as loud as a single note, and every voice sounds equally loud.
-    const scale = loudnessScale(frequencies.flatMap((frequency) => partialsOf(voice, frequency)));
-    const notes = frequencies.map((frequency) => this.startNote(context, frequency, voice, scale, start, duration));
+    const envelope = envelopeFor(voice, articulation, duration);
+    const scale = loudnessScale(
+      frequencies.flatMap((frequency) => partialsOf(voice, frequency)),
+      envelope.kind === 'struck' ? 'struck' : 'sustain',
+      envelope.kind === 'struck' ? envelope.duration : undefined,
+    );
+    const notes = frequencies.map((frequency) =>
+      this.startNote(context, frequency, voice, scale, start, envelope, duration),
+    );
     const oscillators = notes.flatMap((n) => n.partials.map((partial) => partial.oscillator));
 
     let resolveFinished!: () => void;
@@ -258,6 +277,7 @@ export class AudioEngine {
     voice: Voice,
     scale: number,
     start: number,
+    shape: Envelope,
     duration: number | undefined,
   ) {
     const envelope = context.createGain();
@@ -271,7 +291,13 @@ export class AudioEngine {
       oscillator.frequency.value = frequency * (i + 1);
 
       // Negative amplitudes (the triangle recipe) flip the partial's phase.
-      gain.gain.value = amplitude * scale;
+      const level = amplitude * scale;
+      if (shape.kind === 'struck') {
+        // Each harmonic gets its own strike and decay.
+        scheduleStruckPartial(gain.gain, level, i + 1, start, shape);
+      } else {
+        gain.gain.value = level;
+      }
 
       oscillator.connect(gain);
       gain.connect(envelope);
@@ -279,7 +305,7 @@ export class AudioEngine {
     });
 
     // Shape the volume over time, from silence up to full and back.
-    const end = scheduleEnvelope(envelope.gain, envelopeFor(voice), start, duration);
+    const end = scheduleEnvelope(envelope.gain, shape, start, duration);
 
     for (const { oscillator } of partials) {
       oscillator.start(start);
@@ -302,6 +328,13 @@ function scheduleEnvelope(
   start: number,
   duration: number | undefined,
 ): number | undefined {
+  // Struck notes shape each harmonic separately (scheduleStruckPartial);
+  // the note as a whole just plays at full level until it ends.
+  if (envelope.kind === 'struck') {
+    param.setValueAtTime(1, start);
+    return start + envelope.duration;
+  }
+
   param.setValueAtTime(0, start);
   param.linearRampToValueAtTime(1, start + envelope.attack);
 
@@ -322,6 +355,35 @@ function scheduleEnvelope(
   }
 
   return undefined;
+}
+
+/**
+ * One harmonic of a struck note, following `struckEnvelopeAt`: a fast rise
+ * to the boosted strike, an exponential settle onto the harmonic's decay,
+ * the decay itself, then a linear fade to silence.
+ */
+function scheduleStruckPartial(
+  param: AudioParam,
+  level: number,
+  harmonic: number,
+  start: number,
+  { attack, boost, settle, release, duration }: Extract<Envelope, { kind: 'struck' }>,
+): void {
+  param.setValueAtTime(0, start);
+  if (level === 0) {
+    return;
+  }
+
+  const tau = struckDecayTime(harmonic);
+  const releaseStart = duration - release;
+
+  param.linearRampToValueAtTime(level * boost, start + attack);
+  param.exponentialRampToValueAtTime(level * Math.exp(-(settle - attack) / tau), start + settle);
+  param.setTargetAtTime(0, start + settle, tau);
+
+  // Pick up the decay where it will be, then fade out linearly.
+  param.setValueAtTime(level * Math.exp(-(releaseStart - attack) / tau), start + releaseStart);
+  param.linearRampToValueAtTime(0, start + duration);
 }
 
 /** Fade a gain to silence from wherever it is now, without a click. */
