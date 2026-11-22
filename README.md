@@ -60,6 +60,16 @@ npm run dev:story
 
 This runs the dev server with the snapshot from `npm run import:notion` in place of the fixture. The dev server reads the file from `~/.fakestory-private/` on each request and only listens on 127.0.0.1. Production builds never include it: the loading code is stripped from `npm run build`, and `scripts/check-build.ts` fails the build if any trace of it remains. Blocks the reader doesn't support yet show a visible "Unsupported block" notice.
 
+## Music model and audio engine
+
+The shared code every rebuilt demo will use (see the demo design notes in Notion):
+
+- `src/music/`: pure pitch math. Ratios and cents, notes as a pitch class plus an octave (α1 is the base, 200 Hz by default), Pythagorean pitch classes named in stacking order (α β γ δ …), equal temperament that wraps after its last step, and the gaps between pitch classes.
+- `src/audio/voices.ts`: what notes sound like. The default voice is a sawtooth-like tone of 16 harmonics; there are also square- and triangle-like recipes and the plucked sound from the original CodePen demos.
+- `src/audio/engine.ts`: plays them. Every sound, in any voice and whether a single note or a chord, is scaled to the same loudness (weighted for hearing, as in the original harmonic tone chart). Audio starts only from a user action, one demo sounds at a time (also across separate embeds of the site), every start and stop fades to avoid clicks, and sound stops when the page is hidden.
+
+To try the engine by hand, run `npm run dev` and open `/harness/audio.html`. The harness is for development only and is not part of the build.
+
 ## What is and isn't here
 
 - The renderer understands a small subset of Notion-shaped blocks and rich text: paragraphs, headings, bulleted and numbered lists (including nested), tables, callouts (with emoji icons), synced blocks, columns, equations, quotes, dividers, embeds as placeholders, and links. Images are not rendered yet. Unsupported block types are visibly flagged.
