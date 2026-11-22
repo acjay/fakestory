@@ -5,7 +5,9 @@
  * order on one closed loop through the OKLCH color space (perceptually
  * even, so equal steps look like equal steps):
  *
- *   - Hue advances with pitch: 0.3° per cent, starting from α.
+ *   - Hue advances with pitch: 0.3° per cent, starting from α. The circle is
+ *     rotated so the two sides of the octave circle look different (see
+ *     HUE_START), not like a single gradient from top to bottom.
  *   - Lightness alternates between neighbors in semitone order. Equal
  *     lightness looks calmer, but makes some neighbors nearly identical for
  *     readers with color-vision deficiencies; alternating fixes that.
@@ -23,8 +25,14 @@
 import { CENTS_PER_OCTAVE, foldCents } from './pitch';
 import { pythagoreanPitchClasses } from './pitchClasses';
 
-/** Hue of α, in degrees. */
-const HUE_START = 75;
+/**
+ * Hue of α, in degrees: a purple-magenta. Chosen so the warm (orange) to
+ * cool (blue) contrast runs from the right side of the octave circle to the
+ * left. That contrast survives red-green color blindness, so the two sides
+ * never look like mirror images; red versus green ends up top to bottom,
+ * where the alternating lightness keeps neighbors apart.
+ */
+const HUE_START = 325;
 
 /** Hue advance per cent: a full turn per octave. */
 const HUE_PER_CENT = 360 / CENTS_PER_OCTAVE;
@@ -33,7 +41,7 @@ const HUE_PER_CENT = 360 / CENTS_PER_OCTAVE;
 const LIGHTNESS = [0.58, 0.72] as const;
 
 /** The most saturation any anchor gets. */
-const MAX_CHROMA = 0.12;
+const MAX_CHROMA = 0.14;
 
 type Lab = [l: number, a: number, b: number];
 

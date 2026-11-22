@@ -45,7 +45,7 @@ describe('pitch colors', () => {
     const colors = pythagoreanPitchClasses(12).map((pitchClass) => colorForCents(pitchClass.cents).css);
 
     expect(new Set(colors).size).toBe(12);
-    expect(colorForCents(0).css).toBe('#a36e09'); // α, an amber
+    expect(colorForCents(0).css).toBe('#a35aa7'); // α, a purple-magenta
   });
 
   it('keep neighboring semitones clearly distinct', () => {
@@ -56,6 +56,21 @@ describe('pitch colors', () => {
     for (const [name, matrix] of Object.entries(DEFICIENCIES)) {
       expect(
         weakestNeighbors((lab) => simulate(lab, matrix)),
+        name,
+      ).toBeGreaterThan(0.11);
+    }
+  });
+
+  it('make the two sides of the octave circle look different, not mirrored', () => {
+    // The pitch classes k steps clockwise and counterclockwise from α.
+    const mirrorPairs = [1, 2, 3, 4, 5].map((k) => [ANCHORS[k].lab, ANCHORS[12 - k].lab]);
+    const weakest = (see: (lab: Lab) => Lab = (lab) => lab) =>
+      Math.min(...mirrorPairs.map(([a, b]) => difference(see(a), see(b))));
+
+    expect(weakest()).toBeGreaterThan(0.12);
+    for (const [name, matrix] of Object.entries(DEFICIENCIES)) {
+      expect(
+        weakest((lab) => simulate(lab, matrix)),
         name,
       ).toBeGreaterThan(0.11);
     }
