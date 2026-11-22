@@ -284,6 +284,132 @@
   font-weight: 600;
 }
 
+/* --- Stepper (− value +) ----------------------------------------------- */
+
+.demo-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-stepper button {
+  min-width: 44px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.demo-stepper button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.demo-stepper output {
+  min-width: 5.5em;
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Octave circle ------------------------------------------------------- */
+
+.octave-circle {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.octave-circle-ring {
+  fill: none;
+  stroke: var(--demo-border);
+  stroke-width: 2;
+}
+
+.octave-circle-gap {
+  fill: var(--demo-muted);
+  font-size: 12px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.octave-circle-tick {
+  stroke: var(--demo-border);
+  stroke-width: 2;
+}
+
+.octave-circle-note {
+  cursor: pointer;
+  outline: none;
+}
+
+.octave-circle-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.octave-circle-focus {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 3;
+}
+
+.octave-circle-note:focus-visible .octave-circle-focus {
+  stroke: var(--demo-accent);
+}
+
+.octave-circle-note-playing .octave-circle-focus {
+  stroke: var(--demo-text);
+  stroke-width: 4;
+}
+
+/* --- Tables -------------------------------------------------------------- */
+
+/* Wide tables scroll sideways in their own box instead of widening the page. */
+.demo-table-scroll {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+/* --- Scale generator ------------------------------------------------------ */
+
+.scale-generator-circle {
+  max-width: 440px;
+  margin: 8px auto 0;
+}
+
+.scale-generator-table {
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.scale-generator-table th,
+.scale-generator-table td {
+  padding: 6px 8px;
+  border-top: 1px solid var(--demo-zero);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.scale-generator-table th[scope='row'] {
+  text-align: left;
+  font-weight: 600;
+  padding-right: 16px;
+}
+
+.scale-generator-table thead th {
+  color: var(--demo-muted);
+}
+
+.scale-generator-table th[aria-current],
+.scale-generator-table td.is-current {
+  background: var(--demo-panel);
+  color: var(--demo-text);
+  font-weight: 600;
+}
+
 /* --- Harmonic tone demo -------------------------------------------------- */
 
 .harmonic-rows {

@@ -6,6 +6,7 @@ import {
   equalTemperamentPitchClass,
   equalTemperamentPitchClasses,
   gapsBetween,
+  gapStatistics,
   PYTHAGOREAN_COMMA_CENTS,
   pythagoreanPitchClasses,
 } from './pitchClasses';
@@ -93,6 +94,33 @@ describe('gaps between pitch classes', () => {
     expect(gapCents(5)).toEqual([204, 204, 294, 204, 294]);
     expect(gapCents(7)).toEqual([204, 204, 204, 90, 204, 204, 90]);
     expect(new Set(gapCents(12))).toEqual(new Set([90, 114]));
+  });
+});
+
+describe('gap statistics', () => {
+  const stats = (count: number) => {
+    const { biggest, smallest, sizes, standardDeviation } = gapStatistics(pythagoreanPitchClasses(count));
+    return {
+      biggest: Math.round(biggest),
+      smallest: Math.round(smallest),
+      sizes,
+      deviation: Math.round(standardDeviation),
+    };
+  };
+
+  it('treat a single note as one octave-sized gap', () => {
+    expect(stats(1)).toEqual({ biggest: 1200, smallest: 1200, sizes: 1, deviation: 0 });
+  });
+
+  it('find the two-size sets the story discusses: 5, 7 and 12 notes', () => {
+    expect(stats(5)).toMatchObject({ biggest: 294, smallest: 204, sizes: 2 });
+    expect(stats(7)).toMatchObject({ biggest: 204, smallest: 90, sizes: 2 });
+    expect(stats(12)).toMatchObject({ biggest: 114, smallest: 90, sizes: 2 });
+  });
+
+  it('show three gap sizes in between', () => {
+    expect(stats(6).sizes).toBe(3);
+    expect(stats(13).sizes).toBe(3);
   });
 });
 
