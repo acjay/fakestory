@@ -34,9 +34,18 @@ function Harness() {
   return (
     <main style={{ font: '16px/1.5 system-ui, sans-serif', maxWidth: 720, margin: '32px auto', padding: '0 16px' }}>
       <h1 style={{ fontSize: 24 }}>Audio harness</h1>
+      <p>Development only.</p>
       <p>
-        Development only. Each panel plays as a separate “demo”: starting one stops the other. Switching tabs stops
-        everything.
+        Demo A and Demo B are identical. They stand in for two separate demos on one page (or two embeds in one Notion
+        page), to test that only one demo plays at a time. To try it:
+      </p>
+      <ol>
+        <li>In Demo A, press “α1 … until stopped”. It keeps sounding.</li>
+        <li>In Demo B, press any button. Demo A fades out and Demo B plays.</li>
+      </ol>
+      <p>
+        Pressing another button in the same panel replaces that panel’s sound. Each panel’s Stop stops only that panel.
+        Switching to another tab stops everything.
       </p>
 
       <fieldset>
