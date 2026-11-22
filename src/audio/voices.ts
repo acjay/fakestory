@@ -69,14 +69,61 @@ function pluckAmplitudes(): number[] {
   return Array.from({ length: PLUCK_PARTIALS }, (_, i) => (i + 1) ** -0.8);
 }
 
+// ---------------------------------------------------------------------------
+// Loudness matching
+//
+// Ported from the harmonic tone chart demo. Tones with the same peak can
+// sound very different in loudness: a square wave sits near its peak most of
+// the time, a sawtooth only briefly. So instead of matching peaks, every
+// sound is scaled to the same energy, weighted by how well we hear each
+// frequency, then capped so its waveform can't peak high enough to distort.
+// ---------------------------------------------------------------------------
+
+/** The weighted energy (RMS) every sound is scaled to. */
+const TARGET_LOUDNESS = 0.05;
+
+/** The highest the combined waveform may reach, to leave headroom below 1. */
+const MAX_PEAK = 0.9;
+
+/** One sine component of a sound: a frequency and its amplitude. */
+export type Partial = { frequency: number; amplitude: number };
+
 /**
- * A gain factor that keeps low and high notes at a similar perceived
- * loudness: higher notes sound louder, so they're turned down a little.
- * From the original pluck demos, centered on 440 Hz and capped for very low
- * notes.
+ * A rough curve of hearing sensitivity: 1 in the midrange, falling off below
+ * about 180 Hz and above about 6 kHz, where we hear sounds as quieter.
  */
-export function loudnessCompensation(frequency: number): number {
-  return Math.min(1.5, (440 / frequency) ** 0.3);
+export function hearingWeight(frequency: number): number {
+  return frequency / Math.hypot(frequency, 180) / Math.sqrt(1 + (frequency / 6000) ** 4);
+}
+
+/**
+ * The gain to apply to a sound's partials, given at their raw amplitudes,
+ * so it plays at the target loudness without distorting. Pass every partial
+ * of every note sounding together, so a chord as a whole matches a single
+ * note.
+ */
+export function loudnessScale(partials: Partial[]): number {
+  // A sine of amplitude a has mean power a²/2; weight each by audibility.
+  const energy = partials.reduce(
+    (sum, { frequency, amplitude }) => sum + (amplitude * hearingWeight(frequency)) ** 2 / 2,
+    0,
+  );
+
+  // The worst case peak: every partial at its maximum at once.
+  const worstPeak = partials.reduce((sum, { amplitude }) => sum + Math.abs(amplitude), 0);
+
+  if (energy === 0) {
+    return 0;
+  }
+  return Math.min(TARGET_LOUDNESS / Math.sqrt(energy), MAX_PEAK / worstPeak);
+}
+
+/** A voice's partials for one note, at raw amplitudes (before loudness scaling). */
+export function partialsOf(voice: Voice, frequency: number): Partial[] {
+  return harmonicAmplitudes(voice, frequency).map((amplitude, i) => ({
+    frequency: (i + 1) * frequency,
+    amplitude,
+  }));
 }
 
 /**

@@ -1,7 +1,15 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { AudioEngine, AudioUnavailableError } from './engine';
-import { DEFAULT_VOICE, harmonicAmplitudes, loudnessCompensation, MAX_PARTIAL_FREQUENCY } from './voices';
+import {
+  DEFAULT_VOICE,
+  harmonicAmplitudes,
+  hearingWeight,
+  loudnessScale,
+  MAX_PARTIAL_FREQUENCY,
+  partialsOf,
+  type Voice,
+} from './voices';
 
 // ---------------------------------------------------------------------------
 // Voices
@@ -36,12 +44,63 @@ describe('voices', () => {
     expect(amplitudes.slice(8).every((amplitude) => amplitude === 0)).toBe(true);
     expect(MAX_PARTIAL_FREQUENCY).toBe(16000);
   });
+});
 
-  it('turn high notes down a little and low notes up, within a cap', () => {
-    expect(loudnessCompensation(440)).toBe(1);
-    expect(loudnessCompensation(880)).toBeLessThan(1);
-    expect(loudnessCompensation(200)).toBeGreaterThan(1);
-    expect(loudnessCompensation(1)).toBe(1.5);
+// ---------------------------------------------------------------------------
+// Loudness matching
+// ---------------------------------------------------------------------------
+
+describe('loudness matching', () => {
+  /** The hearing-weighted RMS of a sound after scaling: what's matched. */
+  const weightedLoudness = (voice: Voice, frequencies: number[]) => {
+    const partials = frequencies.flatMap((frequency) => partialsOf(voice, frequency));
+    const scale = loudnessScale(partials);
+    const energy = partials.reduce((sum, p) => sum + (p.amplitude * scale * hearingWeight(p.frequency)) ** 2 / 2, 0);
+    return Math.sqrt(energy);
+  };
+  const worstPeak = (voice: Voice, frequencies: number[]) => {
+    const partials = frequencies.flatMap((frequency) => partialsOf(voice, frequency));
+    return loudnessScale(partials) * partials.reduce((sum, p) => sum + Math.abs(p.amplitude), 0);
+  };
+
+  const sawtooth: Voice = { kind: 'harmonic', profile: 'sawtooth', partials: 16 };
+  const square: Voice = { kind: 'harmonic', profile: 'square', partials: 16 };
+  const triangle: Voice = { kind: 'harmonic', profile: 'triangle', partials: 16 };
+
+  it('makes every voice equally loud', () => {
+    const levels = [sawtooth, square, triangle, { kind: 'pluck' } as Voice].map((voice) =>
+      weightedLoudness(voice, [200]),
+    );
+
+    for (const level of levels) {
+      expect(level).toBeCloseTo(levels[0], 6);
+    }
+  });
+
+  it('makes a chord as loud as a single note', () => {
+    expect(weightedLoudness(sawtooth, [200, 300])).toBeCloseTo(weightedLoudness(sawtooth, [200]), 6);
+  });
+
+  it('keeps low and high notes equally loud, allowing for hearing', () => {
+    expect(weightedLoudness(sawtooth, [100])).toBeCloseTo(weightedLoudness(sawtooth, [800]), 6);
+  });
+
+  it('never lets the waveform peak high enough to distort', () => {
+    for (const voice of [sawtooth, square, triangle]) {
+      for (const frequencies of [[200], [200, 300], [80, 120, 160, 200]]) {
+        expect(worstPeak(voice, frequencies)).toBeLessThanOrEqual(0.9 + 1e-9);
+      }
+    }
+  });
+
+  it('weights hearing: quieter below ~180 Hz and above ~6 kHz', () => {
+    expect(hearingWeight(1000)).toBeGreaterThan(0.95);
+    expect(hearingWeight(60)).toBeLessThan(0.4);
+    expect(hearingWeight(12000)).toBeLessThan(0.3);
+  });
+
+  it('is silent for silence', () => {
+    expect(loudnessScale([])).toBe(0);
   });
 });
 
@@ -84,12 +143,12 @@ class FakeNode {
 
 class FakeOscillator extends FakeNode {
   frequency = new FakeParam();
-  wave: { real: Float32Array; imag: Float32Array } | null = null;
+  wave: { real: Float32Array; imag: Float32Array; normalized: boolean } | null = null;
   startedAt: number | null = null;
   stoppedAt: number | null = null;
   onended: (() => void) | null = null;
 
-  setPeriodicWave(wave: { real: Float32Array; imag: Float32Array }) {
+  setPeriodicWave(wave: { real: Float32Array; imag: Float32Array; normalized: boolean }) {
     this.wave = wave;
   }
   start(time: number) {
@@ -141,8 +200,8 @@ class FakeContext {
     this.gains.push(gain);
     return gain;
   }
-  createPeriodicWave(real: Float32Array, imag: Float32Array) {
-    return { real, imag };
+  createPeriodicWave(real: Float32Array, imag: Float32Array, options?: { disableNormalization?: boolean }) {
+    return { real, imag, normalized: !options?.disableNormalization };
   }
 }
 
@@ -247,6 +306,9 @@ describe('audio engine', () => {
     expect(low.wave?.imag).toHaveLength(17);
     expect(low.wave?.imag[0]).toBe(0);
     expect(low.wave?.imag[2]).toBeCloseTo(0.5);
+
+    // Loudness is matched by the engine, not by the browser's peak normalization.
+    expect(low.wave?.normalized).toBe(false);
 
     const [lowGain] = env.context.gains;
     expect(low.connectedTo).toBe(lowGain);
@@ -372,11 +434,12 @@ describe('audio engine', () => {
     expect(env.context.oscillators[0].stoppedAt).not.toBeNull();
   });
 
-  it('splits the level between the notes of a chord', async () => {
-    await env.engine.play([440], { owner: 'a' });
-    await env.engine.play([440, 440], { owner: 'a' });
+  it('plays a chord at the same loudness-matched level as computed for all its notes together', async () => {
+    await env.engine.play([200, 300], { owner: 'a' });
 
+    const expected = loudnessScale([...partialsOf(DEFAULT_VOICE, 200), ...partialsOf(DEFAULT_VOICE, 300)]);
     const peak = (gain: FakeGain) => gain.gain.events[1][1];
-    expect(peak(env.context.gains[1])).toBeCloseTo(peak(env.context.gains[0]) / 2);
+    expect(peak(env.context.gains[0])).toBeCloseTo(expected, 9);
+    expect(peak(env.context.gains[1])).toBeCloseTo(expected, 9);
   });
 });

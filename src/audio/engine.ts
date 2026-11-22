@@ -7,6 +7,8 @@
  *   - One demo at a time. Starting a sound stops sounds owned by other demos,
  *     on this page and in other embeds of the site (e.g. several demos
  *     embedded in one Notion page), via a BroadcastChannel.
+ *   - Even loudness: every sound, single note or chord, in any voice, is
+ *     scaled to the same perceived loudness (see `loudnessScale`).
  *   - Clean starts and stops: every sound fades in and out, so no clicks.
  *   - Stop everything when the page is hidden or closed.
  *   - Clean up: nodes are disconnected once a sound has ended.
@@ -14,10 +16,7 @@
  * The browser APIs are injectable, so the lifecycle is tested with fakes.
  */
 
-import { envelopeFor, harmonicAmplitudes, loudnessCompensation, type Voice, DEFAULT_VOICE } from './voices';
-
-/** Peak gain for one note. Chords split this between their notes. */
-const NOTE_LEVEL = 0.2;
+import { DEFAULT_VOICE, envelopeFor, harmonicAmplitudes, loudnessScale, partialsOf, type Voice } from './voices';
 
 /** How long the fade out takes when a sound is stopped early, in seconds. */
 const STOP_FADE = 0.03;
@@ -119,8 +118,10 @@ export class AudioEngine {
     this.channel?.postMessage({ type: 'started', engine: this.id } satisfies StartedMessage);
 
     const start = context.currentTime + SCHEDULE_AHEAD;
-    const level = NOTE_LEVEL / Math.max(1, frequencies.length);
-    const notes = frequencies.map((frequency) => this.startNote(context, frequency, voice, level, start, duration));
+    // One gain for everything sounding together, so a chord as a whole is
+    // as loud as a single note, and every voice sounds equally loud.
+    const scale = loudnessScale(frequencies.flatMap((frequency) => partialsOf(voice, frequency)));
+    const notes = frequencies.map((frequency) => this.startNote(context, frequency, voice, scale, start, duration));
 
     let resolveFinished!: () => void;
     const finished = new Promise<void>((resolve) => (resolveFinished = resolve));
@@ -202,7 +203,7 @@ export class AudioEngine {
     context: AudioContext,
     frequency: number,
     voice: Voice,
-    level: number,
+    scale: number,
     start: number,
     duration: number | undefined,
   ) {
@@ -210,15 +211,17 @@ export class AudioEngine {
     const gain = context.createGain();
 
     // The harmonics become one custom waveform. Sine terms go in `imag`;
-    // index 0 is the constant (DC) term, which stays zero.
+    // index 0 is the constant (DC) term, which stays zero. The browser's
+    // normalization is off: it would match peaks, but loudness is matched
+    // by `scale` instead.
     const amplitudes = harmonicAmplitudes(voice, frequency);
     const imag = new Float32Array([0, ...amplitudes]);
     const real = new Float32Array(imag.length);
-    oscillator.setPeriodicWave(context.createPeriodicWave(real, imag));
+    oscillator.setPeriodicWave(context.createPeriodicWave(real, imag, { disableNormalization: true }));
     oscillator.frequency.value = frequency;
 
-    // Shape the volume over time.
-    const peak = level * loudnessCompensation(frequency);
+    // Shape the volume over time, peaking at the loudness-matched scale.
+    const peak = scale;
     const envelope = envelopeFor(voice);
     const param = gain.gain;
     param.setValueAtTime(0, start);
