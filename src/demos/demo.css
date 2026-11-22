@@ -114,7 +114,8 @@
   color: var(--demo-muted);
 }
 
-.demo-number input {
+/* Specific enough to beat `.demo input[type='number']` above. */
+.demo .demo-number input {
   color: var(--demo-text);
   width: 5.5em;
   padding: 0 8px;
@@ -167,6 +168,60 @@
   color: var(--demo-accent) !important;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* --- Shared tone settings ("Tone" button and panel) ----------------------- */
+
+.tone-settings {
+  position: relative;
+  margin-top: 12px;
+}
+
+.tone-settings-button {
+  font-size: 14px !important;
+  min-height: 36px !important;
+  border-radius: 999px !important;
+  padding: 0 14px !important;
+}
+
+/* Floats over the demo, like a menu, so opening or closing it never moves
+   the controls underneath (a click outside closes it and still lands). */
+.tone-settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 3;
+  box-sizing: border-box;
+  width: min(480px, calc(100vw - 32px));
+  margin-top: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--demo-surface) !important;
+  border: 1px solid var(--demo-border);
+  box-shadow: 0 8px 24px #0000001f;
+}
+
+.tone-settings-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.tone-settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.tone-settings-actions .demo-status {
+  margin: 0 auto 0 0;
+}
+
+.tone-settings-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 /* --- Panels and graphs --------------------------------------------------- */
