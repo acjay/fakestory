@@ -120,3 +120,32 @@ export function gapsBetween(pitchClasses: PitchClass[]): { from: PitchClass; cen
     return { from, cents: nextCents - from.cents };
   });
 }
+
+export type GapStatistics = {
+  biggest: number;
+  smallest: number;
+
+  /** How many different gap sizes there are, to the nearest cent. */
+  sizes: number;
+
+  /** Sample standard deviation of the gaps, in cents (0 for a single gap). */
+  standardDeviation: number;
+};
+
+/**
+ * How evenly a set of pitch classes divides the octave. As more fifths are
+ * stacked, the gaps get smaller, and at some sizes (5, 7, 12) they settle
+ * into just two sizes: the most even divisions.
+ */
+export function gapStatistics(pitchClasses: PitchClass[]): GapStatistics {
+  const gaps = gapsBetween(pitchClasses).map((gap) => gap.cents);
+  const mean = gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
+  const variance = gaps.length > 1 ? gaps.reduce((sum, gap) => sum + (gap - mean) ** 2, 0) / (gaps.length - 1) : 0;
+
+  return {
+    biggest: Math.max(...gaps),
+    smallest: Math.min(...gaps),
+    sizes: new Set(gaps.map((gap) => Math.round(gap))).size,
+    standardDeviation: Math.sqrt(variance),
+  };
+}

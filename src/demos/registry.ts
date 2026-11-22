@@ -13,6 +13,7 @@
 import type { ComponentType } from 'react';
 
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
+import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
 
 export type DemoComponent = ComponentType<{ params: URLSearchParams }>;
 
@@ -43,6 +44,14 @@ export const DEMOS: Record<string, DemoEntry> = {
       { name: 'through', values: '1, 2, 4, 8, 16', description: 'Include harmonics up to this one. Default 4.' },
     ],
     Component: HarmonicToneDemo,
+  },
+
+  'scale-generator': {
+    title: 'Scale generator',
+    description:
+      'Grow a scale one fifth at a time on the octave circle, hear its notes, and see how evenly they divide the octave at each size.',
+    parameters: [{ name: 'size', values: '1–53', description: 'Number of notes to start with. Default 12.' }],
+    Component: ScaleGeneratorDemo,
   },
 };
 

@@ -76,7 +76,11 @@ Rebuilt demos live in `src/demos/`, one folder each, sharing the audio engine an
 
 - `/demos/harmonic-tone/`: build a tone from up to 16 harmonics. "Play tone" plays a struck tone, each harmonic dying away at its own rate, as in the original demo. Parameters: `fundamental` (80–400 Hz, default 200), `profile` (`sawtooth`, `square` or `triangle`), `through` (1, 2, 4, 8 or 16 harmonics, default 4).
 
-To try the engine by hand, run `npm run dev` and open `/harness/audio.html`. The harness is for development only and is not part of the build.
+- `/demos/scale-generator/`: grow a scale one fifth at a time on the octave circle, and see how evenly it divides the octave at each size. Parameter: `size` (1–53, default 12). Click or tap a note to hear it; Shift plays the octave above and Ctrl/⌘ the octave below, also with Enter on a focused note, and the on-screen Octave control does the same for touch.
+
+Every pitch has a consistent color across the demos (`src/music/colors.ts`): 12 anchor colors for the Pythagorean pitch classes, blended for anything in between.
+
+To try the engine by hand, run `npm run dev` and open `/harness/audio.html`. To judge the pitch colors by eye, including under simulated color-vision deficiencies, open `/harness/colors.html`. The harness is for development only and is not part of the build.
 
 ## What is and isn't here
 
