@@ -1,3 +1,4 @@
+import { demoFromUrl } from './demos/registry';
 import { MathExpression } from './MathExpression';
 import type { Block, RichText } from './model';
 import { RichTextView } from './RichTextView';
@@ -168,9 +169,18 @@ export function BlockView({ block }: { block: Block }) {
     case 'divider':
       return <hr />;
 
-    // Embeds are never loaded from content. Demos will be rebuilt in this codebase.
-    case 'embed':
-      return <DemoPlaceholder />;
+    // Our own demos render directly. Any other embed is never loaded from
+    // content: it shows a placeholder until its demo is rebuilt here.
+    case 'embed': {
+      const demo = demoFromUrl(typeof data.url === 'string' ? data.url : undefined);
+      return demo ? (
+        <div className="demo-embed">
+          <demo.Demo params={demo.params} />
+        </div>
+      ) : (
+        <DemoPlaceholder />
+      );
+    }
 
     default:
       return (
@@ -189,11 +199,11 @@ function typeData(block: Block): Record<string, unknown> {
 
 function DemoPlaceholder() {
   return (
-    <div className="demo-placeholder">
-      <span className="demo-label">Interactive demo</span>
+    <div className="embed-placeholder">
+      <span className="embed-placeholder-label">Interactive demo</span>
       <strong>Listening experiment</strong>
       <p>A future home for sound and interaction.</p>
-      <span className="demo-status">Not yet implemented</span>
+      <span className="embed-placeholder-status">Not yet implemented</span>
     </div>
   );
 }

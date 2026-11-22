@@ -68,11 +68,19 @@ The shared code every rebuilt demo will use (see the demo design notes in Notion
 - `src/audio/voices.ts`: what notes sound like. The default voice is a sawtooth-like tone of 16 harmonics; there are also square- and triangle-like recipes and the plucked sound from the original CodePen demos.
 - `src/audio/engine.ts`: plays them. Every sound, in any voice and whether a single note or a chord, is scaled to the same loudness (weighted for hearing, as in the original harmonic tone chart). Audio starts only from a user action, one demo sounds at a time (also across separate embeds of the site), every start and stop fades to avoid clicks, and sound stops when the page is hidden.
 
+## Demos
+
+Rebuilt demos live in `src/demos/`, one folder each, sharing the audio engine and `src/demos/demo.css`. Each has its own page at `/demos/<slug>/` (from `demos/<slug>/index.html`), which can be embedded in Notion. When the story embeds one of those URLs, the reader renders the demo directly; any other embed shows a placeholder and is never loaded. Query parameters on the URL configure the demo, so variants are set up in Notion.
+
+`/demos/` lists every demo with its embed URL and parameters; it's generated from `src/demos/registry.ts`, where each demo is registered.
+
+- `/demos/harmonic-tone/`: build a tone from up to 16 harmonics. "Play tone" plays a struck tone, each harmonic dying away at its own rate, as in the original demo. Parameters: `fundamental` (80–400 Hz, default 200), `profile` (`sawtooth`, `square` or `triangle`), `through` (1, 2, 4, 8 or 16 harmonics, default 4).
+
 To try the engine by hand, run `npm run dev` and open `/harness/audio.html`. The harness is for development only and is not part of the build.
 
 ## What is and isn't here
 
-- The renderer understands a small subset of Notion-shaped blocks and rich text: paragraphs, headings, bulleted and numbered lists (including nested), tables, callouts (with emoji icons), synced blocks, columns, equations, quotes, dividers, embeds as placeholders, and links. Images are not rendered yet. Unsupported block types are visibly flagged.
+- The renderer understands a small subset of Notion-shaped blocks and rich text: paragraphs, headings, bulleted and numbered lists (including nested), tables, callouts (with emoji icons), synced blocks, columns, equations, quotes, dividers, embeds (the rebuilt demos render; others show a placeholder), and links. Images are not rendered yet. Unsupported block types are visibly flagged.
 - Footnotes render as a ♪ marker after the anchored text; hovering the text or marker highlights the anchor, and the marker opens the note. The importer builds them from Notion comments.
 - The fixture demonstrates glossary definitions using explicit links and local records. This is a test convention, not a chosen authoring format. There is no glossary index or backreference system yet.
 - Notion content is not automatically loaded or published. There is no deployment configuration, private preview, dashboard, or publish action. **Do not deploy this prototype as a preview for draft content.**
