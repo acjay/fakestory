@@ -35,11 +35,16 @@ export const DEMOS: Record<string, DemoEntry> = {
     description:
       'Build a tone from up to 16 harmonics of a fundamental: hear it, see its waveform, and switch harmonics on, off or solo.',
     parameters: [
-      { name: 'fundamental', values: '80–400', description: 'Starting fundamental in hertz. Default 200.' },
+      {
+        name: 'fundamental',
+        values: '80–400',
+        description: 'Fundamental in hertz. If omitted, follows the reader’s tone settings (default 200).',
+      },
       {
         name: 'profile',
         values: 'sawtooth, square, triangle',
-        description: 'Harmonic recipe: all harmonics at 1/n, odd at 1/n, or odd at 1/n². Default sawtooth.',
+        description:
+          'Harmonic recipe: all harmonics at 1/n, odd at 1/n, or odd at 1/n². If omitted, follows the reader’s tone settings (default square).',
       },
       { name: 'through', values: '1, 2, 4, 8, 16', description: 'Include harmonics up to this one. Default 4.' },
     ],

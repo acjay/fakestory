@@ -10,6 +10,13 @@
 /** The three classic harmonic recipes, named after the waveforms they build. */
 export type HarmonicProfile = 'sawtooth' | 'square' | 'triangle';
 
+/** How each recipe is described in controls. */
+export const PROFILE_LABELS: Record<HarmonicProfile, string> = {
+  sawtooth: 'All harmonics · 1/n',
+  square: 'Odd only · 1/n',
+  triangle: 'Odd only · 1/n²',
+};
+
 export type Voice =
   /** A sustained tone built from `partials` harmonics in a classic recipe. */
   | { kind: 'harmonic'; profile: HarmonicProfile; partials: number }
@@ -18,8 +25,11 @@ export type Voice =
   /** Any mix of harmonics, by amplitude (index 0 is the fundamental). Sustained, like `harmonic`. */
   | { kind: 'partials'; amplitudes: number[] };
 
-/** The default voice for every demo: all harmonics at 1/n, 16 of them. */
-export const DEFAULT_VOICE: Voice = { kind: 'harmonic', profile: 'sawtooth', partials: 16 };
+/**
+ * The default voice: odd harmonics at 1/n (square-wave-like), 16 of them.
+ * Readers can change it in the shared tone settings (toneSettings.ts).
+ */
+export const DEFAULT_VOICE: Voice = { kind: 'harmonic', profile: 'square', partials: 16 };
 
 /** How long a pluck rings, in seconds. */
 export const PLUCK_DURATION = 2.5;

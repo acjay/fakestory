@@ -7,6 +7,9 @@
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { audioEngine, AudioUnavailableError, type Sound } from '../../audio/engine';
+import { toneVoice } from '../../audio/toneSettings';
+import { ToneSettingsControl } from '../ToneSettingsControl';
+import { useToneSettings } from '../useToneSettings';
 import { OctaveCircle, type CircleNote, type Modifiers } from '../views/OctaveCircle';
 import {
   circleNotes,
@@ -30,6 +33,7 @@ export function ScaleGeneratorDemo({ params }: { params: URLSearchParams }) {
 
   const owner = useId();
   const sound = useRef<Sound | null>(null);
+  const tone = useToneSettings();
 
   const notes = circleNotes(size);
   const table = statisticsTable(size);
@@ -43,8 +47,10 @@ export function ScaleGeneratorDemo({ params }: { params: URLSearchParams }) {
     setError(null);
 
     try {
-      const started = await audioEngine().play([frequencyFor(note.cents, playOctave)], {
+      // Played in the reader's shared tone, relative to its base frequency.
+      const started = await audioEngine().play([frequencyFor(note.cents, playOctave, tone.baseFrequency)], {
         owner,
+        voice: toneVoice(tone),
         articulation: 'struck',
       });
       sound.current = started;
@@ -99,6 +105,8 @@ export function ScaleGeneratorDemo({ params }: { params: URLSearchParams }) {
           ))}
         </div>
       </div>
+
+      <ToneSettingsControl />
 
       <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
         {error ??

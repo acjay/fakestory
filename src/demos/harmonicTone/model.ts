@@ -8,7 +8,9 @@
  */
 
 import { profileAmplitudes, type HarmonicProfile, type Voice } from '../../audio/voices';
-import { DEFAULT_BASE_FREQUENCY } from '../../music/pitch';
+
+export { PROFILE_LABELS } from '../../audio/voices';
+import { DEFAULT_TONE, type ToneSettings } from '../../audio/toneSettings';
 
 export const MAX_HARMONICS = 16;
 
@@ -24,12 +26,6 @@ export const MAX_FUNDAMENTAL = 400;
 /** The time window the graphs show, in seconds. */
 export const GRAPH_WINDOW = 0.02;
 
-export const PROFILE_LABELS: Record<HarmonicProfile, string> = {
-  sawtooth: 'All harmonics · 1/n',
-  square: 'Odd only · 1/n',
-  triangle: 'Odd only · 1/n²',
-};
-
 export type HarmonicToneSettings = {
   fundamental: number;
   profile: HarmonicProfile;
@@ -41,24 +37,38 @@ export type HarmonicToneSettings = {
 /**
  * Starting settings from the embed URL's query parameters, so the author can
  * set up a variant in Notion, e.g. `?through=1` or `?profile=square`.
- * Anything missing or invalid falls back to a default.
+ * The fundamental and profile otherwise come from the reader's shared tone
+ * settings; `through` defaults to 4.
  *
- *   fundamental  80–400 (Hz), default 200
- *   profile      sawtooth | square | triangle, default sawtooth
- *   through      1, 2, 4, 8 or 16 harmonics, default 4
+ *   fundamental  80–400 (Hz)
+ *   profile      sawtooth | square | triangle
+ *   through      1, 2, 4, 8 or 16 harmonics
  */
-export function settingsFromParams(params: URLSearchParams): HarmonicToneSettings {
+export function settingsFromParams(params: URLSearchParams, tone: ToneSettings = DEFAULT_TONE): HarmonicToneSettings {
+  const through = Number(params.get('through'));
+  const fixed = fixedByUrl(params);
+
+  return {
+    fundamental: fixed.fundamental ?? tone.baseFrequency,
+    profile: fixed.profile ?? tone.profile,
+    enabled: enabledThrough((PRESETS as readonly number[]).includes(through) ? through : 4),
+  };
+}
+
+/**
+ * The settings the embed URL fixes. Those stay put; the others follow the
+ * reader's shared tone settings as they change.
+ */
+export function fixedByUrl(params: URLSearchParams): { fundamental?: number; profile?: HarmonicProfile } {
   const fundamental = Number(params.get('fundamental'));
   const profile = params.get('profile');
-  const through = Number(params.get('through'));
 
   return {
     fundamental:
-      Number.isFinite(fundamental) && fundamental >= MIN_FUNDAMENTAL && fundamental <= MAX_FUNDAMENTAL
+      params.has('fundamental') && fundamental >= MIN_FUNDAMENTAL && fundamental <= MAX_FUNDAMENTAL
         ? fundamental
-        : DEFAULT_BASE_FREQUENCY,
-    profile: profile === 'square' || profile === 'triangle' || profile === 'sawtooth' ? profile : 'sawtooth',
-    enabled: enabledThrough((PRESETS as readonly number[]).includes(through) ? through : 4),
+        : undefined,
+    profile: profile === 'square' || profile === 'triangle' || profile === 'sawtooth' ? profile : undefined,
   };
 }
 

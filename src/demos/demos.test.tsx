@@ -6,6 +6,7 @@ import type { Block } from '../model';
 import { Reader } from '../Reader';
 import { DemoIndex } from './DemoIndex';
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
+import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
 import { demoFromUrl } from './registry';
 
 describe('demo URLs', () => {
@@ -94,5 +95,18 @@ describe('demo index', () => {
     expect(html).toContain('<a href="/demos/harmonic-tone/">Harmonic tone</a>');
     expect(html).toContain('<code>https://fakestory.music/demos/harmonic-tone/</code>');
     expect(html).toContain('<code>through</code>');
+  });
+});
+
+describe('tone settings control', () => {
+  it('shows the shared tone on every demo, collapsed until opened', () => {
+    for (const html of [
+      renderToStaticMarkup(<HarmonicToneDemo params={new URLSearchParams('')} />),
+      renderToStaticMarkup(<ScaleGeneratorDemo params={new URLSearchParams('')} />),
+    ]) {
+      expect(html).toMatch(
+        /<button type="button" class="tone-settings-button" aria-expanded="false"[^>]*>Tone: 200 Hz · square<\/button>/,
+      );
+    }
   });
 });

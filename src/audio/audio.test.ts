@@ -21,8 +21,8 @@ import {
 describe('voices', () => {
   const rounded = (values: number[]) => values.map((value) => Math.round(value * 1000) / 1000);
 
-  it('default to a 16-harmonic sawtooth', () => {
-    expect(DEFAULT_VOICE).toEqual({ kind: 'harmonic', profile: 'sawtooth', partials: 16 });
+  it('default to a 16-harmonic square', () => {
+    expect(DEFAULT_VOICE).toEqual({ kind: 'harmonic', profile: 'square', partials: 16 });
     expect(harmonicAmplitudes(DEFAULT_VOICE, 200)).toHaveLength(16);
   });
 
@@ -40,7 +40,7 @@ describe('voices', () => {
   });
 
   it('drop harmonics above the audible limit', () => {
-    const amplitudes = harmonicAmplitudes(DEFAULT_VOICE, 2000);
+    const amplitudes = harmonicAmplitudes({ kind: 'harmonic', profile: 'sawtooth', partials: 16 }, 2000);
 
     // Harmonic 8 is at 16 kHz, the limit; harmonic 9 is above it.
     expect(amplitudes[7]).toBeGreaterThan(0);
@@ -342,9 +342,10 @@ describe('audio engine', () => {
   });
 
   it('plays each harmonic as its own sine, through an envelope, to the speakers', async () => {
-    await env.engine.play([200], { owner: 'a' });
+    const sawtooth: Voice = { kind: 'harmonic', profile: 'sawtooth', partials: 16 };
+    await env.engine.play([200], { owner: 'a', voice: sawtooth });
 
-    // The default voice: 16 harmonics at 200, 400, … 3200 Hz.
+    // 16 harmonics at 200, 400, … 3200 Hz.
     const oscillators = env.context.oscillators;
     expect(oscillators).toHaveLength(16);
     expect(oscillators.map((o) => o.frequency.value)).toEqual(Array.from({ length: 16 }, (_, i) => 200 * (i + 1)));
@@ -354,7 +355,7 @@ describe('audio engine', () => {
     // Gains: the note's envelope first, then one per harmonic, at its
     // amplitude times the loudness-matched scale.
     const [envelope, first, second] = env.context.gains;
-    const scale = loudnessScale(partialsOf(DEFAULT_VOICE, 200));
+    const scale = loudnessScale(partialsOf(sawtooth, 200));
     expect(first.gain.value).toBeCloseTo(1 * scale, 12);
     expect(second.gain.value).toBeCloseTo(0.5 * scale, 12);
 

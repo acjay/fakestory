@@ -11,6 +11,9 @@ import { useEffect, useId, useRef, useState } from 'react';
 
 import { audioEngine, AudioUnavailableError, type Sound } from '../../audio/engine';
 import type { Articulation, HarmonicProfile, Voice } from '../../audio/voices';
+import { NumberField } from '../NumberField';
+import { ToneSettingsControl } from '../ToneSettingsControl';
+import { useToneSettings } from '../useToneSettings';
 import { WaveformPlot } from '../views/WaveformPlot';
 import {
   activePreset,
@@ -28,6 +31,7 @@ import {
   PRESETS,
   PROFILE_LABELS,
   profileLevels,
+  fixedByUrl,
   settingsFromParams,
   soloVoice,
   type HarmonicToneSettings,
@@ -38,7 +42,8 @@ import '../demo.css';
 type Playback = { mode: 'idle' } | { mode: 'tone' } | { mode: 'continuous' } | { mode: 'solo'; harmonic: number };
 
 export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
-  const [settings, setSettings] = useState<HarmonicToneSettings>(() => settingsFromParams(params));
+  const tone = useToneSettings();
+  const [settings, setSettings] = useState<HarmonicToneSettings>(() => settingsFromParams(params, tone));
   const [showAllRows, setShowAllRows] = useState(() => settings.enabled.slice(COLLAPSED_ROWS).some(Boolean));
   const [playback, setPlayback] = useState<Playback>({ mode: 'idle' });
   const [error, setError] = useState<string | null>(null);
@@ -51,6 +56,25 @@ export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
   const levels = profileLevels(profile);
   const preset = activePreset(enabled);
   const rowCount = showAllRows ? MAX_HARMONICS : COLLAPSED_ROWS;
+
+  // Follow the reader's shared tone settings, except where the embed URL
+  // fixes a value.
+  // (The query string, not the params object: the object can be recreated
+  // on every render of the story, which would wipe the reader's changes.)
+  const query = params.toString();
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const fixed = fixedByUrl(new URLSearchParams(query));
+    setSettings((current) => ({
+      ...current,
+      fundamental: fixed.fundamental ?? tone.baseFrequency,
+      profile: fixed.profile ?? tone.profile,
+    }));
+  }, [tone.baseFrequency, tone.profile, query]);
 
   // While sustaining, follow every change to the controls.
   useEffect(() => {
@@ -139,14 +163,12 @@ export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
           <div className="demo-field-label">
             <label htmlFor={`${owner}-fundamental`}>Fundamental</label>
             <span className="demo-number">
-              <input
-                type="number"
+              <NumberField
                 min={MIN_FUNDAMENTAL}
                 max={MAX_FUNDAMENTAL}
-                step={1}
                 value={fundamental}
                 aria-label="Fundamental frequency in hertz"
-                onChange={(event) => setFundamental(Number(event.target.value))}
+                onChange={setFundamental}
               />
               Hz
             </span>
@@ -198,6 +220,8 @@ export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
           </button>
         </div>
       </div>
+
+      <ToneSettingsControl />
 
       <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
         {error ?? statusText(playback)}

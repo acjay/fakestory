@@ -65,7 +65,7 @@ This runs the dev server with the snapshot from `npm run import:notion` in place
 The shared code every rebuilt demo will use (see the demo design notes in Notion):
 
 - `src/music/`: pure pitch math. Ratios and cents, notes as a pitch class plus an octave (α1 is the base, 200 Hz by default), Pythagorean pitch classes named in stacking order (α β γ δ …), equal temperament that wraps after its last step, and the gaps between pitch classes.
-- `src/audio/voices.ts`: what notes sound like. The default voice is a sawtooth-like tone of 16 harmonics; there are also square- and triangle-like recipes and the plucked sound from the original CodePen demos.
+- `src/audio/voices.ts`: what notes sound like. The default voice is a square-wave-like tone of 16 harmonics (odd harmonics only); there are also square- and triangle-like recipes and the plucked sound from the original CodePen demos.
 - `src/audio/engine.ts`: plays them. Every sound, in any voice and whether a single note or a chord, is scaled to the same loudness (weighted for hearing, as in the original harmonic tone chart). Audio starts only from a user action, one demo sounds at a time (also across separate embeds of the site), every start and stop fades to avoid clicks, and sound stops when the page is hidden.
 
 ## Demos
@@ -74,9 +74,11 @@ Rebuilt demos live in `src/demos/`, one folder each, sharing the audio engine an
 
 `/demos/` lists every demo with its embed URL and parameters; it's generated from `src/demos/registry.ts`, where each demo is registered.
 
-- `/demos/harmonic-tone/`: build a tone from up to 16 harmonics. "Play tone" plays a struck tone, each harmonic dying away at its own rate, as in the original demo. Parameters: `fundamental` (80–400 Hz, default 200), `profile` (`sawtooth`, `square` or `triangle`), `through` (1, 2, 4, 8 or 16 harmonics, default 4).
+- `/demos/harmonic-tone/`: build a tone from up to 16 harmonics. "Play tone" plays a struck tone, each harmonic dying away at its own rate, as in the original demo. Parameters: `fundamental` (80–400 Hz) and `profile` (`sawtooth`, `square` or `triangle`), which otherwise follow the tone settings, and `through` (1, 2, 4, 8 or 16 harmonics, default 4).
 
 - `/demos/scale-generator/`: grow a scale one fifth at a time on the octave circle, and see how evenly it divides the octave at each size. Parameter: `size` (1–53, default 12). Click or tap a note to hear it; Shift plays the octave above and Ctrl/⌘ the octave below, also with Enter on a focused note, and the on-screen Octave control does the same for touch.
+
+Every demo has a **Tone** button for the shared tone settings (`src/audio/toneSettings.ts`): base frequency (α1, default 200 Hz), harmonic profile (default square) and number of harmonics (default 16), with a Reset. They're saved in the reader's browser and apply live to every demo, including other tabs and embeds of the site. Values a demo's embed URL sets take priority over them.
 
 Every pitch has a consistent color across the demos (`src/music/colors.ts`): 12 anchor colors for the Pythagorean pitch classes, blended for anything in between.
 

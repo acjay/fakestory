@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   activePreset,
   enabledThrough,
+  fixedByUrl,
   formatAmplitude,
   mixSummary,
   mixValue,
@@ -14,26 +15,38 @@ import {
 const params = (query: string) => new URLSearchParams(query);
 
 describe('harmonic tone settings from the embed URL', () => {
-  it('default to 200 Hz, sawtooth, through harmonic 4', () => {
+  it('default to the shared tone (200 Hz, square), through harmonic 4', () => {
     const settings = settingsFromParams(params(''));
 
     expect(settings.fundamental).toBe(200);
-    expect(settings.profile).toBe('sawtooth');
+    expect(settings.profile).toBe('square');
     expect(activePreset(settings.enabled)).toBe(4);
   });
 
-  it('read valid values', () => {
-    const settings = settingsFromParams(params('fundamental=110&profile=square&through=16'));
+  it('start from the reader’s tone settings when the URL doesn’t set them', () => {
+    const settings = settingsFromParams(params(''), { baseFrequency: 120, profile: 'triangle', partials: 8 });
 
-    expect(settings).toMatchObject({ fundamental: 110, profile: 'square' });
-    expect(activePreset(settings.enabled)).toBe(16);
+    expect(settings).toMatchObject({ fundamental: 120, profile: 'triangle' });
   });
 
-  it('ignore invalid values', () => {
+  it('read valid values, which take priority over the reader’s settings', () => {
+    const settings = settingsFromParams(params('fundamental=110&profile=sawtooth&through=16'), {
+      baseFrequency: 300,
+      profile: 'square',
+      partials: 16,
+    });
+
+    expect(settings).toMatchObject({ fundamental: 110, profile: 'sawtooth' });
+    expect(activePreset(settings.enabled)).toBe(16);
+    expect(fixedByUrl(params('fundamental=110&profile=sawtooth'))).toEqual({ fundamental: 110, profile: 'sawtooth' });
+  });
+
+  it('ignore invalid values, falling back to the shared tone', () => {
     const settings = settingsFromParams(params('fundamental=5000&profile=noise&through=3'));
 
-    expect(settings).toMatchObject({ fundamental: 200, profile: 'sawtooth' });
+    expect(settings).toMatchObject({ fundamental: 200, profile: 'square' });
     expect(activePreset(settings.enabled)).toBe(4);
+    expect(fixedByUrl(params('fundamental=5000&profile=noise'))).toEqual({});
   });
 });
 
