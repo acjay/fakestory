@@ -28,6 +28,15 @@ The story is written in Notion. The site shows the version committed to this rep
 
 Locally, `npm run dev` shows whatever `content/story.json` holds, so you can also look before pushing.
 
+## Trying changes without publishing
+
+Nothing reaches production until it's merged into `main`, so any branch can be a test:
+
+- **Content only:** import on a branch, push it, and look at its preview. Every pushed branch gets one, with or without a pull request. Re-import and push to update it. If you decide not to publish, delete the branch or close the pull request.
+- **Content and demos together:** put both on one branch. Demos embedded in the story render from the preview's own code, so the preview shows the new demo inside the current story. Notion's own embeds keep pointing at the production demos until you merge.
+- **Shipping only part of it:** keep re-imports on `content/…` branches, and code changes on their own branches. That way you can merge a code change without publishing a test import, or the other way round.
+- **Locally, without pushing:** `npm run import:notion`, then `npm run dev`. `git restore content/story.json` puts the committed story back. This is the only way to look at a draft without making it public.
+
 ## Good to know
 
 - **Everything pushed is public.** The repository is open source, so a pushed branch's story, and its preview build, can be read by anyone who finds them, even before merging. Previews are kept out of search engines but aren't secret.
