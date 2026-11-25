@@ -16,13 +16,13 @@ npm run build
 npm run dev
 ```
 
-Open the local URL printed by Vite. The page uses **invented fixture text**, not the story or a Notion snapshot. The demo panel is a placeholder; no audio is implemented. This is not the final design or a production renderer.
+Open the local URL printed by Vite. Until the story has been imported, the page shows **invented fixture text** (`src/fixture.ts`); after that, the committed story in `content/story.json`. The demo panel is a placeholder; no audio is implemented. This is not the final design or a production renderer.
 
 ## Hosting and preview builds
 
 The site runs on Cloudflare as a static Worker. `main` deploys to production, and every pull request gets its own preview build. Setup and day-to-day use are in [docs/hosting.md](docs/hosting.md).
 
-## Import from Notion locally (optional)
+## Import from Notion
 
 ### Set up access
 
@@ -44,49 +44,17 @@ Rotate it if it may have been exposed, or periodically:
 npm run import:notion
 ```
 
-This read-only script fetches the page's block tree, its Markdown and the comments on anchored blocks, then writes `~/.fakestory-private/story.json` with restrictive permissions, in the same shape the reader renders. Footnotes come from comments (see [the content-model notes](docs/content-model.md)). It prints progress, counts and problems by ID, never story text.
+This read-only script fetches the page's block tree, its Markdown and the comments on anchored blocks, and writes the story to `content/story.json`, in the shape the reader renders. Footnotes come from comments (see [the content-model notes](docs/content-model.md)). It prints progress, counts and problems by ID, not story text.
 
 Temporary failures (rate limits, Notion server errors, dropped connections) are retried with backoff. Anything else, such as a wrong page ID or missing access, stops the import immediately.
 
-**Incomplete imports are not saved.** If Notion's page Markdown is truncated or leaves out blocks, or a footnote can't be anchored to its text, the script lists the problems and exits with an error, leaving any previous snapshot unchanged. For local preview only, save it anyway with:
+**Incomplete imports are not saved.** If Notion's page Markdown is truncated or leaves out blocks, or a footnote can't be anchored to its text, the script lists the problems and exits with an error, leaving `content/story.json` unchanged. To save it anyway for a look (not for publishing):
 
 ```sh
 npm run import:notion -- --allow-incomplete
 ```
 
-The snapshot can contain unpublished content and expiring asset URLs. Its directory is outside the repository and the Vite web root; it is never imported by the app or included in the build. Do not share or commit it. This is an import tool, not an automated content or publishing pipeline. Because failed or incomplete runs never overwrite the last good snapshot, an existing file may be older than your last attempt.
-
-### Preview the imported story locally
-
-```sh
-npm run dev:story
-```
-
-This runs the dev server with the snapshot from `npm run import:notion` in place of the fixture. The dev server reads the file from `~/.fakestory-private/` on each request and only listens on 127.0.0.1. Production builds never include it: the loading code is stripped from `npm run build`, and `scripts/check-build.ts` fails the build if any trace of it remains. Blocks the reader doesn't support yet show a visible "Unsupported block" notice.
-
-## Music model and audio engine
-
-The shared code every rebuilt demo will use (see the demo design notes in Notion):
-
-- `src/music/`: pure pitch math. Ratios and cents, notes as a pitch class plus an octave (α1 is the base, 200 Hz by default), Pythagorean pitch classes named in stacking order (α β γ δ …), equal temperament that wraps after its last step, and the gaps between pitch classes.
-- `src/audio/voices.ts`: what notes sound like. The default voice is a square-wave-like tone of 16 harmonics (odd harmonics only); there are also square- and triangle-like recipes and the plucked sound from the original CodePen demos.
-- `src/audio/engine.ts`: plays them. Every sound, in any voice and whether a single note or a chord, is scaled to the same loudness (weighted for hearing, as in the original harmonic tone chart). Audio starts only from a user action, one demo sounds at a time (also across separate embeds of the site), every start and stop fades to avoid clicks, and sound stops when the page is hidden.
-
-## Demos
-
-Rebuilt demos live in `src/demos/`, one folder each, sharing the audio engine and `src/demos/demo.css`. Each has its own page at `/demos/<slug>/` (from `demos/<slug>/index.html`), which can be embedded in Notion. When the story embeds one of those URLs, the reader renders the demo directly; any other embed shows a placeholder and is never loaded. Query parameters on the URL configure the demo, so variants are set up in Notion.
-
-`/demos/` lists every demo with its embed URL and parameters; it's generated from `src/demos/registry.ts`, where each demo is registered.
-
-- `/demos/harmonic-tone/`: build a tone from up to 16 harmonics. "Play tone" plays a struck tone, each harmonic dying away at its own rate, as in the original demo. Parameters: `fundamental` (80–400 Hz) and `profile` (`sawtooth`, `square` or `triangle`), which otherwise follow the tone settings, and `through` (1, 2, 4, 8 or 16 harmonics, default 4).
-
-- `/demos/scale-generator/`: grow a scale one fifth at a time on the octave circle, and see how evenly it divides the octave at each size. Parameter: `size` (1–53, default 12). Click or tap a note to hear it; Shift plays the octave above and Ctrl/⌘ the octave below, also with Enter on a focused note, and the on-screen Octave control does the same for touch.
-
-Every demo has a **Tone** button for the shared tone settings (`src/audio/toneSettings.ts`): base frequency (α1, default 200 Hz), harmonic profile (default square) and number of harmonics (default 16), with a Reset. They're saved in the reader's browser and apply live to every demo, including other tabs and embeds of the site. Values a demo's embed URL sets take priority over them.
-
-Every pitch has a consistent color across the demos (`src/music/colors.ts`): 12 anchor colors for the Pythagorean pitch classes, blended for anything in between.
-
-To try the engine by hand, run `npm run dev` and open `/harness/audio.html`. To judge the pitch colors by eye, including under simulated color-vision deficiencies, open `/harness/colors.html`. The harness is for development only and is not part of the build.
+To publish what you imported, commit it on a branch and open a pull request: its preview build shows the story, and merging publishes it. See [docs/publishing.md](docs/publishing.md).
 
 ## What is and isn't here
 

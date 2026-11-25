@@ -7,7 +7,7 @@ The site is a static Cloudflare Worker: no server code, just the files `npm run 
 - **`main` deploys to production**, at `https://fakestory.<your-subdomain>.workers.dev`. It's public, and holds only what's in the repository: the reader with its invented fixture story, and the demos.
 - **Every other branch gets a preview build** with its own URL, and pull requests get a comment linking to it. Previews are open to anyone with the link; they're kept out of search engines but aren't secret.
 
-For now, builds use only the invented fixture story (`src/fixture.ts`). The Notion import runs only on your own machine, and Cloudflare never gets a Notion token. How the real story gets previewed and published is still to be decided (subtasks 19–21).
+Builds show the story committed in `content/story.json` (or the invented fixture before the first import). The Notion import runs on your own machine, and Cloudflare never gets a Notion token. Publishing a content change works like a code change: see [publishing.md](publishing.md).
 
 ## What's in the repository
 
