@@ -20,7 +20,7 @@ Open the local URL printed by Vite. The page uses **invented fixture text**, not
 
 ## Hosting and preview builds
 
-The site runs on Cloudflare as a static Worker. `main` deploys to production, and every pull request gets its own preview build behind a sign-in. Setup and day-to-day use are in [docs/hosting.md](docs/hosting.md).
+The site runs on Cloudflare as a static Worker. `main` deploys to production, and every pull request gets its own preview build. Setup and day-to-day use are in [docs/hosting.md](docs/hosting.md).
 
 ## Import from Notion locally (optional)
 
