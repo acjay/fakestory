@@ -113,6 +113,13 @@ describe('demo index', () => {
     expect(html).toContain('<code>https://fakestory.music/demos/number-line/?fifths=5&amp;gaps=1</code>');
   });
 
+  it('copies variant URLs percent-encoded, so captions survive pasting', () => {
+    const html = renderToStaticMarkup(<DemoIndex origin="https://fakestory.music" />);
+
+    expect(html).toContain('captions=Start with α1.|Add β1 702 cents above α1.');
+    expect(html).toContain('href="/demos/number-line/?notes=%CE%B11%7C');
+  });
+
   it('only lists variants that the demo itself accepts', () => {
     for (const [slug, demo] of Object.entries(DEMOS)) {
       const accepted = new Set(demo.parameters.map((parameter) => parameter.name));

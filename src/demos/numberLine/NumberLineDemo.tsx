@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { ToneSettingsControl } from '../ToneSettingsControl';
 import { useNotePlayer } from '../useNotePlayer';
 import { NumberLine, type LineMark } from '../views/NumberLine';
-import { configFromParams, frequencyOf, gapLabel, positionValue, valueLabel, visibleNotes } from './model';
+import { configFromParams, frequencyOf, gapLabel, positionValue, stepCaption, valueLabel, visibleNotes } from './model';
 
 import '../demo.css';
 
@@ -38,11 +38,6 @@ export function NumberLineDemo({ params }: { params: URLSearchParams }) {
     ? shown.slice(0, -1).map((lineNote, i) => gapLabel(lineNote, shown[i + 1], scale, tone.baseFrequency))
     : undefined;
 
-  const added = config.notes.filter((lineNote) => lineNote.step === step).map((lineNote) => lineNote.id);
-  const hint = isStepped
-    ? `Step ${step + 1} of ${stepCount}: ${step === 0 ? 'starting with' : 'adds'} ${added.join(' and ')}. Select a note to hear it.`
-    : 'Select a note to hear it.';
-
   function playMark(mark: LineMark) {
     const lineNote = shown.find((candidate) => candidate.id === mark.id);
     if (lineNote) {
@@ -60,15 +55,13 @@ export function NumberLineDemo({ params }: { params: URLSearchParams }) {
 
   return (
     <div className="demo number-line-demo">
+      {/* The step controls, with what the current step does. */}
       {isStepped && (
-        <div className="demo-toolbar">
+        <div className="number-line-steps">
           <div className="demo-stepper" role="group" aria-label="Steps">
             <button type="button" aria-label="Previous step" disabled={step === 0} onClick={() => setStep(step - 1)}>
               ←
             </button>
-            <output aria-live="polite">
-              Step {step + 1} of {stepCount}
-            </output>
             <button
               type="button"
               aria-label="Next step"
@@ -78,14 +71,13 @@ export function NumberLineDemo({ params }: { params: URLSearchParams }) {
               →
             </button>
           </div>
+          <output className="number-line-caption" aria-live="polite">
+            {stepCaption(config, step)}
+          </output>
         </div>
       )}
 
       <ToneSettingsControl />
-
-      <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
-        {error ?? playing?.text ?? hint}
-      </p>
 
       <NumberLine
         marks={marks}
@@ -96,6 +88,10 @@ export function NumberLineDemo({ params }: { params: URLSearchParams }) {
         onActivate={playMark}
         label={description}
       />
+
+      <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
+        {error ?? playing?.text ?? 'Click a note to play it.'}
+      </p>
     </div>
   );
 }

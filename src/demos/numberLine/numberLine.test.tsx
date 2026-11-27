@@ -7,6 +7,7 @@ import {
   notesFromFifths,
   notesFromSteps,
   parseNote,
+  stepCaption,
   valueLabel,
   visibleNotes,
 } from './model';
@@ -72,6 +73,24 @@ describe('number line notes', () => {
   });
 });
 
+describe('step captions', () => {
+  const steps = 'notes=α1|β1|α2,γ2|γ1';
+
+  it('use the author’s text, numbered', () => {
+    const stepped = config(`${steps}&captions=Start with α1.|Add β1 702 cents above α1.`);
+
+    expect(stepCaption(stepped, 0)).toBe('Step 1 of 4: Start with α1.');
+    expect(stepCaption(stepped, 1)).toBe('Step 2 of 4: Add β1 702 cents above α1.');
+  });
+
+  it('say which notes a step adds where there’s no caption', () => {
+    const stepped = config(`${steps}&captions=Start with α1.||`);
+
+    expect(stepCaption(stepped, 2)).toBe('Step 3 of 4: Add α2 and γ2.');
+    expect(stepCaption(stepped, 3)).toBe('Step 4 of 4: Add γ1.');
+  });
+});
+
 describe('number line configuration', () => {
   it('defaults to the α and β notes by cents, without gaps or steps', () => {
     const { notes, scale, showGaps, stepCount } = config('');
@@ -104,12 +123,16 @@ describe('number line demo', () => {
     expect(html).not.toContain('Previous step');
   });
 
-  it('starts a step-through at its first step', () => {
+  it('starts a step-through at its first step, saying which notes it adds', () => {
     const html = render('notes=α1|β1|α2,γ2|γ1');
 
     expect(html.match(/class="number-line-note"/g)).toHaveLength(1);
-    expect(html).toContain('Step 1 of 4: starting with α1.');
+    expect(html).toContain('Step 1 of 4: Start with α1.');
     expect(html).toMatch(/aria-label="Previous step" disabled=""/);
+  });
+
+  it('puts the hint to play notes below the line', () => {
+    expect(render()).toMatch(/<\/svg><\/div><p class="demo-status" role="status">Click a note to play it.<\/p>/);
   });
 
   it('labels gaps, and describes them for screen readers', () => {
