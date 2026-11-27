@@ -26,6 +26,29 @@ Which story section embeds which pen is tracked privately in Notion, because the
 | `what-do-we-want-more-evenness` | [azopYEe](https://codepen.io/acjay/pen/azopYEe) | The gap-arc number line with 12 notes (adds θ ι κ λ μ). | Click a note to pluck it |
 | `the-ever-tightening-circle` | [JjgEGOj](https://codepen.io/acjay/pen/JjgEGOj) | Scale generator: ➖ / ➕ change the scale size; each new note is a perfect fifth above the last, folded into the octave. Octave circle with gap labels, plus a table per scale size of biggest gap, smallest gap, number of gap sizes and their standard deviation. Starts at 12 notes. | Click a note to pluck it; Shift-click for an octave up, Ctrl/⌘-click for an octave down |
 
+## Migration checklist
+
+Each pen and the rebuilt demo that replaces it. To migrate an embed, replace the CodePen embed in Notion with the new URL on production (`https://fakestory.alanjay1.workers.dev`), then check it in the story's preview.
+
+| Pen | Replacement | Status |
+| --- | --- | --- |
+| `our-base-tone` | Not yet: note buttons | To do |
+| `our-base-tone-octave-up` | Not yet: note buttons | To do |
+| `our-base-tone-octave-down` | Not yet: note buttons | To do |
+| `two-note-harmonies` | Not yet: note buttons | To do |
+| `our-happy-interval-number-line-hertz` | `/demos/number-line/?notes=α0,β0,α1,β1,α2,β2&scale=hertz` | Rebuilt |
+| `our-happy-interval-number-line-cents` | `/demos/number-line/?notes=α0,β0,α1,β1,α2,β2` (the default) | Rebuilt; its notes now play, like the others |
+| `3-s-a-crowd` | `/demos/number-line/?notes=α1\|β1\|α2,γ2\|γ1` | Rebuilt |
+| `the-quest-for-even-spacing` | `/demos/number-line/?fifths=5&gaps=1` | Rebuilt |
+| `onwards-to-7-tones-linear` | `/demos/number-line/?fifths=7&gaps=1` | Rebuilt |
+| `what-do-we-want-more-evenness` | `/demos/number-line/?fifths=12&gaps=1` | Rebuilt |
+| `pentatonic-pitch-circle-arc-labels` | Not yet: the scale generator's circle, fixed at 5 notes | To do |
+| `music-table-with-arcs` | Not yet: interval table | To do |
+| `the-ever-tightening-circle` | `/demos/scale-generator/` | Rebuilt |
+
+"Rebuilt" means the demo exists; the Notion embed still has to be swapped. Changes from the pens:
+- **Number lines:** notes are colored by pitch class (every γ the same color in every octave), rather than ad hoc colors. Labels name the octave. Every note plays, in the reader's tone. The step-through starts at step 1 with ← and → buttons, and the line keeps its full text size on phones, scrolling sideways when notes are close.
+
 ## What they share
 
 - **One pluck synth, copied into 11 pens.** `playGuitarChord` builds a custom waveform of 10 harmonics with amplitudes falling as 1/n^0.8, darkens higher notes, scales volume by (440/f)^0.3, and applies a 2.5 s plucked envelope. Each pluck creates and later closes its own `AudioContext`.

@@ -13,6 +13,7 @@
 import type { ComponentType } from 'react';
 
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
+import { NumberLineDemo } from './numberLine/NumberLineDemo';
 import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
 
 export type DemoComponent = ComponentType<{ params: URLSearchParams }>;
@@ -57,6 +58,29 @@ export const DEMOS: Record<string, DemoEntry> = {
       'Grow a scale one fifth at a time on the octave circle, hear its notes, and see how evenly they divide the octave at each size.',
     parameters: [{ name: 'size', values: '1–53', description: 'Number of notes to start with. Default 12.' }],
     Component: ScaleGeneratorDemo,
+  },
+
+  'number-line': {
+    title: 'Number line',
+    description:
+      'Notes along a line, spaced by cents or by hertz: hear them, step through them, and see the gaps between neighbors.',
+    parameters: [
+      {
+        name: 'notes',
+        values: 'e.g. α0,β0,α1,β1,α2,β2',
+        description:
+          'Notes by Greek letter and octave, separated by commas. Use | between groups for a step-through, e.g. α1|β1|α2,γ2|γ1. Default α0,β0,α1,β1,α2,β2.',
+      },
+      {
+        name: 'fifths',
+        values: '1–12',
+        description:
+          'Instead of notes: the first this-many notes, each a fifth above the last, in one octave, plus α2.',
+      },
+      { name: 'scale', values: 'cents, hertz', description: 'Space notes by cents or by frequency. Default cents.' },
+      { name: 'gaps', values: '1', description: 'Label the gap between neighboring notes.' },
+    ],
+    Component: NumberLineDemo,
   },
 };
 

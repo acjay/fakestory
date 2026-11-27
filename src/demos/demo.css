@@ -549,3 +549,75 @@
     transition: none !important;
   }
 }
+
+/* --- Number line ---------------------------------------------------------- */
+
+/* Narrow screens scroll the line sideways instead of shrinking its labels. */
+.number-line-scroll {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+.number-line {
+  display: block;
+}
+
+.number-line-axis,
+.number-line-tick {
+  stroke: var(--demo-text);
+  stroke-width: 2;
+}
+
+.number-line-arc {
+  fill: none;
+  stroke: var(--demo-muted);
+  stroke-width: 1.5;
+}
+
+.number-line-arrowhead {
+  fill: var(--demo-muted);
+}
+
+.number-line-gap,
+.number-line-value {
+  font-size: 12px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.number-line-gap {
+  fill: var(--demo-muted);
+}
+
+.number-line-value {
+  fill: var(--demo-text);
+}
+
+.number-line-note {
+  cursor: pointer;
+  outline: none;
+}
+
+.number-line-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.number-line-focus {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 3;
+}
+
+.number-line-note:focus-visible .number-line-focus {
+  stroke: var(--demo-accent);
+}
+
+.number-line-note-playing .number-line-focus {
+  stroke: var(--demo-text);
+  stroke-width: 4;
+}
