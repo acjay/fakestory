@@ -61,11 +61,13 @@ export const DEMOS: Record<string, DemoEntry> = {
 };
 
 /**
- * Hosts whose /demos/ URLs are ours. The public domain is not chosen yet;
- * `fakestory.music` is the placeholder used elsewhere in the prototype. The
- * page's own host also counts, for local development and previews.
+ * Hosts whose /demos/ URLs are ours: production on Cloudflare, plus
+ * `fakestory.music`, a placeholder for a future custom domain. The page's own
+ * host also counts, for local development and preview builds. Embeds in the
+ * story should point at production, e.g.
+ * https://fakestory.alanjay1.workers.dev/demos/harmonic-tone/.
  */
-export const DEMO_HOSTS = ['fakestory.music'];
+export const DEMO_HOSTS = ['fakestory.alanjay1.workers.dev', 'fakestory.music'];
 
 const DEMO_PATH = /^\/demos\/([a-z0-9-]+)\/?$/;
 
