@@ -54,6 +54,11 @@ const MARK_RADIUS = 15;
 const MARGIN = 40;
 const LINE_Y = 72;
 
+/** Where the line's arrowheads point to, from each edge, and their size. */
+const AXIS_END = 4;
+const ARROW_LENGTH = 14;
+const ARROW_HALF_WIDTH = 7;
+
 /** The closest two marks may be, in pixels, before the line scrolls instead. */
 const MIN_SPACING = 36;
 
@@ -112,7 +117,22 @@ export function NumberLine({ marks, domain, gaps, allPositions, playingId = null
           </marker>
         </defs>
 
-        <line className="number-line-axis" x1={MARGIN / 4} y1={LINE_Y} x2={width - MARGIN / 4} y2={LINE_Y} />
+        {/* The line, with an arrowhead at each end: it carries on past the notes shown. */}
+        <line
+          className="number-line-axis"
+          x1={AXIS_END + ARROW_LENGTH / 2}
+          y1={LINE_Y}
+          x2={width - AXIS_END - ARROW_LENGTH / 2}
+          y2={LINE_Y}
+        />
+        <polygon
+          className="number-line-axis-arrow"
+          points={`${AXIS_END},${LINE_Y} ${AXIS_END + ARROW_LENGTH},${LINE_Y - ARROW_HALF_WIDTH} ${AXIS_END + ARROW_LENGTH},${LINE_Y + ARROW_HALF_WIDTH}`}
+        />
+        <polygon
+          className="number-line-axis-arrow"
+          points={`${width - AXIS_END},${LINE_Y} ${width - AXIS_END - ARROW_LENGTH},${LINE_Y - ARROW_HALF_WIDTH} ${width - AXIS_END - ARROW_LENGTH},${LINE_Y + ARROW_HALF_WIDTH}`}
+        />
 
         {/* Gap arcs, from each note to the next, under the line. */}
         {gaps &&

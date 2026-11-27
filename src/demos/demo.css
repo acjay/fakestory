@@ -595,8 +595,10 @@
   font-weight: 600;
 }
 
-/* Narrow screens scroll the line sideways instead of shrinking its labels. */
+/* Narrow screens scroll the line sideways instead of shrinking its labels.
+   It starts below the ♪ button, so it always gets the demo's full width. */
 .number-line-scroll {
+  clear: both;
   overflow-x: auto;
   margin-top: 8px;
 }
@@ -609,6 +611,10 @@
 .number-line-tick {
   stroke: var(--demo-text);
   stroke-width: 2;
+}
+
+.number-line-axis-arrow {
+  fill: var(--demo-text);
 }
 
 .number-line-arc {
