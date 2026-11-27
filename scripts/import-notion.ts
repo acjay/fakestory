@@ -2,7 +2,8 @@
  * Read-only import of the real story from Notion.
  *
  * Fetches the page's complete block tree, plus the page Markdown and comments
- * needed to find footnotes, and writes the story to content/story.json in
+ * needed to find footnotes, downloads its images into content/images/, and
+ * writes the story to content/story.json in
  * the shape the reader renders (see `src/model.ts`, and `scripts/snapshot.ts`
  * for what's kept). Commit that on a branch and open a pull request: its
  * preview build shows the story, its diff shows what changed, and merging
@@ -27,6 +28,7 @@ import { dirname, join, relative } from 'node:path';
 
 import type { Block, RichText, Story } from '../src/model.ts';
 import { anchorFootnotes, findAnchors, selectFootnotes, type NotionComment } from './footnotes.ts';
+import { localizeImages, writeImages } from './images.ts';
 import { serializeStory } from './snapshot.ts';
 
 /** The published story, committed to the repository and built into the site. */
@@ -72,15 +74,28 @@ async function importNotion() {
   status.done(`Fetched ${plural(comments.length, 'comment')} from ${plural(commentedBlocks.length, 'block')}`);
 
   const footnotes = anchorFootnotes(blocks, anchors, selectFootnotes(comments));
-  const story: Story = { title, blocks: footnotes.blocks, glossary: {}, footnotes: footnotes.footnotes };
 
-  // 3. Report. Counts and IDs only, never story text, so the output is safe to share.
+  // 3. Images: downloaded now, written only once the import is known to be complete.
+  const images = await localizeImages(footnotes.blocks, fetch, (done, total) =>
+    status.update(`Downloading images… ${done} of ${total}`),
+  );
+  status.done(`Downloaded ${plural(images.files.length, 'image')}`);
+
+  const story: Story = { title, blocks: images.blocks, glossary: {}, footnotes: footnotes.footnotes };
+
+  // 4. Report. Counts and IDs only, never story text, so the output is safe to share.
   console.log('');
   console.log('Block counts:', countBlockTypes(blocks));
   console.log(`Footnotes anchored: ${Object.keys(story.footnotes).length}.`);
+  if (images.uncaptioned.length > 0) {
+    console.warn(
+      `Note: ${plural(images.uncaptioned.length, 'image')} without a caption. Captions are also the images' text ` +
+        `for screen readers, so consider adding them in Notion: ${images.uncaptioned.join(', ')}`,
+    );
+  }
 
-  // 4. Save, but never pass off a partial snapshot as complete.
-  const problems = incompleteSnapshotProblems(markdown, footnotes.problems);
+  // 5. Save, but never pass off a partial snapshot as complete.
+  const problems = [...incompleteSnapshotProblems(markdown, footnotes.problems), ...images.problems];
   for (const problem of problems) {
     console.warn(`Problem: ${problem}`);
   }
@@ -92,8 +107,11 @@ async function importNotion() {
     );
   }
 
+  await writeImages(dirname(STORY_FILE), images.files);
   await writeStory(story);
-  console.log(`Saved ${relative(process.cwd(), STORY_FILE)}`);
+  console.log(
+    `Saved ${relative(process.cwd(), STORY_FILE)}, with ${plural(images.files.length, 'image')} in content/images/`,
+  );
   if (problems.length > 0) {
     console.warn('Warning: saved an INCOMPLETE snapshot (--allow-incomplete). Don’t publish it.');
   }

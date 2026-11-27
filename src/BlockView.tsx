@@ -2,6 +2,7 @@ import { demoFromUrl } from './demos/registry';
 import { MathExpression } from './MathExpression';
 import type { Block, RichText } from './model';
 import { RichTextView } from './RichTextView';
+import { storyImageUrl } from './storyImages';
 import { TableView } from './TableView';
 
 /**
@@ -144,6 +145,9 @@ export function BlockView({ block }: { block: Block }) {
     case 'table':
       return <TableView block={block} />;
 
+    case 'image':
+      return <ImageView data={data} />;
+
     // Content shared between several places in Notion. Its children are the
     // shared content, so it renders as if they were written here. If they're
     // missing (e.g. the original is on a page the integration can't read),
@@ -205,5 +209,34 @@ function DemoPlaceholder() {
       <p>A future home for sound and interaction.</p>
       <span className="embed-placeholder-status">Not yet implemented</span>
     </div>
+  );
+}
+
+/**
+ * An image from the story, served from the site (see scripts/images.ts).
+ * Notion's API has no alt text, so the caption doubles as the text
+ * alternative. An image that isn't available locally gets a visible notice.
+ */
+function ImageView({ data }: { data: Record<string, unknown> }) {
+  const caption = (data.caption as RichText[] | undefined) ?? [];
+  const url = data.type === 'local' && typeof data.path === 'string' ? storyImageUrl(data.path) : undefined;
+
+  if (!url) {
+    return (
+      <div className="unsupported" role="note">
+        Image not available: run the import to download it
+      </div>
+    );
+  }
+
+  return (
+    <figure className="story-image">
+      <img src={url} alt={caption.map((run) => run.plain_text).join('')} loading="lazy" decoding="async" />
+      {caption.length > 0 && (
+        <figcaption>
+          <RichTextView values={caption} />
+        </figcaption>
+      )}
+    </figure>
   );
 }
