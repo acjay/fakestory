@@ -21,4 +21,8 @@
   // Production at fakestory.<account>.workers.dev; previews get their own URLs.
   "workers_dev": true,
   "preview_urls": true,
+
+  // Required by `wrangler preview` (Worker Previews, the preview builds for
+  // branches). Empty: previews use the same settings as production.
+  "previews": {},
 }
