@@ -6,6 +6,7 @@ import type { Block } from '../model';
 import { Reader } from '../Reader';
 import { DemoIndex } from './DemoIndex';
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
+import { NumberLineDemo } from './numberLine/NumberLineDemo';
 import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
 import { DEMOS, demoFromUrl } from './registry';
 
@@ -136,13 +137,15 @@ describe('demo index', () => {
 });
 
 describe('tone settings control', () => {
-  it('shows the shared tone on every demo, collapsed until opened', () => {
+  it('is a ♪ button first in every demo, collapsed until opened, naming the current tone', () => {
     for (const html of [
       renderToStaticMarkup(<HarmonicToneDemo params={new URLSearchParams('')} />),
       renderToStaticMarkup(<ScaleGeneratorDemo params={new URLSearchParams('')} />),
+      renderToStaticMarkup(<NumberLineDemo params={new URLSearchParams('')} />),
     ]) {
+      expect(html).toMatch(/^<div class="demo [^"]*"><div class="tone-settings">/);
       expect(html).toMatch(
-        /<button type="button" class="tone-settings-button" aria-expanded="false"[^>]*>Tone: 200 Hz · square<\/button>/,
+        /<button type="button" class="tone-settings-button" aria-expanded="false"[^>]*aria-label="Tone settings: 200 Hz, square" title="Tone settings: 200 Hz, square"><span aria-hidden="true">♪<\/span><\/button>/,
       );
     }
   });

@@ -174,14 +174,25 @@
 
 .tone-settings {
   position: relative;
-  margin-top: 12px;
+  float: right;
+  margin: 0 0 8px 12px;
 }
 
+/* A small round note button, out of the way in the corner. */
 .tone-settings-button {
-  font-size: 14px !important;
+  width: 36px;
+  min-width: 0 !important;
   min-height: 36px !important;
+  padding: 0 !important;
   border-radius: 999px !important;
-  padding: 0 14px !important;
+  font-size: 20px !important;
+  line-height: 1;
+  color: var(--demo-muted) !important;
+}
+
+.tone-settings-button:hover,
+.tone-settings-button[aria-expanded='true'] {
+  color: var(--demo-text) !important;
 }
 
 /* Floats over the demo, like a menu, so opening or closing it never moves
@@ -189,7 +200,7 @@
 .tone-settings-panel {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
+  right: 0;
   z-index: 3;
   box-sizing: border-box;
   width: min(480px, calc(100vw - 32px));

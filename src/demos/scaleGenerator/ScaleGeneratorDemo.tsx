@@ -43,6 +43,8 @@ export function ScaleGeneratorDemo({ params }: { params: URLSearchParams }) {
 
   return (
     <div className="demo scale-generator">
+      <ToneSettingsControl />
+
       <div className="demo-toolbar scale-generator-toolbar">
         <div className="demo-stepper" role="group" aria-label="Scale size">
           <button
@@ -75,8 +77,6 @@ export function ScaleGeneratorDemo({ params }: { params: URLSearchParams }) {
           ))}
         </div>
       </div>
-
-      <ToneSettingsControl />
 
       <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
         {error ??

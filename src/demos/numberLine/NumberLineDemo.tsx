@@ -55,6 +55,8 @@ export function NumberLineDemo({ params }: { params: URLSearchParams }) {
 
   return (
     <div className="demo number-line-demo">
+      <ToneSettingsControl />
+
       {/* The step controls, with what the current step does. */}
       {isStepped && (
         <div className="number-line-steps">
@@ -76,8 +78,6 @@ export function NumberLineDemo({ params }: { params: URLSearchParams }) {
           </output>
         </div>
       )}
-
-      <ToneSettingsControl />
 
       <NumberLine
         marks={marks}
