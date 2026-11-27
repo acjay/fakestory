@@ -1875,7 +1875,7 @@
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/08b5a887-ac6c-4cd0-ab7e-12ce2ea1e0a2/pure-tone-demo.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665I6A6TYJ%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T025401Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJIMEYCIQDGSatEYHbJXPTlHMm6yl26ZjdT2fhiClPQV7MHX6QxOAIhALOR4NfzJAY%2BG2CkOtzXrm2nZAdBaOtYHcwgMAo21yXhKogECMv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1IgwMMHyDBuoRefwSIEQq3AOIj3QBW0c8sVev8vLgypArqcBcBl4GnrXMto0HZzlbzLb90sLwbkyk3m%2BFFIib6secRT4lK9Q2fDOT1h7%2FEPdfoBQ9m3ibZG4tkgDjwkhvyGWqa%2BD9cSorhz4qdm%2FhwHVOOIAMDqRwcqsLots9xedN%2Fe%2FOSKxJ60UhlB6yshSRxsrm%2BeW8SKQu91X02MT%2FixsJ1nrsQ39eesMSw84U%2FnLYQLGXumgOcB4RKuA%2F5hImt8OjFy2bO7j4fG5kbhsj4m8XE393UjBurTTL%2FjWXcvtzSQ2hISBNju3EHXjXfwlLxoBZODHyLFZShRWaTT1eqVbsfAAbFK97S8zNb6P%2F5M1Zy%2BbzmYcUCD6QN84w3l%2BLsH1Rt4on60fJJYaqn%2BoofDhGAMNJthQKC4oOXVdfzEymeZNoUo37w7cyiGJT3F416M3Z7iYHR9oarfWPJmsY1gI7HJgaotAzv5DwGd9Bvy0cXEQLPqgMaVbrdCuZEgvrHITdQ%2BHwZ7Y%2BEMWtNQMEAV%2Fw72PH5GbELUapHcDWTp5MDO2M1ApNmRlConV%2Bc%2FhTYKDx7yWlOJMEZDXXZrZ0nyIOk4cU8XMeYjjhkqYocbgXnDcTM6bo3G75FQ5Iefxr7UWFytWpg%2Fe1dmKIIzCk1KPYBjqkAVT2rlC82j%2FylUrVgFpoRgbAgd9yu1mdAC3zCdzrjarQ8u6sHst53bQxp4C0TFxkrrdEAYxBGEdlk45%2BGzh53tSjiH2zFw3Z7THHCFnu3tDddhZ8ArbstDQXfVwsjWsz%2BFYzN1LlQKPk2qotthTRGxPXKd%2Fssrk1mg6KQfa8ngKpRLPpQz%2FzOoKF5gF0PraVeBv6KbcmwJf9bO%2FDUY9DHxigwMYs&X-Amz-Signature=ec3e303c56c7db31df088b42950d80fe0fbc550e4dac7ddab8658f04c7d36ea7&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/08b5a887-ac6c-4cd0-ab7e-12ce2ea1e0a2/pure-tone-demo.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=d394f1c3cd51977c65c5efb022e46ebd9f868a2defcb25faeb182d9860343772&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
       }
     },
     {
@@ -2260,7 +2260,16 @@
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/188e9836-80b2-49d4-912b-9f7a74972e99/harmonic_tone_notion_agent_chart.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665I6A6TYJ%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T025401Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJIMEYCIQDGSatEYHbJXPTlHMm6yl26ZjdT2fhiClPQV7MHX6QxOAIhALOR4NfzJAY%2BG2CkOtzXrm2nZAdBaOtYHcwgMAo21yXhKogECMv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1IgwMMHyDBuoRefwSIEQq3AOIj3QBW0c8sVev8vLgypArqcBcBl4GnrXMto0HZzlbzLb90sLwbkyk3m%2BFFIib6secRT4lK9Q2fDOT1h7%2FEPdfoBQ9m3ibZG4tkgDjwkhvyGWqa%2BD9cSorhz4qdm%2FhwHVOOIAMDqRwcqsLots9xedN%2Fe%2FOSKxJ60UhlB6yshSRxsrm%2BeW8SKQu91X02MT%2FixsJ1nrsQ39eesMSw84U%2FnLYQLGXumgOcB4RKuA%2F5hImt8OjFy2bO7j4fG5kbhsj4m8XE393UjBurTTL%2FjWXcvtzSQ2hISBNju3EHXjXfwlLxoBZODHyLFZShRWaTT1eqVbsfAAbFK97S8zNb6P%2F5M1Zy%2BbzmYcUCD6QN84w3l%2BLsH1Rt4on60fJJYaqn%2BoofDhGAMNJthQKC4oOXVdfzEymeZNoUo37w7cyiGJT3F416M3Z7iYHR9oarfWPJmsY1gI7HJgaotAzv5DwGd9Bvy0cXEQLPqgMaVbrdCuZEgvrHITdQ%2BHwZ7Y%2BEMWtNQMEAV%2Fw72PH5GbELUapHcDWTp5MDO2M1ApNmRlConV%2Bc%2FhTYKDx7yWlOJMEZDXXZrZ0nyIOk4cU8XMeYjjhkqYocbgXnDcTM6bo3G75FQ5Iefxr7UWFytWpg%2Fe1dmKIIzCk1KPYBjqkAVT2rlC82j%2FylUrVgFpoRgbAgd9yu1mdAC3zCdzrjarQ8u6sHst53bQxp4C0TFxkrrdEAYxBGEdlk45%2BGzh53tSjiH2zFw3Z7THHCFnu3tDddhZ8ArbstDQXfVwsjWsz%2BFYzN1LlQKPk2qotthTRGxPXKd%2Fssrk1mg6KQfa8ngKpRLPpQz%2FzOoKF5gF0PraVeBv6KbcmwJf9bO%2FDUY9DHxigwMYs&X-Amz-Signature=f0b6264f644cdc4f195b040bcae136d5cf1618f05fa466395ad2c55f0e7fbcbe&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/188e9836-80b2-49d4-912b-9f7a74972e99/harmonic_tone_notion_agent_chart.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=734803547dfebcaee72a626259c4492d3a572309dbaf204be89ef78fd0ca28ea&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+      }
+    },
+    {
+      "id": "4255fa8f-f6f5-8020-8950-da3acea924d8",
+      "type": "embed",
+      "has_children": false,
+      "embed": {
+        "caption": [],
+        "url": "https://fakestory.alanjay1.workers.dev/demos/harmonic-tone/"
       }
     },
     {
@@ -2395,7 +2404,7 @@
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/0e65d167-4126-4696-9b51-b0a366bf7a67/clang-demo.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665I6A6TYJ%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T025401Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJIMEYCIQDGSatEYHbJXPTlHMm6yl26ZjdT2fhiClPQV7MHX6QxOAIhALOR4NfzJAY%2BG2CkOtzXrm2nZAdBaOtYHcwgMAo21yXhKogECMv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1IgwMMHyDBuoRefwSIEQq3AOIj3QBW0c8sVev8vLgypArqcBcBl4GnrXMto0HZzlbzLb90sLwbkyk3m%2BFFIib6secRT4lK9Q2fDOT1h7%2FEPdfoBQ9m3ibZG4tkgDjwkhvyGWqa%2BD9cSorhz4qdm%2FhwHVOOIAMDqRwcqsLots9xedN%2Fe%2FOSKxJ60UhlB6yshSRxsrm%2BeW8SKQu91X02MT%2FixsJ1nrsQ39eesMSw84U%2FnLYQLGXumgOcB4RKuA%2F5hImt8OjFy2bO7j4fG5kbhsj4m8XE393UjBurTTL%2FjWXcvtzSQ2hISBNju3EHXjXfwlLxoBZODHyLFZShRWaTT1eqVbsfAAbFK97S8zNb6P%2F5M1Zy%2BbzmYcUCD6QN84w3l%2BLsH1Rt4on60fJJYaqn%2BoofDhGAMNJthQKC4oOXVdfzEymeZNoUo37w7cyiGJT3F416M3Z7iYHR9oarfWPJmsY1gI7HJgaotAzv5DwGd9Bvy0cXEQLPqgMaVbrdCuZEgvrHITdQ%2BHwZ7Y%2BEMWtNQMEAV%2Fw72PH5GbELUapHcDWTp5MDO2M1ApNmRlConV%2Bc%2FhTYKDx7yWlOJMEZDXXZrZ0nyIOk4cU8XMeYjjhkqYocbgXnDcTM6bo3G75FQ5Iefxr7UWFytWpg%2Fe1dmKIIzCk1KPYBjqkAVT2rlC82j%2FylUrVgFpoRgbAgd9yu1mdAC3zCdzrjarQ8u6sHst53bQxp4C0TFxkrrdEAYxBGEdlk45%2BGzh53tSjiH2zFw3Z7THHCFnu3tDddhZ8ArbstDQXfVwsjWsz%2BFYzN1LlQKPk2qotthTRGxPXKd%2Fssrk1mg6KQfa8ngKpRLPpQz%2FzOoKF5gF0PraVeBv6KbcmwJf9bO%2FDUY9DHxigwMYs&X-Amz-Signature=cbcd5aa73f8bf11ecc0ce46690e47aa5326e0a4f9a0ae821e6d19d0bc6edb83d&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/0e65d167-4126-4696-9b51-b0a366bf7a67/clang-demo.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=1b489319f8bcfa76ce610477a9c8e6cd6c21dc6452f7faceddef8dd632a4b1d2&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
       }
     },
     {
@@ -2556,7 +2565,7 @@
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/2d34a84e-1e48-48fd-be5a-02f24e16e988/harmonic-compatibility-2to1.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665I6A6TYJ%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T025401Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJIMEYCIQDGSatEYHbJXPTlHMm6yl26ZjdT2fhiClPQV7MHX6QxOAIhALOR4NfzJAY%2BG2CkOtzXrm2nZAdBaOtYHcwgMAo21yXhKogECMv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1IgwMMHyDBuoRefwSIEQq3AOIj3QBW0c8sVev8vLgypArqcBcBl4GnrXMto0HZzlbzLb90sLwbkyk3m%2BFFIib6secRT4lK9Q2fDOT1h7%2FEPdfoBQ9m3ibZG4tkgDjwkhvyGWqa%2BD9cSorhz4qdm%2FhwHVOOIAMDqRwcqsLots9xedN%2Fe%2FOSKxJ60UhlB6yshSRxsrm%2BeW8SKQu91X02MT%2FixsJ1nrsQ39eesMSw84U%2FnLYQLGXumgOcB4RKuA%2F5hImt8OjFy2bO7j4fG5kbhsj4m8XE393UjBurTTL%2FjWXcvtzSQ2hISBNju3EHXjXfwlLxoBZODHyLFZShRWaTT1eqVbsfAAbFK97S8zNb6P%2F5M1Zy%2BbzmYcUCD6QN84w3l%2BLsH1Rt4on60fJJYaqn%2BoofDhGAMNJthQKC4oOXVdfzEymeZNoUo37w7cyiGJT3F416M3Z7iYHR9oarfWPJmsY1gI7HJgaotAzv5DwGd9Bvy0cXEQLPqgMaVbrdCuZEgvrHITdQ%2BHwZ7Y%2BEMWtNQMEAV%2Fw72PH5GbELUapHcDWTp5MDO2M1ApNmRlConV%2Bc%2FhTYKDx7yWlOJMEZDXXZrZ0nyIOk4cU8XMeYjjhkqYocbgXnDcTM6bo3G75FQ5Iefxr7UWFytWpg%2Fe1dmKIIzCk1KPYBjqkAVT2rlC82j%2FylUrVgFpoRgbAgd9yu1mdAC3zCdzrjarQ8u6sHst53bQxp4C0TFxkrrdEAYxBGEdlk45%2BGzh53tSjiH2zFw3Z7THHCFnu3tDddhZ8ArbstDQXfVwsjWsz%2BFYzN1LlQKPk2qotthTRGxPXKd%2Fssrk1mg6KQfa8ngKpRLPpQz%2FzOoKF5gF0PraVeBv6KbcmwJf9bO%2FDUY9DHxigwMYs&X-Amz-Signature=f8177781d4c446f29e371ec6093722b3347b24b109080beb15950aa65b75ea8d&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/2d34a84e-1e48-48fd-be5a-02f24e16e988/harmonic-compatibility-2to1.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=56c2803afc761308cd3ea0c92fa4cdb8505d4aa096d802e2773d952bd7515d32&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
       }
     },
     {
@@ -2854,9 +2863,27 @@
       "type": "image",
       "has_children": false,
       "image": {
-        "caption": [],
-        "type": "file",
-        "file": {}
+        "type": "local",
+        "path": "images/1075fa8ff6f580a19767f4aa2029b73c.png",
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "One octave of a keyboard, with 7 white keys and 5 black keys",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "One octave of a keyboard, with 7 white keys and 5 black keys",
+            "href": null
+          }
+        ]
       }
     },
     {
@@ -2893,7 +2920,7 @@
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/e7fb6809-64b7-487e-8603-2f6f599a3bf7/diatonic-keyboard.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665I6A6TYJ%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T025401Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJIMEYCIQDGSatEYHbJXPTlHMm6yl26ZjdT2fhiClPQV7MHX6QxOAIhALOR4NfzJAY%2BG2CkOtzXrm2nZAdBaOtYHcwgMAo21yXhKogECMv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1IgwMMHyDBuoRefwSIEQq3AOIj3QBW0c8sVev8vLgypArqcBcBl4GnrXMto0HZzlbzLb90sLwbkyk3m%2BFFIib6secRT4lK9Q2fDOT1h7%2FEPdfoBQ9m3ibZG4tkgDjwkhvyGWqa%2BD9cSorhz4qdm%2FhwHVOOIAMDqRwcqsLots9xedN%2Fe%2FOSKxJ60UhlB6yshSRxsrm%2BeW8SKQu91X02MT%2FixsJ1nrsQ39eesMSw84U%2FnLYQLGXumgOcB4RKuA%2F5hImt8OjFy2bO7j4fG5kbhsj4m8XE393UjBurTTL%2FjWXcvtzSQ2hISBNju3EHXjXfwlLxoBZODHyLFZShRWaTT1eqVbsfAAbFK97S8zNb6P%2F5M1Zy%2BbzmYcUCD6QN84w3l%2BLsH1Rt4on60fJJYaqn%2BoofDhGAMNJthQKC4oOXVdfzEymeZNoUo37w7cyiGJT3F416M3Z7iYHR9oarfWPJmsY1gI7HJgaotAzv5DwGd9Bvy0cXEQLPqgMaVbrdCuZEgvrHITdQ%2BHwZ7Y%2BEMWtNQMEAV%2Fw72PH5GbELUapHcDWTp5MDO2M1ApNmRlConV%2Bc%2FhTYKDx7yWlOJMEZDXXZrZ0nyIOk4cU8XMeYjjhkqYocbgXnDcTM6bo3G75FQ5Iefxr7UWFytWpg%2Fe1dmKIIzCk1KPYBjqkAVT2rlC82j%2FylUrVgFpoRgbAgd9yu1mdAC3zCdzrjarQ8u6sHst53bQxp4C0TFxkrrdEAYxBGEdlk45%2BGzh53tSjiH2zFw3Z7THHCFnu3tDddhZ8ArbstDQXfVwsjWsz%2BFYzN1LlQKPk2qotthTRGxPXKd%2Fssrk1mg6KQfa8ngKpRLPpQz%2FzOoKF5gF0PraVeBv6KbcmwJf9bO%2FDUY9DHxigwMYs&X-Amz-Signature=8b37b4160c56775f65c4a2a6d3cf233cd6cf1c7c35dd988f04551fff84ad9234&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/e7fb6809-64b7-487e-8603-2f6f599a3bf7/diatonic-keyboard.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=bc8b2323cbfc61b51db2ca5bba1a4be412b0baa987eb1b2c284d083cf5520402&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
       }
     },
     {
@@ -8639,9 +8666,27 @@
       "type": "image",
       "has_children": false,
       "image": {
-        "caption": [],
-        "type": "file",
-        "file": {}
+        "type": "local",
+        "path": "images/1075fa8ff6f580308c0bd06c9bbaba94.png",
+        "caption": [
+          {
+            "type": "text",
+            "text": {
+              "content": "A keyboard with an octave of notes labeled from one A to the A one octave higher",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "A keyboard with an octave of notes labeled from one A to the A one octave higher",
+            "href": null
+          }
+        ]
       }
     },
     {
@@ -9371,9 +9416,9 @@
       "type": "image",
       "has_children": false,
       "image": {
-        "caption": [],
-        "type": "file",
-        "file": {}
+        "type": "local",
+        "path": "images/16a5fa8ff6f58077a7e0ce262d59d5e0.png",
+        "caption": []
       }
     },
     {
