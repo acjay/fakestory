@@ -7,16 +7,17 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { DEMOS } from './registry';
+import { DEMOS, demoTitle } from './registry';
 
 import './standalone.css';
 
 const root = document.getElementById('root')!;
 const slug = root.dataset.demo ?? '';
 const Demo = DEMOS[slug]?.Component;
+const params = new URLSearchParams(location.search);
 
 createRoot(root).render(
   <StrictMode>
-    {Demo ? <Demo params={new URLSearchParams(location.search)} /> : <p>Unknown demo: {slug}</p>}
+    {Demo ? <Demo params={params} title={demoTitle(slug, params)} /> : <p>Unknown demo: {slug}</p>}
   </StrictMode>,
 );

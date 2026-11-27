@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 
-import { ToneSettingsControl } from '../ToneSettingsControl';
+import { DemoHeader } from '../DemoHeader';
 import { useNotePlayer } from '../useNotePlayer';
 import { OctaveCircle, type CircleNote, type Modifiers } from '../views/OctaveCircle';
 import {
@@ -23,7 +23,7 @@ import {
 
 import '../demo.css';
 
-export function ScaleGeneratorDemo({ params }: { params: URLSearchParams }) {
+export function ScaleGeneratorDemo({ params, title }: { params: URLSearchParams; title: string }) {
   const [size, setSize] = useState(() => sizeFromParams(params));
   const [octave, setOctave] = useState<OctaveChoice>(0);
   const { tone, playing, error, play } = useNotePlayer();
@@ -43,7 +43,7 @@ export function ScaleGeneratorDemo({ params }: { params: URLSearchParams }) {
 
   return (
     <div className="demo scale-generator">
-      <ToneSettingsControl />
+      <DemoHeader title={title} />
 
       <div className="demo-toolbar scale-generator-toolbar">
         <div className="demo-stepper" role="group" aria-label="Scale size">

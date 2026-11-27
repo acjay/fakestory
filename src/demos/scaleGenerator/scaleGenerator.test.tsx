@@ -39,7 +39,8 @@ describe('scale generator model', () => {
 });
 
 describe('scale generator demo', () => {
-  const render = (query = '') => renderToStaticMarkup(<ScaleGeneratorDemo params={new URLSearchParams(query)} />);
+  const render = (query = '') =>
+    renderToStaticMarkup(<ScaleGeneratorDemo params={new URLSearchParams(query)} title="Test" />);
 
   it('draws each note as a labeled button', () => {
     const html = render('size=3');

@@ -12,7 +12,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { audioEngine, AudioUnavailableError, type Sound } from '../../audio/engine';
 import type { Articulation, HarmonicProfile, Voice } from '../../audio/voices';
 import { NumberField } from '../NumberField';
-import { ToneSettingsControl } from '../ToneSettingsControl';
+import { DemoHeader } from '../DemoHeader';
 import { useToneSettings } from '../useToneSettings';
 import { WaveformPlot } from '../views/WaveformPlot';
 import {
@@ -41,7 +41,7 @@ import '../demo.css';
 
 type Playback = { mode: 'idle' } | { mode: 'tone' } | { mode: 'continuous' } | { mode: 'solo'; harmonic: number };
 
-export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
+export function HarmonicToneDemo({ params, title }: { params: URLSearchParams; title: string }) {
   const tone = useToneSettings();
   const [settings, setSettings] = useState<HarmonicToneSettings>(() => settingsFromParams(params, tone));
   const [showAllRows, setShowAllRows] = useState(() => settings.enabled.slice(COLLAPSED_ROWS).some(Boolean));
@@ -158,7 +158,7 @@ export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
 
   return (
     <div className="demo harmonic-tone">
-      <ToneSettingsControl />
+      <DemoHeader title={title} />
 
       <div className="demo-controls">
         <div className="demo-field demo-field-wide">
