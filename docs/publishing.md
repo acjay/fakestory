@@ -18,9 +18,9 @@ The story is written in Notion. The site shows the version committed to this rep
    npm run import:notion
    ```
 
-   This writes `content/story.json`. If anything would make it incomplete, such as a footnote that can't be placed, it saves nothing and lists the problems instead. Fix them in Notion and run it again.
+   This writes `content/story.json` and the images in `content/images/`. If anything would make it incomplete, such as a footnote that can't be placed, it saves nothing and lists the problems instead. Fix them in Notion and run it again.
 
-3. **Review the diff.** `git diff content/story.json` shows exactly which text changed. The snapshot keeps only what the reader renders, so re-importing an unchanged story produces no diff.
+3. **Review the diff.** `git diff content/` shows exactly which text changed, and lists any added or changed images. The snapshot keeps only what the reader renders, so re-importing an unchanged story produces no diff.
 
 4. **Commit, push and open a pull request.** Cloudflare builds a preview of the site with the new content, and comments on the pull request with its URL. Check the story there; push more commits if needed.
 
@@ -36,11 +36,11 @@ Nothing reaches production until it's merged into `main`, so any branch can be a
 - **Content and demos together:** put both on one branch. Demos embedded in the story render from the preview's own code, so the preview shows the new demo inside the current story. Notion's own embeds keep pointing at the production demos until you merge.
 - **Shipping only part of it:** keep re-imports on `content/…` branches, and code changes on their own branches. That way you can merge a code change without publishing a test import, or the other way round.
 - **Mixed pull requests get flagged.** If a pull request changes both `content/` and anything else, a check labels it `content + code` and comments on it, since merging it publishes both. It's only a warning: merge anyway if that's what you want.
-- **Locally, without pushing:** `npm run import:notion`, then `npm run dev`. `git restore content/story.json` puts the committed story back. This is the only way to look at a draft without making it public.
+- **Locally, without pushing:** `npm run import:notion`, then `npm run dev`. `git restore content/` puts the committed story back (`git clean -f content/images/` removes newly downloaded images). This is the only way to look at a draft without making it public.
 
 ## Good to know
 
 - **Everything pushed is public.** The repository is open source, so a pushed branch's story, and its preview build, can be read by anyone who finds them, even before merging. Previews are kept out of search engines but aren't secret.
 - **What's in the snapshot:** each block's ID, type, content and children; the title; and the footnotes (comments starting with "Footnote: "). Other comments, edit times and editor IDs are left out.
-- **Not yet:** images. Links to files uploaded to Notion expire within the hour, so they're removed from the snapshot for now; storing images is subtask 06.
+- **Images** are downloaded by the import into `content/images/`, named after their block, and committed with the story. The site serves its own copies, since Notion's links to uploaded files expire within the hour. Images the story no longer uses are deleted. An image's caption is also its text alternative for screen readers, so the import lists any image without one.
 - **Before the first import**, there's no `content/story.json`, and the site shows the invented fixture story (`src/fixture.ts`).

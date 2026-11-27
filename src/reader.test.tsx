@@ -1,10 +1,15 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { fixture } from './fixture';
 import { parseGlossaryLink, safeHref } from './links';
 import type { Block, RichText, Story } from './model';
 import { Reader } from './Reader';
+
+// No images are committed for tests: pretend one exists.
+vi.mock('./storyImages', () => ({
+  storyImageUrl: (path: string) => (path === 'images/test.png' ? '/assets/test-abc123.png' : undefined),
+}));
 
 const text = (plain_text: string, footnote?: string): RichText => ({ type: 'text', plain_text, footnote });
 
@@ -157,5 +162,24 @@ describe('links', () => {
     expect(parseGlossaryLink('https://fakestory.music/terminology/octave?x=1')).toBeNull();
     expect(parseGlossaryLink('https://fakestory.music/footnotes/octave')).toBeNull();
     expect(safeHref('javascript:alert(1)')).toBeUndefined();
+  });
+});
+
+describe('images', () => {
+  const render = (image: Record<string, unknown>) =>
+    renderToStaticMarkup(<Reader story={{ ...fixture, blocks: [{ id: 'i', type: 'image', image }] }} />);
+
+  it('render a local image as a figure, with its caption as the text alternative', () => {
+    const html = render({ type: 'local', path: 'images/test.png', caption: [text('A '), text('keyboard')] });
+
+    expect(html).toMatch(/<figure class="story-image"><img src="[^"]+" alt="A keyboard"/);
+    expect(html).toContain('<figcaption>A keyboard</figcaption>');
+  });
+
+  it('show a notice for an image that isn’t available locally, rather than loading it from Notion', () => {
+    const html = render({ type: 'external', external: { url: 'https://example.com/a.png' }, caption: [] });
+
+    expect(html).toContain('Image not available');
+    expect(html).not.toContain('example.com');
   });
 });

@@ -58,7 +58,7 @@ To publish what you imported, commit it on a branch and open a pull request: its
 
 ## What is and isn't here
 
-- The renderer understands a small subset of Notion-shaped blocks and rich text: paragraphs, headings, bulleted and numbered lists (including nested), tables, callouts (with emoji icons), synced blocks, columns, equations, quotes, dividers, embeds (the rebuilt demos render; others show a placeholder), and links. Images are not rendered yet. Unsupported block types are visibly flagged.
+- The renderer understands a small subset of Notion-shaped blocks and rich text: paragraphs, headings, bulleted and numbered lists (including nested), tables, callouts (with emoji icons), synced blocks, columns, equations, quotes, dividers, embeds (the rebuilt demos render; others show a placeholder), images (downloaded by the import, with the caption as alt text), and links. Unsupported block types are visibly flagged.
 - Footnotes render as a ♪ marker after the anchored text; hovering the text or marker highlights the anchor, and the marker opens the note. The importer builds them from Notion comments.
 - The fixture demonstrates glossary definitions using explicit links and local records. This is a test convention, not a chosen authoring format. There is no glossary index or backreference system yet.
 - Notion content is not automatically loaded or published. There is no deployment configuration, private preview, dashboard, or publish action. **Do not deploy this prototype as a preview for draft content.**

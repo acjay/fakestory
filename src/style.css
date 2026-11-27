@@ -355,6 +355,21 @@ th {
   display: block;
   overflow-x: auto;
 }
+.story-image {
+  margin: 32px 0;
+  max-width: 680px;
+}
+.story-image img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+.story-image figcaption {
+  margin-top: 8px;
+  font-size: 15px;
+  color: #5c6760;
+}
 .unsupported {
   border-left: 3px solid #98672e;
   background: #fbebde;
