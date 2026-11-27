@@ -172,20 +172,44 @@
 
 /* --- Shared tone settings ("Tone" button and panel) ----------------------- */
 
-.tone-settings {
-  position: relative;
-  float: right;
-  margin: 0 0 8px 12px;
+/* --- Header bar --------------------------------------------------------- */
+
+/* "Demo: <title>" on the left, the ♪ tone button on the right. */
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--demo-border);
 }
 
-/* A small round note button, out of the way in the corner. */
+.demo-header-title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.demo-header-kind {
+  color: var(--demo-muted);
+  font-weight: 500;
+}
+
+/* --- Tone settings ------------------------------------------------------- */
+
+.tone-settings {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* A small round note button, out of the way in the header's corner. */
 .tone-settings-button {
-  width: 36px;
+  width: 34px;
   min-width: 0 !important;
-  min-height: 36px !important;
+  min-height: 34px !important;
   padding: 0 !important;
   border-radius: 999px !important;
-  font-size: 20px !important;
+  font-size: 19px !important;
   line-height: 1;
   color: var(--demo-muted) !important;
 }
@@ -196,38 +220,59 @@
 }
 
 /* Floats over the demo, like a menu, so opening or closing it never moves
-   the controls underneath (a click outside closes it and still lands). */
+   the controls underneath (a click outside closes it and still lands).
+   Two compact rows, so it fits inside short embeds. */
 .tone-settings-panel {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   right: 0;
   z-index: 3;
   box-sizing: border-box;
-  width: min(480px, calc(100vw - 32px));
+  width: min(460px, calc(100vw - 32px));
   margin-top: 0 !important;
+  padding: 10px 12px !important;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 8px;
   background: var(--demo-surface) !important;
   border: 1px solid var(--demo-border);
   box-shadow: 0 8px 24px #0000001f;
 }
 
-.tone-settings-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 24px;
+.tone-settings-panel button,
+.tone-settings-panel select,
+.tone-settings-panel input[type='number'] {
+  min-height: 36px;
+  padding: 0 10px;
 }
 
-.tone-settings-actions {
+.tone-settings-frequency {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tone-settings-frequency label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tone-settings-frequency input[type='range'] {
+  flex: 1;
+  min-width: 80px;
+}
+
+.tone-settings-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
 
-.tone-settings-actions .demo-status {
-  margin: 0 auto 0 0;
+.tone-settings-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
 }
 
 .tone-settings-actions button:disabled {
@@ -595,10 +640,8 @@
   font-weight: 600;
 }
 
-/* Narrow screens scroll the line sideways instead of shrinking its labels.
-   It starts below the ♪ button, so it always gets the demo's full width. */
+/* Narrow screens scroll the line sideways instead of shrinking its labels. */
 .number-line-scroll {
-  clear: both;
   overflow-x: auto;
   margin-top: 8px;
 }

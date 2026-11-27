@@ -16,9 +16,15 @@ import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
 import { NumberLineDemo } from './numberLine/NumberLineDemo';
 import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
 
-export type DemoComponent = ComponentType<{ params: URLSearchParams }>;
+export type DemoComponent = ComponentType<{
+  params: URLSearchParams;
+
+  /** Shown in the demo's header bar, after "Demo:". */
+  title: string;
+}>;
 
 export type DemoEntry = {
+  /** The demo's name, and its header title unless the URL gives another. */
   title: string;
 
   /** One line on what the reader can do with it, for the demo index. */
@@ -30,9 +36,10 @@ export type DemoEntry = {
   /**
    * Ready-made configurations, linked from the demo index so their URLs
    * never need writing by hand. Queries are written readably, unencoded
-   * (so no `&`, `#` or `+` inside values); the index encodes them.
+   * (so no `&`, `#` or `+` inside values); the index encodes them. A
+   * variant's `title`, if any, goes in its URL as the header title.
    */
-  variants: { name: string; query: string }[];
+  variants: { name: string; query: string; title?: string }[];
 
   Component: DemoComponent;
 };
@@ -105,10 +112,15 @@ export const DEMOS: Record<string, DemoEntry> = {
     ],
     // The six CodePen number lines this demo replaces (see legacy-demos/README.md).
     variants: [
-      { name: 'Our happy interval, by hertz', query: 'notes=α0,β0,α1,β1,α2,β2&scale=hertz' },
-      { name: 'Our happy interval, by cents', query: 'notes=α0,β0,α1,β1,α2,β2' },
+      {
+        name: 'Our happy interval, by hertz',
+        title: 'Our happy interval, by hertz',
+        query: 'notes=α0,β0,α1,β1,α2,β2&scale=hertz',
+      },
+      { name: 'Our happy interval, by cents', title: 'Our happy interval, by cents', query: 'notes=α0,β0,α1,β1,α2,β2' },
       {
         name: '3’s a crowd (step-through)',
+        title: '3’s a crowd',
         query:
           'notes=α1|α2|β1|γ2|γ1&captions=' +
           [
@@ -119,9 +131,9 @@ export const DEMOS: Record<string, DemoEntry> = {
             'Add γ1 an octave (1200 cents) below γ2.',
           ].join('|'),
       },
-      { name: 'The quest for even spacing: 5 notes', query: 'fifths=5&gaps=1' },
-      { name: 'Onwards to 7 notes', query: 'fifths=7&gaps=1' },
-      { name: 'More evenness: 12 notes', query: 'fifths=12&gaps=1' },
+      { name: 'The quest for even spacing: 5 notes', title: 'The quest for even spacing', query: 'fifths=5&gaps=1' },
+      { name: 'Onwards to 7 notes', title: 'Onwards to 7 notes', query: 'fifths=7&gaps=1' },
+      { name: 'More evenness: 12 notes', title: 'More evenness', query: 'fifths=12&gaps=1' },
     ],
     Component: NumberLineDemo,
   },
@@ -138,11 +150,19 @@ export const DEMO_HOSTS = ['fakestory.alanjay1.workers.dev', 'fakestory.music'];
 
 const DEMO_PATH = /^\/demos\/([a-z0-9-]+)\/?$/;
 
+/** Every demo accepts this, for the title in its header bar. */
+export const TITLE_PARAMETER = 'title';
+
+/** The header title for a demo: the URL's `title`, if given, or else the demo's name. */
+export function demoTitle(slug: string, params: URLSearchParams): string {
+  return params.get(TITLE_PARAMETER)?.trim() || (DEMOS[slug]?.title ?? '');
+}
+
 /** The demo an embed URL points to, with its configuration, or null. */
 export function demoFromUrl(
   url: string | undefined,
   currentHost = globalThis.location?.host,
-): { slug: string; Demo: DemoComponent; params: URLSearchParams } | null {
+): { slug: string; Demo: DemoComponent; params: URLSearchParams; title: string } | null {
   if (!url) {
     return null;
   }
@@ -165,5 +185,5 @@ export function demoFromUrl(
     return null;
   }
 
-  return { slug, Demo, params: parsed.searchParams };
+  return { slug, Demo, params: parsed.searchParams, title: demoTitle(slug, parsed.searchParams) };
 }

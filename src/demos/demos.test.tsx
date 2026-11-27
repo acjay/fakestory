@@ -8,7 +8,7 @@ import { DemoIndex } from './DemoIndex';
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
 import { NumberLineDemo } from './numberLine/NumberLineDemo';
 import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
-import { DEMOS, demoFromUrl } from './registry';
+import { DEMOS, demoFromUrl, demoTitle, TITLE_PARAMETER } from './registry';
 
 describe('demo URLs', () => {
   it('recognize our demos, with their configuration', () => {
@@ -65,7 +65,8 @@ describe('demos in the story', () => {
 });
 
 describe('harmonic tone demo', () => {
-  const render = (query = '') => renderToStaticMarkup(<HarmonicToneDemo params={new URLSearchParams(query)} />);
+  const render = (query = '') =>
+    renderToStaticMarkup(<HarmonicToneDemo params={new URLSearchParams(query)} title="Test" />);
 
   it('starts at 200 Hz with harmonics 1–4 and 8 rows', () => {
     const html = render();
@@ -110,8 +111,13 @@ describe('demo index', () => {
   it('links every variant, with a URL ready to copy', () => {
     const html = renderToStaticMarkup(<DemoIndex origin="https://fakestory.music" />);
 
-    expect(html).toContain('<a href="/demos/number-line/?fifths=5&amp;gaps=1">The quest for even spacing: 5 notes</a>');
-    expect(html).toContain('<code>https://fakestory.music/demos/number-line/?fifths=5&amp;gaps=1</code>');
+    expect(html).toContain(
+      '<a href="/demos/number-line/?fifths=5&amp;gaps=1&amp;title=The%20quest%20for%20even%20spacing">The quest for even spacing: 5 notes</a>',
+    );
+    expect(html).toContain(
+      '<code>https://fakestory.music/demos/number-line/?fifths=5&amp;gaps=1&amp;title=The quest for even spacing</code>',
+    );
+    expect(html).toContain('<a href="/demos/scale-generator/?size=5">');
   });
 
   it('copies variant URLs percent-encoded, so captions survive pasting', () => {
@@ -125,7 +131,7 @@ describe('demo index', () => {
 
   it('only lists variants that the demo itself accepts', () => {
     for (const [slug, demo] of Object.entries(DEMOS)) {
-      const accepted = new Set(demo.parameters.map((parameter) => parameter.name));
+      const accepted = new Set([...demo.parameters.map((parameter) => parameter.name), TITLE_PARAMETER]);
 
       for (const variant of demo.variants) {
         for (const name of new URLSearchParams(variant.query).keys()) {
@@ -136,17 +142,34 @@ describe('demo index', () => {
   });
 });
 
-describe('tone settings control', () => {
-  it('is a ♪ button first in every demo, collapsed until opened, naming the current tone', () => {
-    for (const html of [
-      renderToStaticMarkup(<HarmonicToneDemo params={new URLSearchParams('')} />),
-      renderToStaticMarkup(<ScaleGeneratorDemo params={new URLSearchParams('')} />),
-      renderToStaticMarkup(<NumberLineDemo params={new URLSearchParams('')} />),
-    ]) {
-      expect(html).toMatch(/^<div class="demo [^"]*"><div class="tone-settings">/);
+describe('demo header', () => {
+  const demos = [
+    renderToStaticMarkup(<HarmonicToneDemo params={new URLSearchParams('')} title="Test" />),
+    renderToStaticMarkup(<ScaleGeneratorDemo params={new URLSearchParams('')} title="Test" />),
+    renderToStaticMarkup(<NumberLineDemo params={new URLSearchParams('')} title="Test" />),
+  ];
+
+  it('starts every demo with "Demo:" and its title', () => {
+    for (const html of demos) {
       expect(html).toMatch(
-        /<button type="button" class="tone-settings-button" aria-expanded="false"[^>]*aria-label="Tone settings: 200 Hz, square" title="Tone settings: 200 Hz, square"><span aria-hidden="true">♪<\/span><\/button>/,
+        /^<div class="demo [^"]*"><div class="demo-header"><p class="demo-header-title"><span class="demo-header-kind">Demo:<\/span> Test<\/p>/,
       );
     }
+  });
+
+  it('ends with the ♪ tone button, collapsed until opened, naming the current tone', () => {
+    for (const html of demos) {
+      expect(html).toContain('<button type="button" class="tone-settings-button" aria-expanded="false"');
+      expect(html).toContain(
+        'aria-label="Tone settings: 200 Hz, square. Applies to every demo." title="Tone settings: 200 Hz, square. Applies to every demo."><span aria-hidden="true">♪</span></button></div></div>',
+      );
+    }
+  });
+
+  it('takes its title from the URL, or else the demo’s name', () => {
+    expect(demoTitle('number-line', new URLSearchParams('title=3’s a crowd'))).toBe('3’s a crowd');
+    expect(demoTitle('number-line', new URLSearchParams(''))).toBe('Number line');
+    expect(demoTitle('number-line', new URLSearchParams('title=%20'))).toBe('Number line');
+    expect(demoFromUrl('https://fakestory.music/demos/scale-generator/?title=Five')?.title).toBe('Five');
   });
 });

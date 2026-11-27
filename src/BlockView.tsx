@@ -179,7 +179,7 @@ export function BlockView({ block }: { block: Block }) {
       const demo = demoFromUrl(typeof data.url === 'string' ? data.url : undefined);
       return demo ? (
         <div className="demo-embed">
-          <demo.Demo params={demo.params} />
+          <demo.Demo params={demo.params} title={demo.title} />
         </div>
       ) : (
         <DemoPlaceholder />

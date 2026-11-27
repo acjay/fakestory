@@ -7,7 +7,7 @@
 
 import { useState } from 'react';
 
-import { DEMOS } from './registry';
+import { DEMOS, TITLE_PARAMETER } from './registry';
 
 import './demo.css';
 
@@ -23,6 +23,16 @@ export function DemoIndex({ origin }: { origin: string }) {
       <ul className="demo-index-list">
         {Object.entries(DEMOS).map(([slug, demo]) => {
           const url = `${origin}/demos/${slug}/`;
+
+          // Every demo also takes a title for its header bar.
+          const parameters = [
+            ...demo.parameters,
+            {
+              name: TITLE_PARAMETER,
+              values: 'text',
+              description: `The title in the demo’s header bar, after “Demo:”. Default “${demo.title}”.`,
+            },
+          ];
 
           return (
             <li key={slug} className="demo-panel">
@@ -42,7 +52,10 @@ export function DemoIndex({ origin }: { origin: string }) {
                   <ul className="demo-index-variants">
                     {demo.variants.map((variant) => {
                       // Shown as written, copied percent-encoded (e.g. spaces in captions).
-                      const path = `/demos/${slug}/?${variant.query}`;
+                      const query = variant.title
+                        ? `${variant.query}&${TITLE_PARAMETER}=${variant.title}`
+                        : variant.query;
+                      const path = `/demos/${slug}/?${query}`;
                       const embedUrl = encodeURI(origin + path);
 
                       return (
@@ -59,7 +72,7 @@ export function DemoIndex({ origin }: { origin: string }) {
                 </>
               )}
 
-              {demo.parameters.length > 0 && (
+              {parameters.length > 0 && (
                 <table className="demo-index-parameters">
                   <caption>Parameters</caption>
                   <thead>
@@ -70,7 +83,7 @@ export function DemoIndex({ origin }: { origin: string }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {demo.parameters.map((parameter) => (
+                    {parameters.map((parameter) => (
                       <tr key={parameter.name}>
                         <th scope="row">
                           <code>{parameter.name}</code>

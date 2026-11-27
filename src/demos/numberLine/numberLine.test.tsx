@@ -113,7 +113,8 @@ describe('number line configuration', () => {
 });
 
 describe('number line demo', () => {
-  const render = (query = '') => renderToStaticMarkup(<NumberLineDemo params={new URLSearchParams(query)} />);
+  const render = (query = '') =>
+    renderToStaticMarkup(<NumberLineDemo params={new URLSearchParams(query)} title="Test" />);
 
   it('draws every note as a labeled button, in its pitch color', () => {
     const html = render();

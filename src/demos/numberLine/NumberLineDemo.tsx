@@ -7,14 +7,14 @@
 
 import { useState } from 'react';
 
-import { ToneSettingsControl } from '../ToneSettingsControl';
+import { DemoHeader } from '../DemoHeader';
 import { useNotePlayer } from '../useNotePlayer';
 import { NumberLine, type LineMark } from '../views/NumberLine';
 import { configFromParams, frequencyOf, gapLabel, positionValue, stepCaption, valueLabel, visibleNotes } from './model';
 
 import '../demo.css';
 
-export function NumberLineDemo({ params }: { params: URLSearchParams }) {
+export function NumberLineDemo({ params, title }: { params: URLSearchParams; title: string }) {
   const [config] = useState(() => configFromParams(params));
   const [step, setStep] = useState(0);
   const { tone, playing, error, play } = useNotePlayer();
@@ -55,7 +55,7 @@ export function NumberLineDemo({ params }: { params: URLSearchParams }) {
 
   return (
     <div className="demo number-line-demo">
-      <ToneSettingsControl />
+      <DemoHeader title={title} />
 
       {/* The step controls, with what the current step does. */}
       {isStepped && (
