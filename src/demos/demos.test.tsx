@@ -116,7 +116,9 @@ describe('demo index', () => {
   it('copies variant URLs percent-encoded, so captions survive pasting', () => {
     const html = renderToStaticMarkup(<DemoIndex origin="https://fakestory.music" />);
 
-    expect(html).toContain('captions=Start with α1.|Add β1 702 cents above α1.');
+    expect(html).toContain(
+      'captions=Start with α1.|Add α2 an octave (1200 cents) above α1 to define our home octave.|',
+    );
     expect(html).toContain('href="/demos/number-line/?notes=%CE%B11%7C');
   });
 

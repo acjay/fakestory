@@ -110,9 +110,10 @@ export const DEMOS: Record<string, DemoEntry> = {
       {
         name: '3’s a crowd (step-through)',
         query:
-          'notes=α1|β1|α2,γ2|γ1&captions=' +
+          'notes=α1|α2|β1|γ2|γ1&captions=' +
           [
             'Start with α1.',
+            'Add α2 an octave (1200 cents) above α1 to define our home octave.',
             'Add β1 702 cents above α1.',
             'Add γ 702 cents above β1. Name it γ2, because it is above α2.',
             'Add γ1 an octave (1200 cents) below γ2.',
