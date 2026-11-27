@@ -158,6 +158,8 @@ export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
 
   return (
     <div className="demo harmonic-tone">
+      <ToneSettingsControl />
+
       <div className="demo-controls">
         <div className="demo-field demo-field-wide">
           <div className="demo-field-label">
@@ -220,8 +222,6 @@ export function HarmonicToneDemo({ params }: { params: URLSearchParams }) {
           </button>
         </div>
       </div>
-
-      <ToneSettingsControl />
 
       <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
         {error ?? statusText(playback)}

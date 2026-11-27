@@ -1,7 +1,11 @@
 /**
- * The "Tone" button every demo shows. It summarizes the shared tone settings
- * and opens a small panel to change or reset them. Changes apply to every
- * demo at once (see toneSettings.ts).
+ * The tone settings button every demo shows: a small ♪ in the demo's upper
+ * right corner, which opens a panel to change or reset the shared tone. Its
+ * tooltip and accessible name summarize the current tone. Changes apply to
+ * every demo at once (see toneSettings.ts).
+ *
+ * Render it as the demo's first element: it floats right, so the demo's
+ * first row of controls makes room for it.
  */
 
 import { usePopup } from '../usePopup';
@@ -25,6 +29,8 @@ export function ToneSettingsControl() {
     tone.profile === DEFAULT_TONE.profile &&
     tone.partials === DEFAULT_TONE.partials;
 
+  const summary = `Tone settings: ${tone.baseFrequency} Hz, ${PROFILE_NAMES[tone.profile]}`;
+
   return (
     <div className="tone-settings" ref={containerRef}>
       <button
@@ -32,9 +38,11 @@ export function ToneSettingsControl() {
         className="tone-settings-button"
         aria-expanded={open}
         aria-controls={`${id}-panel`}
+        aria-label={summary}
+        title={summary}
         onClick={toggle}
       >
-        Tone: {tone.baseFrequency} Hz · {PROFILE_NAMES[tone.profile]}
+        <span aria-hidden="true">♪</span>
       </button>
 
       {open && (

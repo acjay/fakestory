@@ -60,6 +60,8 @@ export function NumberLineDemo({ params }: { params: URLSearchParams }) {
 
   return (
     <div className="demo number-line-demo">
+      <ToneSettingsControl />
+
       {isStepped && (
         <div className="demo-toolbar">
           <div className="demo-stepper" role="group" aria-label="Steps">
@@ -80,8 +82,6 @@ export function NumberLineDemo({ params }: { params: URLSearchParams }) {
           </div>
         </div>
       )}
-
-      <ToneSettingsControl />
 
       <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
         {error ?? playing?.text ?? hint}
