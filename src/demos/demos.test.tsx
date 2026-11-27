@@ -18,6 +18,15 @@ describe('demo URLs', () => {
     expect(demoFromUrl('https://fakestory.music/demos/harmonic-tone')?.slug).toBe('harmonic-tone');
   });
 
+  it('recognize production, including from a preview build on another host', () => {
+    const demo = demoFromUrl(
+      'https://fakestory.alanjay1.workers.dev/demos/scale-generator/?size=7',
+      'hosting-fakestory.alanjay1.workers.dev',
+    );
+
+    expect(demo?.slug).toBe('scale-generator');
+  });
+
   it('recognize the page’s own host, for local development', () => {
     expect(demoFromUrl('http://localhost:5173/demos/harmonic-tone/', 'localhost:5173')?.slug).toBe('harmonic-tone');
   });

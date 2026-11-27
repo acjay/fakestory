@@ -35,9 +35,11 @@ You need a Cloudflare account; the free plan is enough (see Costs below).
 3. Don't add any build variables or secrets. The build doesn't need any; in particular, never add a Notion token.
 4. Deploy. The first production build runs from `main`.
 
-### 2. Tell the repository the production address
+### 2. The production address
 
-Once production is live, add its host (e.g. `fakestory.<your-subdomain>.workers.dev`) to `DEMO_HOSTS` in `src/demos/registry.ts`. Story embeds pointing there then render as demos in every build, including previews, which have different hosts.
+Production is at `https://fakestory.alanjay1.workers.dev`, and that host is listed in `DEMO_HOSTS` in `src/demos/registry.ts`. Story embeds pointing there (e.g. `https://fakestory.alanjay1.workers.dev/demos/harmonic-tone/`) render as demos in every build, including previews, which have other hosts. If the site moves to a custom domain, add that host too.
+
+Preview URLs look like `https://<branch>-fakestory.alanjay1.workers.dev`, and stay the same as the branch gets new commits.
 
 ## Day to day
 
