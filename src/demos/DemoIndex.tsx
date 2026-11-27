@@ -41,14 +41,16 @@ export function DemoIndex({ origin }: { origin: string }) {
                   <h3 className="demo-index-heading">Variants</h3>
                   <ul className="demo-index-variants">
                     {demo.variants.map((variant) => {
+                      // Shown as written, copied percent-encoded (e.g. spaces in captions).
                       const path = `/demos/${slug}/?${variant.query}`;
+                      const embedUrl = encodeURI(origin + path);
 
                       return (
                         <li key={variant.query}>
-                          <a href={path}>{variant.name}</a>
+                          <a href={encodeURI(path)}>{variant.name}</a>
                           <div className="demo-index-url">
                             <code>{origin + path}</code>
-                            <CopyButton text={origin + path} />
+                            <CopyButton text={embedUrl} />
                           </div>
                         </li>
                       );

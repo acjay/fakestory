@@ -582,6 +582,19 @@
 
 /* --- Number line ---------------------------------------------------------- */
 
+/* Step buttons, then the step's caption beside them (below, if it doesn't fit). */
+.number-line-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.number-line-caption {
+  flex: 1 1 240px;
+  font-weight: 600;
+}
+
 /* Narrow screens scroll the line sideways instead of shrinking its labels. */
 .number-line-scroll {
   overflow-x: auto;

@@ -8,6 +8,7 @@
  *   ?notes=α0,β0,α1,β1,α2,β2    these notes, by name and octave
  *   ?notes=α1|β1|α2,γ2|γ1       a step-through: `|` separates steps
  *   ?fifths=5                   the first 5 pitch classes in the home octave, plus α2
+ *   &captions=Start with α1.|…  what each step says, `|` between steps
  *   &scale=hertz                space by frequency instead of cents
  *   &gaps=1                     label the gap between neighboring notes
  */
@@ -42,6 +43,9 @@ export type LineConfig = {
   /** How many steps there are: 1 unless the URL sets up a step-through. */
   stepCount: number;
 
+  /** The author's text for each step, if given; empty where it's missing. */
+  captions: string[];
+
   scale: Scale;
   showGaps: boolean;
 };
@@ -66,8 +70,9 @@ export function configFromParams(params: URLSearchParams): LineConfig {
 
   const notes = fromNotes.length > 0 ? fromNotes : fromFifths.length > 0 ? fromFifths : notesFromSteps(DEFAULT_NOTES);
   const stepCount = Math.max(...notes.map((lineNote) => lineNote.step)) + 1;
+  const captions = (params.get('captions') ?? '').split('|').map((caption) => caption.trim());
 
-  return { notes, stepCount, scale, showGaps };
+  return { notes, stepCount, captions, scale, showGaps };
 }
 
 /**
@@ -164,4 +169,15 @@ export function visibleNotes(config: LineConfig, step: number): LineNote[] {
   return config.notes
     .filter((lineNote) => lineNote.step <= step)
     .sort((a, b) => positionValue(a, config.scale) - positionValue(b, config.scale));
+}
+
+/**
+ * What a step says, e.g. "Step 2 of 4: Add β1 702 cents above α1.": the
+ * author's caption from the URL, or else which notes the step adds.
+ */
+export function stepCaption(config: LineConfig, step: number): string {
+  const added = config.notes.filter((lineNote) => lineNote.step === step).map((lineNote) => lineNote.id);
+  const text = config.captions[step] || `${step === 0 ? 'Start with' : 'Add'} ${added.join(' and ')}.`;
+
+  return `Step ${step + 1} of ${config.stepCount}: ${text}`;
 }
