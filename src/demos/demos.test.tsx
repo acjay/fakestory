@@ -7,7 +7,7 @@ import { Reader } from '../Reader';
 import { DemoIndex } from './DemoIndex';
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
 import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
-import { demoFromUrl } from './registry';
+import { DEMOS, demoFromUrl } from './registry';
 
 describe('demo URLs', () => {
   it('recognize our demos, with their configuration', () => {
@@ -104,6 +104,25 @@ describe('demo index', () => {
     expect(html).toContain('<a href="/demos/harmonic-tone/">Harmonic tone</a>');
     expect(html).toContain('<code>https://fakestory.music/demos/harmonic-tone/</code>');
     expect(html).toContain('<code>through</code>');
+  });
+
+  it('links every variant, with a URL ready to copy', () => {
+    const html = renderToStaticMarkup(<DemoIndex origin="https://fakestory.music" />);
+
+    expect(html).toContain('<a href="/demos/number-line/?fifths=5&amp;gaps=1">The quest for even spacing: 5 notes</a>');
+    expect(html).toContain('<code>https://fakestory.music/demos/number-line/?fifths=5&amp;gaps=1</code>');
+  });
+
+  it('only lists variants that the demo itself accepts', () => {
+    for (const [slug, demo] of Object.entries(DEMOS)) {
+      const accepted = new Set(demo.parameters.map((parameter) => parameter.name));
+
+      for (const variant of demo.variants) {
+        for (const name of new URLSearchParams(variant.query).keys()) {
+          expect(accepted, `${slug}: ${variant.name}`).toContain(name);
+        }
+      }
+    }
   });
 });
 
