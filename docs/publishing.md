@@ -35,6 +35,7 @@ Nothing reaches production until it's merged into `main`, so any branch can be a
 - **Content only:** import on a branch, push it, and look at its preview. Every pushed branch gets one, with or without a pull request. Re-import and push to update it. If you decide not to publish, delete the branch or close the pull request.
 - **Content and demos together:** put both on one branch. Demos embedded in the story render from the preview's own code, so the preview shows the new demo inside the current story. Notion's own embeds keep pointing at the production demos until you merge.
 - **Shipping only part of it:** keep re-imports on `content/…` branches, and code changes on their own branches. That way you can merge a code change without publishing a test import, or the other way round.
+- **Mixed pull requests get flagged.** If a pull request changes both `content/` and anything else, a check labels it `content + code` and comments on it, since merging it publishes both. It's only a warning: merge anyway if that's what you want.
 - **Locally, without pushing:** `npm run import:notion`, then `npm run dev`. `git restore content/story.json` puts the committed story back. This is the only way to look at a draft without making it public.
 
 ## Good to know
