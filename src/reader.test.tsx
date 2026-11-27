@@ -183,3 +183,15 @@ describe('images', () => {
     expect(html).not.toContain('example.com');
   });
 });
+
+describe('header', () => {
+  it('links to the source, the demos and the author’s website, with labels for icon-only links', () => {
+    const html = renderToStaticMarkup(<Reader story={fixture} />);
+
+    expect(html).toContain(
+      '<a href="https://github.com/acjay/fakestory" class="header-link" aria-label="Source code on GitHub"',
+    );
+    expect(html).toContain('<a href="/demos/" class="header-link" aria-label="Interactive demos"');
+    expect(html).toContain('<a href="https://acjay.com" class="header-link" aria-label="Author’s website, acjay.com"');
+  });
+});

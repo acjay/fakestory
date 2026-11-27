@@ -1,4 +1,5 @@
 import { Blocks } from './BlockView';
+import { HeaderLinks } from './HeaderLinks';
 import type { Story } from './model';
 import { ReferencesProvider } from './references';
 
@@ -23,7 +24,10 @@ export function Reader({ story }: { story: Story }) {
               of Music
             </span>
           </a>
-          <span className="status">Reading prototype</span>
+          <div className="site-header-end">
+            <span className="status">Reading prototype</span>
+            <HeaderLinks />
+          </div>
         </header>
 
         <article>
