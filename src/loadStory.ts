@@ -2,21 +2,19 @@ import { fixture } from './fixture';
 import type { Story } from './model';
 
 /**
- * Which story to render: the invented fixture, or (local development only)
- * the private snapshot written by `npm run import:notion`.
- *
- * `import.meta.env.DEV` is false in production builds, so the bundler drops the
- * whole local branch, including the URL. scripts/check-build.ts verifies it.
+ * The published story, if there is one: content/story.json, written by
+ * `npm run import:notion` and committed to the repository. It's bundled at
+ * build time, so every build (local, preview, production) shows exactly the
+ * committed story. Until the first import, there's no file, and the reader
+ * shows the invented fixture instead.
  */
+const published = import.meta.glob<Story>('/content/story.json', { eager: true, import: 'default' });
+
+export function currentStory(): Story {
+  return published['/content/story.json'] ?? fixture;
+}
+
+/** Kept async so the reader could load content lazily later without changing callers. */
 export async function loadStory(): Promise<Story> {
-  if (import.meta.env.DEV && import.meta.env.VITE_LOCAL_STORY === '1') {
-    const response = await fetch('/__local/story.json');
-    if (!response.ok) {
-      throw new Error(await response.text());
-    }
-
-    return (await response.json()) as Story;
-  }
-
-  return fixture;
+  return currentStory();
 }

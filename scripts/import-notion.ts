@@ -2,10 +2,11 @@
  * Read-only import of the real story from Notion.
  *
  * Fetches the page's complete block tree, plus the page Markdown and comments
- * needed to find footnotes, and writes the result as a private local story
- * file in the same shape the reader renders (see `src/model.ts`). It prints
- * counts and problems, never story text. The app does not load this file: it
- * renders `src/fixture.ts`.
+ * needed to find footnotes, and writes the story to content/story.json in
+ * the shape the reader renders (see `src/model.ts`, and `scripts/snapshot.ts`
+ * for what's kept). Commit that on a branch and open a pull request: its
+ * preview build shows the story, its diff shows what changed, and merging
+ * publishes it. See docs/publishing.md.
  *
  *   NOTION_API_TOKEN=... NOTION_PAGE_ID=... npm run import:notion
  *
@@ -13,26 +14,25 @@
  * and must be connected to the page.
  *
  * If the result would be incomplete (e.g. a footnote that can't be placed),
- * nothing is saved and the script exits with an error. For local preview,
- * `npm run import:notion -- --allow-incomplete` saves it anyway.
+ * nothing is saved and the script exits with an error.
+ * `npm run import:notion -- --allow-incomplete` saves it anyway, for a look;
+ * don't publish an incomplete snapshot.
  *
  * Reading order: `importNotion` (the whole sequence), then its helpers, then
  * the Notion API client. The script is started at the very bottom.
  */
 
 import { mkdir, rename, writeFile } from 'node:fs/promises';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 
 import type { Block, RichText, Story } from '../src/model.ts';
 import { anchorFootnotes, findAnchors, selectFootnotes, type NotionComment } from './footnotes.ts';
+import { serializeStory } from './snapshot.ts';
 
-// Outside the repository and Vite's web root, so draft content can't be
-// committed or end up in build output.
-const SNAPSHOT_DIR = join(homedir(), '.fakestory-private');
-const STORY_FILE = join(SNAPSHOT_DIR, 'story.json');
+/** The published story, committed to the repository and built into the site. */
+const STORY_FILE = join(import.meta.dirname, '..', 'content', 'story.json');
 
-// Save a snapshot even if it's incomplete (local preview only).
+// Save a snapshot even if it's incomplete (for a look, not for publishing).
 const ALLOW_INCOMPLETE = process.argv.includes('--allow-incomplete');
 
 // A page ID, with or without dashes.
@@ -87,17 +87,19 @@ async function importNotion() {
 
   if (problems.length > 0 && !ALLOW_INCOMPLETE) {
     throw new Error(
-      `Import incomplete (${plural(problems.length, 'problem')}). Nothing was saved; any previous snapshot is unchanged.\n` +
-        'To save it anyway for local preview, run: npm run import:notion -- --allow-incomplete',
+      `Import incomplete (${plural(problems.length, 'problem')}). Nothing was saved; content/story.json is unchanged.\n` +
+        'To save it anyway for a look (not for publishing), run: npm run import:notion -- --allow-incomplete',
     );
   }
 
   await writeStory(story);
-  console.log(`Saved ${STORY_FILE}`);
+  console.log(`Saved ${relative(process.cwd(), STORY_FILE)}`);
   if (problems.length > 0) {
-    console.warn('Warning: saved an INCOMPLETE snapshot (--allow-incomplete). Use it for local preview only.');
+    console.warn('Warning: saved an INCOMPLETE snapshot (--allow-incomplete). Don’t publish it.');
   }
-  console.log('This file is not used by the app or deployment. Never commit or share it.');
+  console.log(
+    'Next: review the diff, commit it on a branch, and open a pull request to preview it. Merging publishes it.',
+  );
 }
 
 /**
@@ -166,9 +168,8 @@ function createStatus() {
 async function writeStory(story: Story) {
   const tempFile = `${STORY_FILE}.tmp`;
 
-  // Readable by the current user only.
-  await mkdir(SNAPSHOT_DIR, { recursive: true, mode: 0o700 });
-  await writeFile(tempFile, JSON.stringify(story, null, 2), { mode: 0o600 });
+  await mkdir(dirname(STORY_FILE), { recursive: true });
+  await writeFile(tempFile, serializeStory(story));
 
   await rename(tempFile, STORY_FILE);
 }
