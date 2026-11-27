@@ -13,6 +13,7 @@
 import type { ComponentType } from 'react';
 
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
+import { NumberLineDemo } from './numberLine/NumberLineDemo';
 import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
 
 export type DemoComponent = ComponentType<{ params: URLSearchParams }>;
@@ -25,6 +26,13 @@ export type DemoEntry = {
 
   /** The URL parameters it accepts, for authors setting up variants. */
   parameters: { name: string; values: string; description: string }[];
+
+  /**
+   * Ready-made configurations, linked from the demo index so their URLs
+   * never need writing by hand. Queries are written readably, unencoded
+   * (so no `&`, `#` or `+` inside values); the index encodes them.
+   */
+  variants: { name: string; query: string }[];
 
   Component: DemoComponent;
 };
@@ -48,6 +56,11 @@ export const DEMOS: Record<string, DemoEntry> = {
       },
       { name: 'through', values: '1, 2, 4, 8, 16', description: 'Include harmonics up to this one. Default 4.' },
     ],
+    variants: [
+      { name: 'The fundamental alone', query: 'through=1' },
+      { name: 'With the octave', query: 'through=2' },
+      { name: 'All 16 harmonics', query: 'through=16' },
+    ],
     Component: HarmonicToneDemo,
   },
 
@@ -56,7 +69,61 @@ export const DEMOS: Record<string, DemoEntry> = {
     description:
       'Grow a scale one fifth at a time on the octave circle, hear its notes, and see how evenly they divide the octave at each size.',
     parameters: [{ name: 'size', values: '1–53', description: 'Number of notes to start with. Default 12.' }],
+    variants: [
+      { name: 'Starting at 5 notes', query: 'size=5' },
+      { name: 'Starting at 7 notes', query: 'size=7' },
+      { name: 'Starting at 53 notes', query: 'size=53' },
+    ],
     Component: ScaleGeneratorDemo,
+  },
+
+  'number-line': {
+    title: 'Number line',
+    description:
+      'Notes along a line, spaced by cents or by hertz: hear them, step through them, and see the gaps between neighbors.',
+    parameters: [
+      {
+        name: 'notes',
+        values: 'e.g. α0,β0,α1,β1,α2,β2',
+        description:
+          'Notes by Greek letter and octave, separated by commas. Use | between groups for a step-through, e.g. α1|β1|α2,γ2|γ1. Default α0,β0,α1,β1,α2,β2.',
+      },
+      {
+        name: 'fifths',
+        values: '1–12',
+        description:
+          'Instead of notes: the first this-many notes, each a fifth above the last, in one octave, plus α2.',
+      },
+      { name: 'scale', values: 'cents, hertz', description: 'Space notes by cents or by frequency. Default cents.' },
+      {
+        name: 'captions',
+        values: 'text, | between steps',
+        description:
+          'What each step of a step-through says, after “Step 2 of 4:”. Steps without one say which notes they add.',
+      },
+      { name: 'gaps', values: '1', description: 'Label the gap between neighboring notes.' },
+    ],
+    // The six CodePen number lines this demo replaces (see legacy-demos/README.md).
+    variants: [
+      { name: 'Our happy interval, by hertz', query: 'notes=α0,β0,α1,β1,α2,β2&scale=hertz' },
+      { name: 'Our happy interval, by cents', query: 'notes=α0,β0,α1,β1,α2,β2' },
+      {
+        name: '3’s a crowd (step-through)',
+        query:
+          'notes=α1|α2|β1|γ2|γ1&captions=' +
+          [
+            'Start with α1.',
+            'Add α2 an octave (1200 cents) above α1 to define our home octave.',
+            'Add β1 702 cents above α1.',
+            'Add γ 702 cents above β1. Name it γ2, because it is above α2.',
+            'Add γ1 an octave (1200 cents) below γ2.',
+          ].join('|'),
+      },
+      { name: 'The quest for even spacing: 5 notes', query: 'fifths=5&gaps=1' },
+      { name: 'Onwards to 7 notes', query: 'fifths=7&gaps=1' },
+      { name: 'More evenness: 12 notes', query: 'fifths=12&gaps=1' },
+    ],
+    Component: NumberLineDemo,
   },
 };
 

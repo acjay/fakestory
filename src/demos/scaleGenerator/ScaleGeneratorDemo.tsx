@@ -4,12 +4,10 @@
  * CodePen on the shared engine, colors and octave circle.
  */
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useState } from 'react';
 
-import { audioEngine, AudioUnavailableError, type Sound } from '../../audio/engine';
-import { toneVoice } from '../../audio/toneSettings';
 import { ToneSettingsControl } from '../ToneSettingsControl';
-import { useToneSettings } from '../useToneSettings';
+import { useNotePlayer } from '../useNotePlayer';
 import { OctaveCircle, type CircleNote, type Modifiers } from '../views/OctaveCircle';
 import {
   circleNotes,
@@ -28,47 +26,19 @@ import '../demo.css';
 export function ScaleGeneratorDemo({ params }: { params: URLSearchParams }) {
   const [size, setSize] = useState(() => sizeFromParams(params));
   const [octave, setOctave] = useState<OctaveChoice>(0);
-  const [playing, setPlaying] = useState<{ id: string; text: string } | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const owner = useId();
-  const sound = useRef<Sound | null>(null);
-  const tone = useToneSettings();
+  const { tone, playing, error, play } = useNotePlayer();
 
   const notes = circleNotes(size);
   const table = statisticsTable(size);
 
-  // Stop when the demo goes away.
-  useEffect(() => () => sound.current?.stop(), []);
-
-  async function play(note: CircleNote, modifiers: Modifiers) {
+  // Played in the reader's shared tone, relative to its base frequency.
+  function playNote(note: CircleNote, modifiers: Modifiers) {
     const playOctave = octaveFor(octave, modifiers);
-    sound.current?.stop();
-    setError(null);
 
-    try {
-      // Played in the reader's shared tone, relative to its base frequency.
-      const started = await audioEngine().play([frequencyFor(note.cents, playOctave, tone.baseFrequency)], {
-        owner,
-        voice: toneVoice(tone),
-        articulation: 'struck',
-      });
-      sound.current = started;
-      setPlaying({
-        id: note.id,
-        text: `Playing ${note.label} (${Math.round(note.cents)}¢), ${OCTAVE_NAMES[playOctave].toLowerCase()} octave`,
-      });
-
-      await started.finished;
-      if (sound.current === started) {
-        sound.current = null;
-        setPlaying(null);
-      }
-    } catch (caught) {
-      sound.current = null;
-      setPlaying(null);
-      setError(caught instanceof AudioUnavailableError ? caught.message : 'Audio could not start.');
-    }
+    void play(frequencyFor(note.cents, playOctave, tone.baseFrequency), {
+      id: note.id,
+      text: `Playing ${note.label} (${Math.round(note.cents)}¢), ${OCTAVE_NAMES[playOctave].toLowerCase()} octave`,
+    });
   }
 
   return (
@@ -118,7 +88,7 @@ export function ScaleGeneratorDemo({ params }: { params: URLSearchParams }) {
         <OctaveCircle
           notes={notes}
           playingId={playing?.id}
-          onActivate={play}
+          onActivate={playNote}
           label={`Octave circle with ${size} notes, each a fifth above the last, folded into one octave.`}
         />
       </div>

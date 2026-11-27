@@ -313,6 +313,25 @@
   background: var(--demo-surface);
 }
 
+.demo-index-heading {
+  margin: 20px 0 8px;
+  font-size: 16px;
+}
+
+.demo-index-variants {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.demo-index-variants .demo-index-url {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
 .demo-index-parameters {
   margin-top: 16px;
   border-collapse: collapse;
@@ -548,4 +567,89 @@
   .demo * {
     transition: none !important;
   }
+}
+
+/* --- Number line ---------------------------------------------------------- */
+
+/* Step buttons, then the step's caption beside them (below, if it doesn't fit). */
+.number-line-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.number-line-caption {
+  flex: 1 1 240px;
+  font-weight: 600;
+}
+
+/* Narrow screens scroll the line sideways instead of shrinking its labels. */
+.number-line-scroll {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+.number-line {
+  display: block;
+}
+
+.number-line-axis,
+.number-line-tick {
+  stroke: var(--demo-text);
+  stroke-width: 2;
+}
+
+.number-line-arc {
+  fill: none;
+  stroke: var(--demo-muted);
+  stroke-width: 1.5;
+}
+
+.number-line-arrowhead {
+  fill: var(--demo-muted);
+}
+
+.number-line-gap,
+.number-line-value {
+  font-size: 12px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.number-line-gap {
+  fill: var(--demo-muted);
+}
+
+.number-line-value {
+  fill: var(--demo-text);
+}
+
+.number-line-note {
+  cursor: pointer;
+  outline: none;
+}
+
+.number-line-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.number-line-focus {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 3;
+}
+
+.number-line-note:focus-visible .number-line-focus {
+  stroke: var(--demo-accent);
+}
+
+.number-line-note-playing .number-line-focus {
+  stroke: var(--demo-text);
+  stroke-width: 4;
 }
