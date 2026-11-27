@@ -1,6 +1,7 @@
 /**
  * The demo index at /demos/: every rebuilt demo, with a link to its page,
- * the URL to embed in Notion, and the parameters for setting up variants.
+ * the URL to embed in Notion, ready-made variants with their own URLs, and
+ * the parameters for setting up others.
  * Generated from the registry, so a new demo appears here automatically.
  */
 
@@ -34,6 +35,27 @@ export function DemoIndex({ origin }: { origin: string }) {
                 <code>{url}</code>
                 <CopyButton text={url} />
               </div>
+
+              {demo.variants.length > 0 && (
+                <>
+                  <h3 className="demo-index-heading">Variants</h3>
+                  <ul className="demo-index-variants">
+                    {demo.variants.map((variant) => {
+                      const path = `/demos/${slug}/?${variant.query}`;
+
+                      return (
+                        <li key={variant.query}>
+                          <a href={path}>{variant.name}</a>
+                          <div className="demo-index-url">
+                            <code>{origin + path}</code>
+                            <CopyButton text={origin + path} />
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </>
+              )}
 
               {demo.parameters.length > 0 && (
                 <table className="demo-index-parameters">

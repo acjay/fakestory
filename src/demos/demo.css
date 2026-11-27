@@ -324,6 +324,25 @@
   background: var(--demo-surface);
 }
 
+.demo-index-heading {
+  margin: 20px 0 8px;
+  font-size: 16px;
+}
+
+.demo-index-variants {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.demo-index-variants .demo-index-url {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
 .demo-index-parameters {
   margin-top: 16px;
   border-collapse: collapse;
