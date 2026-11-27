@@ -16,7 +16,7 @@ npm run build
 npm run dev
 ```
 
-Open the local URL printed by Vite. Until the story has been imported, the page shows **invented fixture text** (`src/fixture.ts`); after that, the committed story in `content/story.json`. The demo panel is a placeholder; no audio is implemented. This is not the final design or a production renderer.
+Open the local URL printed by Vite. Until the story has been imported, the page shows **invented fixture text** (`src/fixture.ts`); after that, the committed story in `content/story.json`. Embeds of the rebuilt demos render in place; other embeds show a placeholder (see [docs/demos.md](docs/demos.md)). This is not the final design or a production renderer.
 
 ## Hosting and preview builds
 
