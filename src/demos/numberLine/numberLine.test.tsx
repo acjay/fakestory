@@ -132,8 +132,8 @@ describe('number line demo', () => {
     expect(html).toMatch(/aria-label="Previous step" disabled=""/);
   });
 
-  it('puts the hint to play notes below the line', () => {
-    expect(render()).toMatch(/<\/svg><\/div><p class="demo-status">Click a note to play it.<\/p>/);
+  it('shows no text below the line until there’s an audio error', () => {
+    expect(render()).not.toContain('demo-status');
   });
 
   it('highlights the home octave, from α1 to α2, in α’s color', () => {

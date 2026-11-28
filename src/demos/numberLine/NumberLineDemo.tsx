@@ -101,7 +101,7 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
         label={description}
       />
 
-      {error ? <DemoError error={error} /> : <p className="demo-status">Click a note to play it.</p>}
+      <DemoError error={error} />
     </div>
   );
 }
