@@ -11,6 +11,8 @@
  * and PR_NUMBER set.
  */
 
+import { createGitHub } from './github.ts';
+
 export const LABEL = 'content + code';
 const LABEL_COLOR = 'd4a72c';
 const LABEL_DESCRIPTION = 'Changes the story and code together: merging publishes both';
@@ -76,46 +78,6 @@ function plural(count: number, noun: string): string {
   return `${count} ${noun}${count === 1 ? '' : 's'}`;
 }
 
-/** A tiny client for the GitHub REST API calls we need. */
-function createGitHub(token: string, repository: string) {
-  async function request(method: string, path: string, body?: unknown): Promise<Response> {
-    return fetch(`https://api.github.com/repos/${repository}${path}`, {
-      method,
-      headers: {
-        authorization: `Bearer ${token}`,
-        accept: 'application/vnd.github+json',
-        'x-github-api-version': '2022-11-28',
-        ...(body ? { 'content-type': 'application/json' } : {}),
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-  }
-
-  /** Make a request that must succeed, and return its JSON. */
-  async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
-    const response = await request(method, path, body);
-    if (!response.ok) {
-      throw new Error(`GitHub ${method} ${path} failed: HTTP ${response.status} ${await response.text()}`);
-    }
-    return (response.status === 204 ? undefined : await response.json()) as T;
-  }
-
-  /** Every page of a list endpoint. */
-  async function all<T>(path: string): Promise<T[]> {
-    const items: T[] = [];
-    for (let page = 1; ; page++) {
-      const separator = path.includes('?') ? '&' : '?';
-      const batch = await call<T[]>('GET', `${path}${separator}per_page=100&page=${page}`);
-      items.push(...batch);
-      if (batch.length < 100) {
-        return items;
-      }
-    }
-  }
-
-  return { request, call, all };
-}
-
 async function main() {
   const token = process.env.GITHUB_TOKEN;
   const repository = process.env.GITHUB_REPOSITORY;
@@ -141,22 +103,11 @@ async function main() {
     // A GitHub Actions warning shows on the run's summary, too.
     console.log(`::warning title=Story and code together::${LABEL_DESCRIPTION}.`);
 
-    // 3. Label it, creating the label the first time. 422 means it already exists.
-    const created = await github.request('POST', '/labels', {
-      name: LABEL,
-      color: LABEL_COLOR,
-      description: LABEL_DESCRIPTION,
-    });
-    if (!created.ok && created.status !== 422) {
-      throw new Error(`Creating the label failed: HTTP ${created.status}`);
-    }
-    await github.call('POST', `/issues/${pullNumber}/labels`, { labels: [LABEL] });
+    // 3. Label it.
+    await github.addLabel(Number(pullNumber), { name: LABEL, color: LABEL_COLOR, description: LABEL_DESCRIPTION });
   } else {
-    // 3. Not (or no longer) mixed: remove the label. 404 means it wasn't there.
-    const removed = await github.request('DELETE', `/issues/${pullNumber}/labels/${encodeURIComponent(LABEL)}`);
-    if (!removed.ok && removed.status !== 404) {
-      throw new Error(`Removing the label failed: HTTP ${removed.status}`);
-    }
+    // 3. Not (or no longer) mixed: remove the label.
+    await github.removeLabel(Number(pullNumber), LABEL);
   }
 
   // 4. Keep one comment up to date. Only say "no longer mixed" if we warned before.
