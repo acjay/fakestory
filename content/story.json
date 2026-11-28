@@ -1874,8 +1874,7 @@
       "type": "embed",
       "has_children": false,
       "embed": {
-        "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/08b5a887-ac6c-4cd0-ab7e-12ce2ea1e0a2/pure-tone-demo.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=d394f1c3cd51977c65c5efb022e46ebd9f868a2defcb25faeb182d9860343772&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "caption": []
       }
     },
     {
@@ -2255,15 +2254,6 @@
       }
     },
     {
-      "id": "ce5732c0-feaf-49b7-b65a-fa09dc422aff",
-      "type": "embed",
-      "has_children": false,
-      "embed": {
-        "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/188e9836-80b2-49d4-912b-9f7a74972e99/harmonic_tone_notion_agent_chart.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=734803547dfebcaee72a626259c4492d3a572309dbaf204be89ef78fd0ca28ea&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
-      }
-    },
-    {
       "id": "4255fa8f-f6f5-8020-8950-da3acea924d8",
       "type": "embed",
       "has_children": false,
@@ -2403,8 +2393,7 @@
       "type": "embed",
       "has_children": false,
       "embed": {
-        "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/0e65d167-4126-4696-9b51-b0a366bf7a67/clang-demo.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=1b489319f8bcfa76ce610477a9c8e6cd6c21dc6452f7faceddef8dd632a4b1d2&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "caption": []
       }
     },
     {
@@ -2564,8 +2553,7 @@
       "type": "embed",
       "has_children": false,
       "embed": {
-        "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/2d34a84e-1e48-48fd-be5a-02f24e16e988/harmonic-compatibility-2to1.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=56c2803afc761308cd3ea0c92fa4cdb8505d4aa096d802e2773d952bd7515d32&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "caption": []
       }
     },
     {
@@ -2919,8 +2907,7 @@
       "type": "embed",
       "has_children": false,
       "embed": {
-        "caption": [],
-        "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/5b3f3829-d6cd-4081-ab14-399bb523d36b/e7fb6809-64b7-487e-8603-2f6f599a3bf7/diatonic-keyboard.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TXBZKTY2%2F20261127%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20261127T043507Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAMaCXVzLXdlc3QtMiJHMEUCIQCTRcZNzlrpqHsZw1Zf6EGJBgoKe1fIrcEg%2FPwpZbi%2BTQIgefsEvKr1hFa7zhkWwJI6XXY5o0d%2BHDoh1L9q7z8TPu8qiAQIy%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDANk7E8GAbiBg%2FjqeircA7TruxigjUHmXpl9y%2FvggqIiL7NElyWPWvA28Zdc2wIhdwtb%2FOuOQRj1ORYiIvVaT4wd4PO85GGxQUMLU4OxgomHYVFhp%2BbSJ%2FbjgURUHFI5XA5Wq1hzmJlPy4k%2BCPIuJ5mH8axqXtdIY9amIaXEXnmly93qeNoYE07%2BS5BxO%2F2NRAoQstvT%2FaUo0iWZlPds4VTsqktVYun6dGdJK0z4RRIMVMcYyHBXd18f5PwgvRSYC3nR96sbgDC9dDvk7Ynm539dIHV1SPtfYkqZEddBMakmG8QFEjt3aEqqhfJ89veLrxsP93Ja6cvHfpXtlP7piFgpI%2FeHeWYIFgAZSdulGp1crPI0q6LkWCKhMxne6C0BqCph0oY%2BSBkqKdbltaUKLM2mNcqR7hb2ld87r58LS0GuSEJ1pD7Xv1v1ufXpE0pOprT5nm1Iuecnc5rXaq0lS7SqiZ4eIpm4GoKL2hRRfbwG0yy3n5j92STynoVmaqogLr3mPLsjG41NSMUBjzH4r7PKhi6UYdvQysrKA3l64%2B8EaHGRr8ac50y4%2BNWW2bQ6P6Yh17sJlbwUitcWbuAi83hwz3UDDJAYAnysTZB%2BLpJOv3b8Y5Yf7OJnnZtX7EpoRU4TafaDu5pf9sewMJbSo9gGOqUBev4UU9wSILXHDf8yYfPQxblz%2Fq5ktHKd4C9V65FvQnmWqKFbLC63%2FVAAIaVOwvbBGRPn8phjHLGf86nRQ2iGKGZYn532juypACei72Kq3c3eX9pQpFgqseSOhG4bESYrltrUkZNM73mEtaIu1Jtk%2BySBLNGLAywzwewbQGIMIIepzBPwoApRAw77aIoJ8r4VmE9VbINMpCfa7YeQWPpUpGm29jyg&X-Amz-Signature=bc8b2323cbfc61b51db2ca5bba1a4be412b0baa987eb1b2c284d083cf5520402&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "caption": []
       }
     },
     {
@@ -3270,8 +3257,7 @@
               "color": "default"
             },
             "plain_text": "Greek letter",
-            "href": null,
-            "footnote": "10f5fa8ff6f5807a96e3001cff2e666c"
+            "href": null
           },
           {
             "type": "text",
@@ -3346,7 +3332,7 @@
                   {
                     "type": "text",
                     "text": {
-                      "content": "Every note has a ",
+                      "content": "Every note has a fundamental frequency. We’re going to start our journey with a single note at 200Hz, which I’m going to call ",
                       "link": null
                     },
                     "annotations": {
@@ -3357,42 +3343,7 @@
                       "code": false,
                       "color": "default"
                     },
-                    "plain_text": "Every note has a ",
-                    "href": null
-                  },
-                  {
-                    "type": "text",
-                    "text": {
-                      "content": "fundamental frequency",
-                      "link": null
-                    },
-                    "annotations": {
-                      "bold": false,
-                      "italic": false,
-                      "strikethrough": false,
-                      "underline": false,
-                      "code": false,
-                      "color": "default"
-                    },
-                    "plain_text": "fundamental frequency",
-                    "href": null,
-                    "footnote": "10e5fa8ff6f58067a317001c62d29dc9"
-                  },
-                  {
-                    "type": "text",
-                    "text": {
-                      "content": ". We’re going to start our journey with a single note at 200Hz, which I’m going to call ",
-                      "link": null
-                    },
-                    "annotations": {
-                      "bold": false,
-                      "italic": false,
-                      "strikethrough": false,
-                      "underline": false,
-                      "code": false,
-                      "color": "default"
-                    },
-                    "plain_text": ". We’re going to start our journey with a single note at 200Hz, which I’m going to call ",
+                    "plain_text": "Every note has a fundamental frequency. We’re going to start our journey with a single note at 200Hz, which I’m going to call ",
                     "href": null
                   },
                   {
@@ -4290,12 +4241,12 @@
       }
     },
     {
-      "id": "1115fa8f-f6f5-803f-9f6f-db4fc47f25fc",
+      "id": "4255fa8f-f6f5-80c1-be7e-efda2254b997",
       "type": "embed",
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://codepen.io/acjay/embed/ogvBEdm?default-tab=result&theme-id=light"
+        "url": "https://fakestory.alanjay1.workers.dev/demos/number-line/?notes=%CE%B10,%CE%B20,%CE%B11,%CE%B21,%CE%B12,%CE%B22&scale=hertz&title=Our%20happy%20interval,%20by%20hertz"
       }
     },
     {
@@ -4417,12 +4368,12 @@
       }
     },
     {
-      "id": "15f5fa8f-f6f5-80cb-943b-d76b81039337",
+      "id": "4255fa8f-f6f5-8087-8483-ed18314d7059",
       "type": "embed",
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://codepen.io/acjay/embed/MYgJQgj?default-tab=result&theme-id=light"
+        "url": "https://fakestory.alanjay1.workers.dev/demos/number-line/?notes=%CE%B10,%CE%B20,%CE%B11,%CE%B21,%CE%B12,%CE%B22&title=Our%20happy%20interval,%20by%20cents"
       }
     },
     {
@@ -4545,12 +4496,12 @@
       }
     },
     {
-      "id": "15f5fa8f-f6f5-80b9-b987-d887d6e521ef",
+      "id": "4255fa8f-f6f5-80ea-9ed8-caacdc99219b",
       "type": "embed",
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://codepen.io/acjay/embed/OPLWQGX?default-tab=result&theme-id=light"
+        "url": "https://fakestory.alanjay1.workers.dev/demos/number-line/?notes=%CE%B11%7C%CE%B12%7C%CE%B21%7C%CE%B32%7C%CE%B31&captions=Start%20with%20%CE%B11.%7CAdd%20%CE%B12%20an%20octave%20(1200%20cents)%20above%20%CE%B11%20to%20define%20our%20home%20octave.%7CAdd%20%CE%B21%20702%20cents%20above%20%CE%B11.%7CAdd%20%CE%B3%20702%20cents%20above%20%CE%B21.%20Name%20it%20%CE%B32,%20because%20it%20is%20above%20%CE%B12.%7CAdd%20%CE%B31%20an%20octave%20(1200%20cents)%20below%20%CE%B32.&title=3%E2%80%99s%20a%20crowd"
       }
     },
     {
@@ -5416,12 +5367,12 @@
       }
     },
     {
-      "id": "15f5fa8f-f6f5-808c-bc50-f305a670943d",
+      "id": "4255fa8f-f6f5-802e-b1a4-e72bb1e2cc4c",
       "type": "embed",
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://codepen.io/acjay/embed/emOgMmj?default-tab=result&theme-id=light"
+        "url": "https://fakestory.alanjay1.workers.dev/demos/number-line/?fifths=5&gaps=1&title=The%20quest%20for%20even%20spacing"
       }
     },
     {
@@ -6343,12 +6294,12 @@
       }
     },
     {
-      "id": "15f5fa8f-f6f5-8000-bbaa-efed3ba8c2f1",
+      "id": "4255fa8f-f6f5-8089-9b95-d5b2b847f5e6",
       "type": "embed",
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://codepen.io/acjay/embed/zxONWwb?default-tab=result&theme-id=light"
+        "url": "https://fakestory.alanjay1.workers.dev/demos/number-line/?fifths=7&gaps=1&title=Onwards%20to%207%20notes"
       }
     },
     {
@@ -7480,12 +7431,12 @@
       }
     },
     {
-      "id": "15f5fa8f-f6f5-8078-8913-e501a8b4616a",
+      "id": "4255fa8f-f6f5-80f0-b5b2-e4d047271919",
       "type": "embed",
       "has_children": false,
       "embed": {
         "caption": [],
-        "url": "https://codepen.io/acjay/embed/azopYEe?default-tab=result&theme-id=light"
+        "url": "https://fakestory.alanjay1.workers.dev/demos/number-line/?fifths=12&gaps=1&title=More%20evenness"
       }
     },
     {
@@ -34177,7 +34128,7 @@
       {
         "type": "text",
         "text": {
-          "content": "I credit this idea to Dmitri Tymoczko.",
+          "content": "I credit these assumptions to Dmitri Tymoczko.",
           "link": null
         },
         "annotations": {
@@ -34188,7 +34139,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "I credit this idea to Dmitri Tymoczko.",
+        "plain_text": "I credit these assumptions to Dmitri Tymoczko.",
         "href": null
       }
     ],
@@ -34196,7 +34147,7 @@
       {
         "type": "text",
         "text": {
-          "content": "there is ",
+          "content": "There is ",
           "link": null
         },
         "annotations": {
@@ -34207,7 +34158,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "there is ",
+        "plain_text": "There is ",
         "href": null
       },
       {
@@ -34283,49 +34234,11 @@
         "href": null
       }
     ],
-    "10f5fa8ff6f5807a96e3001cff2e666c": [
-      {
-        "type": "text",
-        "text": {
-          "content": "(insert the Greek letters and names) ",
-          "link": null
-        },
-        "annotations": {
-          "bold": false,
-          "italic": false,
-          "strikethrough": false,
-          "underline": false,
-          "code": false,
-          "color": "default"
-        },
-        "plain_text": "(insert the Greek letters and names) ",
-        "href": null
-      }
-    ],
-    "10e5fa8ff6f58067a317001c62d29dc9": [
-      {
-        "type": "text",
-        "text": {
-          "content": "gonig to assume understanding of the relationship between pitch, frequency, and overtones. Probably need to liink to a primer on this.",
-          "link": null
-        },
-        "annotations": {
-          "bold": false,
-          "italic": false,
-          "strikethrough": false,
-          "underline": false,
-          "code": false,
-          "color": "default"
-        },
-        "plain_text": "gonig to assume understanding of the relationship between pitch, frequency, and overtones. Probably need to liink to a primer on this.",
-        "href": null
-      }
-    ],
     "10f5fa8ff6f58077a673001c0d83e202": [
       {
         "type": "text",
         "text": {
-          "content": "octave is a musical term, coming from the idea of 8 notes. We'll see where that comes from many sections ahead. I'm mostly going to avoid using terms ahead of time, but octave isn't worth avoiding.",
+          "content": "Octave is a musical term, coming from the idea of 8 notes. We'll see where that comes from many sections ahead. I'm mostly going to avoid using terms ahead of time, but octave isn't worth avoiding.",
           "link": null
         },
         "annotations": {
@@ -34336,7 +34249,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "octave is a musical term, coming from the idea of 8 notes. We'll see where that comes from many sections ahead. I'm mostly going to avoid using terms ahead of time, but octave isn't worth avoiding.",
+        "plain_text": "Octave is a musical term, coming from the idea of 8 notes. We'll see where that comes from many sections ahead. I'm mostly going to avoid using terms ahead of time, but octave isn't worth avoiding.",
         "href": null
       }
     ],
@@ -34363,7 +34276,7 @@
       {
         "type": "text",
         "text": {
-          "content": "many people will recognize this as a perfect fifth. But I’m avoiding using terminology until it makes sense. I don’t want to talk about a “fifth” pitch until we have 4 that come before it. So let’s not get ahead of ourselves.\n\nAlso, don’t take “happy” literally, from an emotional perspective. It is just a shorthand word for the fact that this interval sounds correct and stable.",
+          "content": "Many people will recognize this as a perfect fifth. But I’m avoiding using terminology until it makes sense. I don’t want to talk about a “fifth” pitch until we have 4 that come before it. So let’s not get ahead of ourselves.\n\nAlso, don’t take “happy” literally, from an emotional perspective. It is just a shorthand word for the fact that this interval sounds correct and stable.",
           "link": null
         },
         "annotations": {
@@ -34374,7 +34287,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "many people will recognize this as a perfect fifth. But I’m avoiding using terminology until it makes sense. I don’t want to talk about a “fifth” pitch until we have 4 that come before it. So let’s not get ahead of ourselves.\n\nAlso, don’t take “happy” literally, from an emotional perspective. It is just a shorthand word for the fact that this interval sounds correct and stable.",
+        "plain_text": "Many people will recognize this as a perfect fifth. But I’m avoiding using terminology until it makes sense. I don’t want to talk about a “fifth” pitch until we have 4 that come before it. So let’s not get ahead of ourselves.\n\nAlso, don’t take “happy” literally, from an emotional perspective. It is just a shorthand word for the fact that this interval sounds correct and stable.",
         "href": null
       }
     ],
@@ -34511,7 +34424,7 @@
       {
         "type": "text",
         "text": {
-          "content": "(there’s an interesting point to be made that composers have always been interested in the full 12-tone scale, before and after the advent of tonality.)",
+          "content": "There’s an interesting point to be made that composers have always been interested in the full 12-tone scale, before and after the advent of tonality.",
           "link": null
         },
         "annotations": {
@@ -34522,7 +34435,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "(there’s an interesting point to be made that composers have always been interested in the full 12-tone scale, before and after the advent of tonality.)",
+        "plain_text": "There’s an interesting point to be made that composers have always been interested in the full 12-tone scale, before and after the advent of tonality.",
         "href": null
       }
     ],
@@ -34621,7 +34534,7 @@
       {
         "type": "text",
         "text": {
-          "content": "the reasons for this are very obscure, but if you really want to know, check out ",
+          "content": "The reasons for this are very obscure, but if you really want to know, check out ",
           "link": null
         },
         "annotations": {
@@ -34632,7 +34545,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "the reasons for this are very obscure, but if you really want to know, check out ",
+        "plain_text": "The reasons for this are very obscure, but if you really want to know, check out ",
         "href": null
       },
       {
@@ -34801,7 +34714,7 @@
       {
         "type": "text",
         "text": {
-          "content": "these ratios of (n+1) : n are the ratios between adjacent harmonics in the ",
+          "content": "These ratios of (n+1) : n are the ratios between adjacent harmonics in the ",
           "link": null
         },
         "annotations": {
@@ -34812,7 +34725,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "these ratios of (n+1) : n are the ratios between adjacent harmonics in the ",
+        "plain_text": "These ratios of (n+1) : n are the ratios between adjacent harmonics in the ",
         "href": null
       },
       {
@@ -34856,7 +34769,7 @@
       {
         "type": "text",
         "text": {
-          "content": "to be specific, Pythagorean scales only have ratios that have factors of 2 or 3 in the numerator or denominator. 2 represents octave relationships and 3 represents perfect fifth relationships (technically, an octave plus a perfect fifth).",
+          "content": "To be specific, Pythagorean scales only have ratios that have factors of 2 or 3 in the numerator or denominator. 2 represents octave relationships and 3 represents perfect fifth relationships (technically, an octave plus a perfect fifth).",
           "link": null
         },
         "annotations": {
@@ -34867,7 +34780,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "to be specific, Pythagorean scales only have ratios that have factors of 2 or 3 in the numerator or denominator. 2 represents octave relationships and 3 represents perfect fifth relationships (technically, an octave plus a perfect fifth).",
+        "plain_text": "To be specific, Pythagorean scales only have ratios that have factors of 2 or 3 in the numerator or denominator. 2 represents octave relationships and 3 represents perfect fifth relationships (technically, an octave plus a perfect fifth).",
         "href": null
       }
     ],
@@ -34875,7 +34788,7 @@
       {
         "type": "text",
         "text": {
-          "content": "there’s a bit of a contradiction here that took me years to put my finger on. The idea of calling an interval a “third” only makes sense in the context of the diatonic scale, which is created by stacking perfect fifths. So when we say “pure” major third, it is noting that the interval is a harmonically ideal 5:4 ratio, but it actually deviates from the original definition of the major third.",
+          "content": "There’s a bit of a contradiction here that took me years to put my finger on. The idea of calling an interval a “third” only makes sense in the context of the diatonic scale, which is created by stacking perfect fifths. So when we say “pure” major third, it is noting that the interval is a harmonically ideal 5:4 ratio, but it actually deviates from the original definition of the major third.",
           "link": null
         },
         "annotations": {
@@ -34886,7 +34799,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "there’s a bit of a contradiction here that took me years to put my finger on. The idea of calling an interval a “third” only makes sense in the context of the diatonic scale, which is created by stacking perfect fifths. So when we say “pure” major third, it is noting that the interval is a harmonically ideal 5:4 ratio, but it actually deviates from the original definition of the major third.",
+        "plain_text": "There’s a bit of a contradiction here that took me years to put my finger on. The idea of calling an interval a “third” only makes sense in the context of the diatonic scale, which is created by stacking perfect fifths. So when we say “pure” major third, it is noting that the interval is a harmonically ideal 5:4 ratio, but it actually deviates from the original definition of the major third.",
         "href": null
       }
     ],
@@ -34894,7 +34807,7 @@
       {
         "type": "text",
         "text": {
-          "content": "meaning related to “3”, as in intervals of thirds. \n\nThere are other approaches, such as ",
+          "content": "Meaning related to “3”, as in intervals of thirds. \n\nThere are other approaches, such as ",
           "link": null
         },
         "annotations": {
@@ -34905,7 +34818,7 @@
           "code": false,
           "color": "default"
         },
-        "plain_text": "meaning related to “3”, as in intervals of thirds. \n\nThere are other approaches, such as ",
+        "plain_text": "Meaning related to “3”, as in intervals of thirds. \n\nThere are other approaches, such as ",
         "href": null
       },
       {
