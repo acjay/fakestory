@@ -2,7 +2,9 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import {
+  arrivalsAt,
   configFromParams,
+  intervalLabel,
   gapLabel,
   notesFromFifths,
   notesFromSteps,
@@ -88,6 +90,37 @@ describe('step captions', () => {
 
     expect(stepCaption(stepped, 2)).toBe('Step 3 of 4: Add α2 and γ2.');
     expect(stepCaption(stepped, 3)).toBe('Step 4 of 4: Add γ1.');
+  });
+});
+
+describe('sliding notes in a step-through', () => {
+  const walkthrough = config('notes=α1|α2|β1|γ2|γ1');
+  const sources = (step: number) =>
+    arrivalsAt(walkthrough, step).map(({ note, from, cents }) => `${from.id}→${note.id} ${Math.round(cents)}`);
+
+  it('slide each new note out of the note a fifth or an octave away', () => {
+    expect(sources(0)).toEqual([]);
+    expect(sources(1)).toEqual(['α1→α2 1200']);
+    expect(sources(2)).toEqual(['α1→β1 702']);
+    expect(sources(3)).toEqual(['β1→γ2 702']);
+    expect(sources(4)).toEqual(['γ2→γ1 -1200']);
+  });
+
+  it('prefer a fifth to an octave', () => {
+    // β1 could come from β0 (an octave) or α1 (a fifth): the fifth wins.
+    expect(arrivalsAt(config('notes=α1,β0|β1'), 1).map(({ from }) => from.id)).toEqual(['α1']);
+  });
+
+  it('let notes with no neighbor simply appear', () => {
+    expect(arrivalsAt(config('notes=α1|δ1'), 1)).toEqual([]);
+  });
+
+  it('count the interval up as the note slides, in the line’s units', () => {
+    const [down] = arrivalsAt(walkthrough, 4);
+
+    expect(intervalLabel(down, 'cents', 0.5)).toBe('−600¢');
+    expect(intervalLabel(down, 'cents')).toBe('−1200¢');
+    expect(intervalLabel(arrivalsAt(walkthrough, 2)[0], 'hertz')).toBe('+100 Hz');
   });
 });
 

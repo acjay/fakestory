@@ -14,9 +14,12 @@
  */
 
 import { colorForCents, type PitchColor } from '../../music/colors';
-import { DEFAULT_BASE_FREQUENCY } from '../../music/pitch';
-import { pythagoreanPitchClasses } from '../../music/pitchClasses';
+import { CENTS_PER_OCTAVE, DEFAULT_BASE_FREQUENCY, ratioToCents } from '../../music/pitch';
+import { PERFECT_FIFTH, pythagoreanPitchClasses } from '../../music/pitchClasses';
 import { HOME_OCTAVE, note, noteCents, noteLabel, noteRatio, parseNote, type Note } from '../../music/notes';
+
+/** A perfect fifth, about 702 cents. */
+const FIFTH_CENTS = ratioToCents(PERFECT_FIFTH);
 
 export type Scale = 'cents' | 'hertz';
 
@@ -32,6 +35,9 @@ export type LineNote = {
 
   /** Cents above the base frequency (negative below it). */
   cents: number;
+
+  /** Its place in the stack of fifths: α is 0, β is 1, γ is 2, and so on. */
+  fifths: number;
 
   /** Colored by pitch class, so every γ has the same color in every octave. */
   color: PitchColor;
@@ -119,6 +125,7 @@ function lineNote(n: Note, step: number): LineNote {
     step,
     ratio: noteRatio(n),
     cents: noteCents(n),
+    fifths: n.pitchClass.index,
     color: colorForCents(n.pitchClass.cents),
   };
 }
@@ -168,4 +175,63 @@ export function stepCaption(config: LineConfig, step: number): string {
   const text = config.captions[step] || `${step === 0 ? 'Start with' : 'Add'} ${added.join(' and ')}.`;
 
   return `Step ${step + 1} of ${config.stepCount}: ${text}`;
+}
+
+/** A note a step adds, and the note on the line it comes from. */
+export type Arrival = {
+  note: LineNote;
+  from: LineNote;
+
+  /** The interval from `from` up (or down, if negative) to `note`, in cents. */
+  cents: number;
+};
+
+/** Tolerance for comparing intervals in cents, against floating-point drift. */
+const CENTS_TOLERANCE = 0.01;
+
+/**
+ * Where each note a step adds comes from, so it can slide out of that note:
+ * a note already on the line a fifth away (the neighboring Greek letter),
+ * or else an octave away (the same letter). The latest such note wins.
+ * Notes that come from neither just appear.
+ *
+ *   α1 | α2 | β1 | γ2 | γ1   →   α2 from α1, β1 from α1, γ2 from β1, γ1 from γ2
+ */
+export function arrivalsAt(config: LineConfig, step: number): Arrival[] {
+  const earlier = config.notes.filter((lineNote) => lineNote.step < step).reverse();
+  const isNear = (a: number, b: number) => Math.abs(a - b) < CENTS_TOLERANCE;
+
+  return config.notes
+    .filter((lineNote) => lineNote.step === step && step > 0)
+    .flatMap((lineNote) => {
+      const byFifth = earlier.find(
+        (candidate) =>
+          Math.abs(candidate.fifths - lineNote.fifths) === 1 &&
+          isNear(Math.abs(lineNote.cents - candidate.cents), FIFTH_CENTS) &&
+          Math.sign(lineNote.cents - candidate.cents) === Math.sign(lineNote.fifths - candidate.fifths),
+      );
+      const byOctave = earlier.find(
+        (candidate) =>
+          candidate.fifths === lineNote.fifths && isNear(Math.abs(lineNote.cents - candidate.cents), CENTS_PER_OCTAVE),
+      );
+      const from = byFifth ?? byOctave;
+
+      return from ? [{ note: lineNote, from, cents: lineNote.cents - from.cents }] : [];
+    });
+}
+
+/** An interval's label, partway through sliding (`progress` from 0 to 1): "+702¢", "−1200¢" or "+100 Hz". */
+export function intervalLabel(
+  arrival: Arrival,
+  scale: Scale,
+  progress = 1,
+  baseFrequency = DEFAULT_BASE_FREQUENCY,
+): string {
+  const size =
+    scale === 'cents'
+      ? arrival.cents
+      : frequencyOf(arrival.note, baseFrequency) - frequencyOf(arrival.from, baseFrequency);
+  const sofar = Math.round(Math.abs(size) * progress);
+
+  return `${size < 0 ? '−' : '+'}${sofar}${scale === 'cents' ? '¢' : ' Hz'}`;
 }

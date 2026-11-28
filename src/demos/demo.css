@@ -892,3 +892,24 @@
 .number-line-band {
   opacity: 0.35;
 }
+
+/* How a step-through's new note got there: an arc from the note it came
+   from, labeled with the interval, stretching as the note slides. */
+.number-line-move {
+  fill: none;
+  stroke: var(--demo-accent);
+  stroke-width: 2;
+}
+
+.number-line-move-arrowhead {
+  fill: var(--demo-accent);
+}
+
+.number-line-move-label {
+  fill: var(--demo-accent);
+  font-size: 13px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-variant-numeric: tabular-nums;
+}
