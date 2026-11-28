@@ -48,8 +48,10 @@ function publishedBlock(block: Block): Block {
 
 /**
  * Remove expiring links to Notion-hosted files, anywhere in a value. Notion
- * marks them with an `expiry_time` next to the `url`; links to files hosted
- * elsewhere have no expiry and are kept.
+ * usually marks them with an `expiry_time` next to the `url`, but not always:
+ * embeds of uploaded files (e.g. HTML) carry only the `url`. So a `url` that
+ * is a signed download link is removed too, since it holds temporary
+ * credentials and changes on every import. Other links are kept.
  */
 function withoutSignedLinks(value: unknown): unknown {
   if (Array.isArray(value)) {
@@ -60,13 +62,27 @@ function withoutSignedLinks(value: unknown): unknown {
   }
 
   const entries = Object.entries(value);
-  const isSignedLink = entries.some(([key]) => key === 'expiry_time');
+  const hasExpiry = entries.some(([key]) => key === 'expiry_time');
+  const isExpiring = (key: string, inner: unknown) =>
+    (hasExpiry && (key === 'url' || key === 'expiry_time')) || (key === 'url' && isSignedUrl(inner));
 
   return Object.fromEntries(
-    entries
-      .filter(([key]) => !(isSignedLink && (key === 'url' || key === 'expiry_time')))
-      .map(([key, inner]) => [key, withoutSignedLinks(inner)]),
+    entries.filter(([key, inner]) => !isExpiring(key, inner)).map(([key, inner]) => [key, withoutSignedLinks(inner)]),
   );
+}
+
+/** Whether a value is a signed download link, e.g. to Notion's file storage on Amazon S3. */
+export function isSignedUrl(value: unknown): boolean {
+  if (typeof value !== 'string') {
+    return false;
+  }
+
+  try {
+    const params = new URL(value).searchParams;
+    return ['X-Amz-Signature', 'X-Amz-Credential', 'X-Amz-Security-Token'].some((name) => params.has(name));
+  } catch {
+    return false;
+  }
 }
 
 /** The snapshot as committed: stable, readable JSON with a trailing newline. */
