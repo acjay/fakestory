@@ -2,7 +2,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import {
+  arrivalsAt,
   configFromParams,
+  stepSounds,
+  intervalLabel,
   gapLabel,
   notesFromFifths,
   notesFromSteps,
@@ -91,6 +94,70 @@ describe('step captions', () => {
   });
 });
 
+describe('the home octave in the notes list', () => {
+  it('starts from the step that lists home, which can be a step of its own', () => {
+    expect(config('notes=α1|α2,home|β1')).toMatchObject({ homeStep: 1, stepCount: 3 });
+    expect(config('notes=α1,α2|home')).toMatchObject({ homeStep: 1, stepCount: 2 });
+    expect(config('notes=α0,α1,α2').homeStep).toBeNull();
+  });
+
+  it('says so in a step that only highlights it', () => {
+    expect(stepCaption(config('notes=α1,α2|home'), 1)).toBe('Step 2 of 2: Highlight the home octave, from α1 to α2.');
+  });
+});
+
+describe('sliding notes in a step-through', () => {
+  const walkthrough = config('notes=α1|α2|β1|γ2|γ1');
+  const sources = (step: number) =>
+    arrivalsAt(walkthrough, step).map(({ note, from, cents }) => `${from.id}→${note.id} ${Math.round(cents)}`);
+
+  it('slide each new note out of the note a fifth or an octave away', () => {
+    expect(sources(0)).toEqual([]);
+    expect(sources(1)).toEqual(['α1→α2 1200']);
+    expect(sources(2)).toEqual(['α1→β1 702']);
+    expect(sources(3)).toEqual(['β1→γ2 702']);
+    expect(sources(4)).toEqual(['γ2→γ1 -1200']);
+  });
+
+  it('prefer a fifth to an octave', () => {
+    // β1 could come from β0 (an octave) or α1 (a fifth): the fifth wins.
+    expect(arrivalsAt(config('notes=α1,β0|β1'), 1).map(({ from }) => from.id)).toEqual(['α1']);
+  });
+
+  it('let notes with no neighbor simply appear', () => {
+    expect(arrivalsAt(config('notes=α1|δ1'), 1)).toEqual([]);
+  });
+
+  it('count the interval up as the note slides, in the line’s units', () => {
+    const [down] = arrivalsAt(walkthrough, 4);
+
+    expect(intervalLabel(down, 'cents', 0.5)).toBe('−600¢');
+    expect(intervalLabel(down, 'cents')).toBe('−1200¢');
+    expect(intervalLabel(arrivalsAt(walkthrough, 2)[0], 'hertz')).toBe('+100 Hz');
+  });
+});
+
+describe('sounds of a step', () => {
+  const ids = ({ first, then }: ReturnType<typeof stepSounds>) =>
+    `${first.map((n) => n.id).join('+')} then ${then.map((n) => n.id).join('+')}`;
+
+  it('play the note a new note comes from, then the new note', () => {
+    const walkthrough = config('notes=α1|α2,home|β1|γ2|γ1');
+
+    expect(ids(stepSounds(walkthrough, 1))).toBe('α1 then α2');
+    expect(ids(stepSounds(walkthrough, 3))).toBe('β1 then γ2');
+    expect(ids(stepSounds(walkthrough, 4))).toBe('γ2 then γ1');
+  });
+
+  it('play a source once, even for two notes from it', () => {
+    expect(ids(stepSounds(config('notes=α1|α2,β1'), 1))).toBe('α1 then α2+β1');
+  });
+
+  it('play new notes with nowhere to come from straight away', () => {
+    expect(ids(stepSounds(config('notes=α1|δ1'), 1))).toBe('δ1 then ');
+  });
+});
+
 describe('number line configuration', () => {
   it('defaults to the α and β notes by cents, without gaps or steps', () => {
     const { notes, scale, showGaps, stepCount } = config('');
@@ -136,12 +203,17 @@ describe('number line demo', () => {
     expect(render()).not.toContain('demo-status');
   });
 
-  it('highlights the home octave, from α1 to α2, in α’s color', () => {
-    const html = render();
+  it('highlights the home octave, from α1 to α2, in α’s color, when asked', () => {
+    const band =
+      /<rect class="number-line-band"[^>]*fill="#[0-9a-f]{6}"><title>The home octave, from α1 to α2<\/title>/;
 
-    expect(html).toMatch(
-      /<rect class="number-line-band"[^>]*fill="#[0-9a-f]{6}"><title>The home octave, from α1 to α2<\/title>/,
-    );
+    expect(render('notes=α0,α1,α2,home')).toMatch(band);
+    expect(render('notes=α0,α1,α2')).not.toContain('number-line-band');
+    expect(render('fifths=5')).not.toContain('number-line-band');
+  });
+
+  it('only highlights it from its step on in a step-through', () => {
+    expect(render('notes=α1|α2,home|β1')).not.toContain('number-line-band'); // starts at step 1
   });
 
   it('labels gaps, and describes them for screen readers', () => {

@@ -95,7 +95,7 @@ export const DEMOS: Record<string, DemoEntry> = {
         name: 'notes',
         values: 'e.g. α0,β0,α1,β1,α2,β2',
         description:
-          'Notes by Greek letter and octave, separated by commas. Use | between groups for a step-through, e.g. α1|β1|α2,γ2|γ1. Default α0,β0,α1,β1,α2,β2.',
+          'Notes by Greek letter and octave, separated by commas. Use | between groups for a step-through, e.g. α1|β1|α2,γ2|γ1. Add home to highlight the home octave (α1 to α2) from that step on. Default α0,β0,α1,β1,α2,β2.',
       },
       {
         name: 'fifths',
@@ -117,14 +117,18 @@ export const DEMOS: Record<string, DemoEntry> = {
       {
         name: 'Our happy interval, by hertz',
         title: 'Our happy interval, by hertz',
-        query: 'notes=α0,β0,α1,β1,α2,β2&scale=hertz',
+        query: 'notes=α0,β0,α1,β1,α2,β2,home&scale=hertz',
       },
-      { name: 'Our happy interval, by cents', title: 'Our happy interval, by cents', query: 'notes=α0,β0,α1,β1,α2,β2' },
+      {
+        name: 'Our happy interval, by cents',
+        title: 'Our happy interval, by cents',
+        query: 'notes=α0,β0,α1,β1,α2,β2,home',
+      },
       {
         name: '3’s a crowd (step-through)',
         title: '3’s a crowd',
         query:
-          'notes=α1|α2|β1|γ2|γ1&captions=' +
+          'notes=α1|α2,home|β1|γ2|γ1&captions=' +
           [
             'Start with α1.',
             'Add α2 an octave (1200 cents) above α1 to define our home octave.',

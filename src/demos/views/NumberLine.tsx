@@ -23,6 +23,9 @@ export type LineMark = {
   value: string;
 
   color: PitchColor;
+
+  /** Sliding into place: drawn on top of the notes it passes. */
+  isMoving?: boolean;
 };
 
 type Props = {
@@ -34,6 +37,16 @@ type Props = {
 
   /** Labels for the gap from each mark to the next, e.g. "+204¢"; one fewer than the marks. Omit for no arcs. */
   gaps?: string[];
+
+  /**
+   * Arcs from one position to another, labeled with the interval: how a
+   * step-through's new notes got there. `to` can be partway, while a note
+   * slides into place.
+   */
+  moves?: { id: string; from: number; to: number; label: string }[];
+
+  /** Leave room under the line for `moves`, so it doesn't jump when they appear. */
+  reserveMoveSpace?: boolean;
 
   /**
    * A stretch of the line to highlight, e.g. the home octave, in the line's
@@ -80,7 +93,18 @@ const labelWidth = (text: string) => text.length * 6.5 + 2;
 /** Lower rows for labels that would overlap their neighbor's, in pixels. */
 const STAGGER = 14;
 
-export function NumberLine({ marks, domain, gaps, band, allPositions, playingId = null, onActivate, label }: Props) {
+export function NumberLine({
+  marks,
+  domain,
+  gaps,
+  moves = [],
+  reserveMoveSpace = false,
+  band,
+  allPositions,
+  playingId = null,
+  onActivate,
+  label,
+}: Props) {
   // An id for the arrowhead, unique to this line (useId's colons aren't valid in url()).
   const arrowId = `number-line-arrow-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 
@@ -102,7 +126,8 @@ export function NumberLine({ marks, domain, gaps, band, allPositions, playingId 
 
   const valuesBottom = LINE_Y + 20 + (valueRows.includes(1) ? STAGGER : 0);
   const arcTop = valuesBottom + 12;
-  const height = gaps ? arcTop + 46 + (gapRows.includes(1) ? STAGGER : 0) : valuesBottom + 16;
+  const hasArcs = Boolean(gaps) || moves.length > 0 || reserveMoveSpace;
+  const height = hasArcs ? arcTop + 46 + (gapRows.includes(1) ? STAGGER : 0) : valuesBottom + 16;
 
   const activate = (mark: LineMark, event: MouseEvent | KeyboardEvent) => {
     event.preventDefault();
@@ -123,6 +148,9 @@ export function NumberLine({ marks, domain, gaps, band, allPositions, playingId 
         <defs>
           <marker id={arrowId} markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
             <polygon points="0 0, 8 3, 0 6" className="number-line-arrowhead" />
+          </marker>
+          <marker id={`${arrowId}-move`} markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 9 3.5, 0 7" className="number-line-move-arrowhead" />
           </marker>
         </defs>
 
@@ -178,7 +206,34 @@ export function NumberLine({ marks, domain, gaps, band, allPositions, playingId 
             );
           })}
 
-        {marks.map((mark, i) => {
+        {/* Move arcs: from the note a new note came from, to where it is now. */}
+        {moves.map((move) => {
+          const direction = Math.sign(move.to - move.from);
+          const from = x(move.from) + 4 * direction;
+          const to = x(move.to) - 4 * direction;
+          const middle = (from + to) / 2;
+
+          // Too short to draw yet, at the very start of a slide.
+          if (direction === 0 || (to - from) * direction < 8) {
+            return null;
+          }
+
+          return (
+            <g key={`move-${move.id}`} aria-hidden="true">
+              <path
+                className="number-line-move"
+                d={`M ${from},${arcTop} Q ${middle},${arcTop + 26} ${to},${arcTop}`}
+                markerEnd={`url(#${arrowId}-move)`}
+              />
+              <text className="number-line-move-label" x={middle} y={arcTop + 32}>
+                {move.label}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Notes, with any that are sliding drawn last, so they pass over the others. */}
+        {drawingOrder(marks).map(({ mark, index: i }) => {
           const markX = x(mark.position);
           const markY = LINE_Y - 30;
           const isPlaying = mark.id === playingId;
@@ -262,4 +317,10 @@ function useWidth(): [RefObject<HTMLDivElement | null>, number] {
   }, []);
 
   return [ref, width];
+}
+
+/** The marks with their original indexes, moving ones last. */
+function drawingOrder(marks: LineMark[]): { mark: LineMark; index: number }[] {
+  const indexed = marks.map((mark, index) => ({ mark, index }));
+  return [...indexed.filter(({ mark }) => !mark.isMoving), ...indexed.filter(({ mark }) => mark.isMoving)];
 }
