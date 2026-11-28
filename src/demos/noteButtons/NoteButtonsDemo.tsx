@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 
+import { DemoError } from '../DemoError';
 import { DemoHeader } from '../DemoHeader';
 import { useNotePlayer } from '../useNotePlayer';
 import { buttonsFromParams, frequenciesOf, hertzLabel, type NoteButton } from './model';
@@ -42,7 +43,7 @@ export function NoteButtonsDemo({ params, title }: { params: URLSearchParams; ti
             <button
               key={button.label}
               type="button"
-              className="note-button"
+              className={`note-button${playing?.id === button.label ? ' is-sounding' : ''}`}
               aria-label={spoken}
               aria-pressed={playing?.id === button.label}
               onClick={() => playButton(button)}
@@ -67,9 +68,7 @@ export function NoteButtonsDemo({ params, title }: { params: URLSearchParams; ti
         })}
       </div>
 
-      <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
-        {error ?? playing?.text ?? `Click ${buttons.length === 1 ? 'the button' : 'a button'} to play it.`}
-      </p>
+      <DemoError error={error} />
     </div>
   );
 }

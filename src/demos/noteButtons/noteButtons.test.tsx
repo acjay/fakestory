@@ -50,8 +50,7 @@ describe('note buttons demo', () => {
     expect(html).toContain('<span class="note-button-hertz">200 + 300 Hz</span>');
   });
 
-  it('says how to play, with the right number', () => {
-    expect(render()).toContain('Click the button to play it.');
-    expect(render('buttons=α1|β1')).toContain('Click a button to play it.');
+  it('shows no status text: the playing button pulses instead', () => {
+    expect(render()).not.toContain('demo-status');
   });
 });

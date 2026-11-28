@@ -6,7 +6,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { DemoError } from '../DemoError';
 import { DemoHeader } from '../DemoHeader';
+import { useModifierKeys } from '../useModifierKeys';
 import { useNotePlayer } from '../useNotePlayer';
 import { OctaveCircle, type CircleNote, type Modifiers } from '../views/OctaveCircle';
 import {
@@ -15,6 +17,7 @@ import {
   MAX_SIZE,
   MIN_SIZE,
   OCTAVE_NAMES,
+  OCTAVE_SHORTCUTS,
   octaveFor,
   sizeFromParams,
   statisticsTable,
@@ -27,6 +30,11 @@ export function ScaleGeneratorDemo({ params, title }: { params: URLSearchParams;
   const [size, setSize] = useState(() => sizeFromParams(params));
   const [octave, setOctave] = useState<OctaveChoice>(0);
   const { tone, playing, error, play } = useNotePlayer();
+
+  // While Shift and/or Ctrl/⌘ are held, the octave they'd play in instead
+  // of the chosen one, highlighted on the control.
+  const held = useModifierKeys();
+  const overridden = held.shift || held.down ? octaveFor(octave, held) : null;
 
   const notes = circleNotes(size);
   const table = statisticsTable(size);
@@ -53,7 +61,28 @@ export function ScaleGeneratorDemo({ params, title }: { params: URLSearchParams;
 
   return (
     <div className="demo scale-generator">
-      <DemoHeader title={title} />
+      <DemoHeader title={title}>
+        {/* Compact, in the header: which octave notes play in. */}
+        <div
+          className="demo-segmented demo-segmented-compact"
+          role="group"
+          aria-label="Play notes in octave"
+          aria-description={OCTAVE_SHORTCUTS}
+          title={OCTAVE_SHORTCUTS}
+        >
+          {([-1, 0, 1] as OctaveChoice[]).map((choice) => (
+            <button
+              key={choice}
+              type="button"
+              className={overridden === choice ? 'is-overridden' : undefined}
+              aria-pressed={octave === choice}
+              onClick={() => setOctave(choice)}
+            >
+              {OCTAVE_NAMES[choice]}
+            </button>
+          ))}
+        </div>
+      </DemoHeader>
 
       <div className="demo-toolbar scale-generator-toolbar">
         <div className="demo-stepper" role="group" aria-label="Scale size">
@@ -77,22 +106,9 @@ export function ScaleGeneratorDemo({ params, title }: { params: URLSearchParams;
             +
           </button>
         </div>
-
-        <div className="demo-segmented" role="group" aria-label="Play notes in octave">
-          <span className="demo-segmented-label">Octave</span>
-          {([-1, 0, 1] as OctaveChoice[]).map((choice) => (
-            <button key={choice} type="button" aria-pressed={octave === choice} onClick={() => setOctave(choice)}>
-              {OCTAVE_NAMES[choice]}
-            </button>
-          ))}
-        </div>
       </div>
 
-      <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
-        {error ??
-          playing?.text ??
-          'Select a note to hear it. Shortcuts: Shift for the octave above, Ctrl or ⌘ for below.'}
-      </p>
+      <DemoError error={error} />
 
       {/* The circle, with the table beside it where there's room, or below. */}
       <div className="scale-generator-body">

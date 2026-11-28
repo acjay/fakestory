@@ -12,6 +12,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { audioEngine, AudioUnavailableError, type Sound } from '../../audio/engine';
 import type { Articulation, HarmonicProfile, Voice } from '../../audio/voices';
 import { NumberField } from '../NumberField';
+import { DemoError } from '../DemoError';
 import { DemoHeader } from '../DemoHeader';
 import { useToneSettings } from '../useToneSettings';
 import { WaveformPlot } from '../views/WaveformPlot';
@@ -214,18 +215,25 @@ export function HarmonicToneDemo({ params, title }: { params: URLSearchParams; t
         </div>
 
         <div className="demo-playback">
-          <button type="button" className="demo-primary" onClick={playTone}>
+          <button
+            type="button"
+            className={`demo-primary${playback.mode === 'tone' ? ' is-sounding' : ''}`}
+            onClick={playTone}
+          >
             ▶ Play tone
           </button>
-          <button type="button" aria-pressed={playback.mode === 'continuous'} onClick={toggleContinuous}>
+          <button
+            type="button"
+            className={playback.mode === 'continuous' ? 'is-sounding' : undefined}
+            aria-pressed={playback.mode === 'continuous'}
+            onClick={toggleContinuous}
+          >
             {playback.mode === 'continuous' ? '■ Stop' : '▷ Play continuously'}
           </button>
         </div>
       </div>
 
-      <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
-        {error ?? statusText(playback)}
-      </p>
+      <DemoError error={error} />
 
       <section className="demo-panel" aria-label="Combined waveform">
         <div className="demo-panel-head">
@@ -279,7 +287,7 @@ export function HarmonicToneDemo({ params, title }: { params: URLSearchParams; t
 
               <button
                 type="button"
-                className="harmonic-solo"
+                className={`harmonic-solo${isSolo ? ' is-sounding' : ''}`}
                 aria-pressed={isSolo}
                 aria-label={`Hear partial ${harmonic} alone`}
                 onClick={() => toggleSolo(harmonic)}
@@ -302,17 +310,4 @@ export function HarmonicToneDemo({ params, title }: { params: URLSearchParams; t
 
 function currentVoice(settings: HarmonicToneSettings, playback: Playback): Voice {
   return playback.mode === 'solo' ? soloVoice(settings, playback.harmonic) : mixVoice(settings);
-}
-
-function statusText(playback: Playback): string {
-  switch (playback.mode) {
-    case 'idle':
-      return 'Audio stopped';
-    case 'tone':
-      return 'Playing a one-second tone';
-    case 'continuous':
-      return 'Playing continuously: adjust the controls to hear the change';
-    case 'solo':
-      return `Playing partial ${playback.harmonic} alone`;
-  }
 }

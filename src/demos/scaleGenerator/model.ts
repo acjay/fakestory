@@ -56,12 +56,18 @@ export function frequencyFor(cents: number, octave: OctaveChoice, baseFrequency 
 
 /**
  * Which octave a click plays: Shift for one above, Ctrl/⌘ for one below,
- * otherwise the octave chosen on screen.
+ * both together for the home octave, otherwise the octave chosen on screen.
+ * So every octave is playable from the keyboard, whatever's chosen.
  */
 export function octaveFor(chosen: OctaveChoice, modifiers: { shift: boolean; down: boolean }): OctaveChoice {
+  if (modifiers.shift && modifiers.down) return 0;
   if (modifiers.shift) return 1;
   if (modifiers.down) return -1;
   return chosen;
 }
+
+/** The keyboard shortcuts, for the octave control's tooltip and description. */
+export const OCTAVE_SHORTCUTS =
+  'Shortcuts when selecting a note: Shift for the octave above, Ctrl or ⌘ for below, both for home.';
 
 export const OCTAVE_NAMES: Record<OctaveChoice, string> = { [-1]: 'Below', 0: 'Home', 1: 'Above' };
