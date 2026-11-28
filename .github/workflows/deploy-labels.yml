@@ -1,0 +1,40 @@
+# Labels the pull request merged into main with the state of its production
+# deploy (deploying, then deployed or deploy failed). Cloudflare's Workers
+# Builds does the deploy and reports it as a check; this runs when that
+# check starts or finishes. See scripts/deploy-labels.ts.
+#
+# Check run events only use this file from the default branch, so it takes
+# effect once merged.
+name: Deploy labels
+
+on:
+  check_run:
+    types: [created, rerequested, completed]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  label:
+    # Only Cloudflare's builds of main, which are production deploys.
+    if: github.event.check_run.app.slug == 'cloudflare-workers-and-pages' && github.event.check_run.check_suite.head_branch == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+
+      # No dependencies to install: the script uses only Node's built-ins.
+      - run: node scripts/deploy-labels.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          COMMIT_SHA: ${{ github.event.check_run.head_sha }}
+          CHECK_ACTION: ${{ github.event.action }}
+          CHECK_CONCLUSION: ${{ github.event.check_run.conclusion }}
