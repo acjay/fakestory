@@ -17,6 +17,7 @@ import { NumberLine, type LineMark } from '../views/NumberLine';
 import {
   arrivalsAt,
   configFromParams,
+  stepSounds,
   frequencyOf,
   gapLabel,
   intervalLabel,
@@ -112,6 +113,35 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
     ? shown.slice(0, -1).map((lineNote, i) => gapLabel(lineNote, shown[i + 1], scale, tone.baseFrequency))
     : undefined;
 
+  // Stepping forward plays the step: the notes its new notes come from, then
+  // the new notes as they land. Started from the click itself, since some
+  // browsers only allow sound to start from one; the rest is scheduled.
+  const landing = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => clearTimeout(landing.current ?? undefined), []);
+
+  function goToStep(next: number) {
+    clearTimeout(landing.current ?? undefined);
+    setStep(next);
+    if (next <= step) {
+      return;
+    }
+
+    const { first, then } = stepSounds(config, next);
+    const playNotes = (notes: typeof first) =>
+      notes.length > 0 &&
+      void play(
+        notes.map((lineNote) => frequencyOf(lineNote, tone.baseFrequency)),
+        { id: notes[0].id, text: `Playing ${notes.map((lineNote) => lineNote.id).join(' & ')}` },
+      );
+
+    playNotes(first);
+    if (then.length > 0) {
+      const reduceMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+      const longestNext = Math.max(0, ...arrivalsAt(config, next).map((arrival) => Math.abs(arrival.cents)));
+      landing.current = setTimeout(() => playNotes(then), reduceMotion ? 600 : slideDuration(longestNext));
+    }
+  }
+
   function playMark(mark: LineMark) {
     const lineNote = shown.find((candidate) => candidate.id === mark.id);
     if (lineNote) {
@@ -135,14 +165,14 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
       {isStepped && (
         <div className="number-line-steps">
           <div className="demo-stepper" role="group" aria-label="Steps">
-            <button type="button" aria-label="Previous step" disabled={step === 0} onClick={() => setStep(step - 1)}>
+            <button type="button" aria-label="Previous step" disabled={step === 0} onClick={() => goToStep(step - 1)}>
               ←
             </button>
             <button
               type="button"
               aria-label="Next step"
               disabled={step === stepCount - 1}
-              onClick={() => setStep(step + 1)}
+              onClick={() => goToStep(step + 1)}
             >
               →
             </button>

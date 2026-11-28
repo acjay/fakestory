@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   arrivalsAt,
   configFromParams,
+  stepSounds,
   intervalLabel,
   gapLabel,
   notesFromFifths,
@@ -133,6 +134,27 @@ describe('sliding notes in a step-through', () => {
     expect(intervalLabel(down, 'cents', 0.5)).toBe('−600¢');
     expect(intervalLabel(down, 'cents')).toBe('−1200¢');
     expect(intervalLabel(arrivalsAt(walkthrough, 2)[0], 'hertz')).toBe('+100 Hz');
+  });
+});
+
+describe('sounds of a step', () => {
+  const ids = ({ first, then }: ReturnType<typeof stepSounds>) =>
+    `${first.map((n) => n.id).join('+')} then ${then.map((n) => n.id).join('+')}`;
+
+  it('play the note a new note comes from, then the new note', () => {
+    const walkthrough = config('notes=α1|α2,home|β1|γ2|γ1');
+
+    expect(ids(stepSounds(walkthrough, 1))).toBe('α1 then α2');
+    expect(ids(stepSounds(walkthrough, 3))).toBe('β1 then γ2');
+    expect(ids(stepSounds(walkthrough, 4))).toBe('γ2 then γ1');
+  });
+
+  it('play a source once, even for two notes from it', () => {
+    expect(ids(stepSounds(config('notes=α1|α2,β1'), 1))).toBe('α1 then α2+β1');
+  });
+
+  it('play new notes with nowhere to come from straight away', () => {
+    expect(ids(stepSounds(config('notes=α1|δ1'), 1))).toBe('δ1 then ');
   });
 });
 

@@ -264,3 +264,16 @@ export function intervalLabel(
 
   return `${size < 0 ? '−' : '+'}${sofar}${scale === 'cents' ? '¢' : ' Hz'}`;
 }
+
+/**
+ * What a step plays as it slides its notes in: the notes they come from,
+ * then the new notes as they land. New notes with nowhere to come from
+ * play with the others; a step of those alone plays them straight away.
+ */
+export function stepSounds(config: LineConfig, step: number): { first: LineNote[]; then: LineNote[] } {
+  const added = config.notes.filter((lineNote) => lineNote.step === step);
+  const sources = arrivalsAt(config, step).map((arrival) => arrival.from);
+  const first = sources.filter((source, i) => sources.findIndex((other) => other.id === source.id) === i);
+
+  return first.length > 0 ? { first, then: added } : { first: added, then: [] };
+}
