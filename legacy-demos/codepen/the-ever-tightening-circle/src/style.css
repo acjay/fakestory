@@ -1,0 +1,60 @@
+.top-row {
+  display: flex;
+  height: 500px;
+  align-items: center;
+}
+.diagram-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pitch-circle {
+  fill: lightblue;
+  stroke: black;
+  stroke-width: 2px;
+  cursor: pointer;
+  
+  &:hover {
+    fill: #9999FF;
+  }
+}
+.label {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+.arc-label {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  fill: darkred;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+.table-container {
+  overflow-y: auto;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.scale-comparison {
+}
+.scale-comparison,
+.scale-comparison th,
+.scale-comparison td {
+  border: 1px solid gray;
+  border-collapse: collapse;
+  padding: 5px;
+}
+.row-header {
+  width: 50px;
+}
+.scale-size-header {
+  width: 28px;
+}
+.table-entry {
+  text-align: right;
+}

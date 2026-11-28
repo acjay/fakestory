@@ -1,0 +1,544 @@
+:root {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  color: #252725;
+  background: #f8f7f3;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+a {
+  color: #244f49;
+  text-underline-offset: 3px;
+}
+:focus-visible {
+  outline: 3px solid #357c72;
+  outline-offset: 4px;
+}
+.shell {
+  max-width: 1160px;
+  margin: auto;
+  padding: 0 48px;
+}
+.site-header {
+  min-height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d4d6cf;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+  line-height: 1.15;
+  font-size: 15px;
+}
+.brand-mark {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+  color: #f8f7f3;
+  background: #264c45;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+.status,
+.hero-kicker,
+.eyebrow,
+.embed-placeholder-label,
+.embed-placeholder-status,
+footer,
+.hero-rule {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.status {
+  color: #5c6760;
+}
+.site-header-end {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.header-links {
+  display: flex;
+  gap: 4px;
+}
+/* Icon-only links, with a comfortable tap target around each icon. */
+.header-link {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: inherit;
+}
+.header-link:hover {
+  background: rgb(127 127 127 / 0.14);
+}
+.header-link svg {
+  width: 22px;
+  height: 22px;
+}
+/* The acjay.com logo's thin strokes need a little more size to read. */
+.header-link .acjay-icon {
+  width: 27px;
+  height: 27px;
+}
+.hero {
+  padding: 98px 0 65px;
+  max-width: 900px;
+}
+.hero-kicker,
+.eyebrow {
+  color: #4c6c60;
+}
+.hero-kicker span {
+  color: #a4b2a9;
+  padding: 0 10px;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+h1 {
+  font-size: clamp(54px, 8vw, 94px);
+  line-height: 1.03;
+  margin: 24px 0;
+  max-width: 790px;
+}
+.hero-deck {
+  font-family: Georgia, serif;
+  font-size: clamp(21px, 2.5vw, 27px);
+  line-height: 1.45;
+  color: #53605a;
+  max-width: 620px;
+}
+.hero-rule {
+  border-top: 1px solid #aab9af;
+  margin-top: 55px;
+  padding-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  color: #47685b;
+}
+.reading {
+  border-top: 1px solid #d4d6cf;
+  padding: 62px 0 90px;
+  max-width: 900px;
+}
+.reading > p,
+.reading > ul,
+.reading > ol {
+  max-width: 680px;
+}
+.section-heading h2 {
+  font-size: clamp(36px, 5vw, 52px);
+  line-height: 1.12;
+  margin: 16px 0 24px;
+}
+h3 {
+  font-size: 31px;
+  margin: 0 0 18px;
+  line-height: 1.15;
+}
+h4 {
+  font-size: 24px;
+}
+p {
+  font-size: 18px;
+  line-height: 1.75;
+  margin: 0 0 24px;
+}
+ul,
+ol {
+  font-size: 18px;
+  line-height: 1.75;
+  margin: 0 0 24px;
+  padding-left: 1.4em;
+}
+li {
+  margin-bottom: 6px;
+}
+/* Nested lists, and any paragraphs inside an item, sit tight under it. */
+li > ul,
+li > ol,
+li > p {
+  margin: 6px 0 0;
+}
+.load-error {
+  margin: 40px;
+  white-space: pre-wrap;
+}
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin: 55px 0;
+  align-items: start;
+}
+.embed-placeholder {
+  min-height: 235px;
+  background: #e8ede6;
+  border: 1px solid #cbd6ca;
+  border-radius: 8px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.embed-placeholder-label {
+  color: #426457;
+  margin-bottom: 24px;
+}
+.embed-placeholder strong {
+  font-family: Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+}
+.embed-placeholder p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #4e5e55;
+  margin: 8px 0 20px;
+}
+.embed-placeholder-status {
+  color: #47665a;
+  margin-top: auto;
+  letter-spacing: 0.04em;
+}
+.inline-detail {
+  display: inline;
+  position: relative;
+}
+.reference-trigger {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  color: #244f49;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 4px;
+}
+.detail-body {
+  display: block;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 2;
+  width: min(300px, 75vw);
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #bbc9bd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px #0000000c;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.detail-body > strong,
+.detail-body > span {
+  display: block;
+}
+.detail-body > strong {
+  margin-bottom: 6px;
+}
+/*
+ * Footnotes: the anchored text reads as normal prose. A small ♪ after it is
+ * the always-visible clue. The text and the ♪ act as one unit: hovering
+ * either, focusing the ♪ with the keyboard, or opening the note highlights
+ * both together, and clicking either toggles the note.
+ */
+.footnote {
+  cursor: pointer;
+  border-radius: 3px;
+  /* Keep the rounded highlight on each line when the anchor wraps. */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  transition:
+    background-color 0.15s,
+    box-shadow 0.15s;
+}
+.footnote:hover,
+.footnote:has(:focus-visible),
+.footnote[data-open] {
+  background: #dde8df;
+  box-shadow: 0 0 0 2px #dde8df;
+}
+/* The open note is not part of the highlighted unit. */
+.footnote .detail-body {
+  cursor: auto;
+}
+.footnote-marker {
+  /* Raised like a footnote number, without changing the line height. */
+  position: relative;
+  top: -0.35em;
+  margin-left: 0.05em;
+  padding: 0 0.12em;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  font: inherit;
+  font-size: 1.05em;
+  font-weight: 700;
+  line-height: 1;
+  color: #3d6b5c;
+  cursor: pointer;
+}
+.footnote:hover .footnote-marker,
+.footnote[data-open] .footnote-marker {
+  color: #244f49;
+}
+.footnote-marker:focus-visible {
+  outline: 2px solid #4c6c60;
+  outline-offset: 1px;
+}
+/* Callouts: a tinted aside with an optional emoji. */
+.callout {
+  display: flex;
+  gap: 14px;
+  max-width: 680px;
+  margin: 0 0 24px;
+  padding: 18px 20px;
+  border-radius: 8px;
+  background: var(--callout-bg, #eef1ec);
+}
+.callout-icon {
+  font-size: 22px;
+  line-height: 1.6;
+}
+.callout-body > :last-child {
+  margin-bottom: 0;
+}
+.callout[data-color^='gray'] {
+  --callout-bg: #eceeeb;
+}
+.callout[data-color^='brown'] {
+  --callout-bg: #f1ebe5;
+}
+.callout[data-color^='orange'] {
+  --callout-bg: #f8ebdf;
+}
+.callout[data-color^='yellow'] {
+  --callout-bg: #f8f1d8;
+}
+.callout[data-color^='green'] {
+  --callout-bg: #e3efe6;
+}
+.callout[data-color^='blue'] {
+  --callout-bg: #e3edf5;
+}
+.callout[data-color^='purple'] {
+  --callout-bg: #eee8f4;
+}
+.callout[data-color^='pink'] {
+  --callout-bg: #f6e6ee;
+}
+.callout[data-color^='red'] {
+  --callout-bg: #f8e5e2;
+}
+/* Tables scroll sideways on narrow screens rather than squeezing columns. */
+.table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0 0 24px;
+}
+table {
+  border-collapse: collapse;
+  font-size: 16px;
+  line-height: 1.5;
+}
+th,
+td {
+  padding: 8px 14px;
+  border: 1px solid #d4d6cf;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #eef1ec;
+  font-weight: 600;
+}
+.math {
+  white-space: nowrap;
+}
+.math-display {
+  display: block;
+  overflow-x: auto;
+}
+.story-image {
+  margin: 32px 0;
+  max-width: 680px;
+}
+.story-image img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+.story-image figcaption {
+  margin-top: 8px;
+  font-size: 15px;
+  color: #5c6760;
+}
+.unsupported {
+  border-left: 3px solid #98672e;
+  background: #fbebde;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+footer {
+  border-top: 1px solid #d4d6cf;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 25px 0 40px;
+  color: #606b63;
+  letter-spacing: 0.04em;
+}
+@media (max-width: 640px) {
+  .detail-body {
+    position: fixed;
+    left: 22px;
+    right: 22px;
+    top: auto;
+    bottom: 24px;
+    width: auto;
+  }
+  .shell {
+    padding: 0 22px;
+  }
+  .site-header {
+    min-height: 84px;
+  }
+  .status {
+    font-size: 10px;
+  }
+  .site-header-end {
+    gap: 8px;
+  }
+  /* Too cramped beside the brand and links on phones. */
+  .status {
+    display: none;
+  }
+  .header-links {
+    gap: 0;
+  }
+  .hero {
+    padding: 70px 0 46px;
+  }
+  .hero-rule {
+    margin-top: 38px;
+  }
+  .reading {
+    padding: 48px 0 64px;
+  }
+  .columns {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin: 40px 0;
+  }
+  p {
+    font-size: 17px;
+  }
+  footer {
+    flex-direction: column;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #eeefea;
+    background: #191d1b;
+  }
+  .site-header,
+  .reading,
+  footer {
+    border-color: #46524b;
+  }
+  .hero-kicker,
+  .eyebrow,
+  .hero-rule,
+  .status,
+  footer {
+    color: #b4cabd;
+  }
+  .hero-rule {
+    border-color: #61776a;
+  }
+  .hero-deck {
+    color: #bfccc2;
+  }
+  .brand-mark {
+    color: #191d1b;
+    background: #b4cabd;
+  }
+  a,
+  .reference-trigger {
+    color: #a5d1bb;
+  }
+  .embed-placeholder {
+    background: #28342d;
+    border-color: #53665b;
+  }
+  .embed-placeholder-label,
+  .embed-placeholder-status,
+  .embed-placeholder p {
+    color: #c0d0c4;
+  }
+  .detail-body {
+    background: #28332d;
+    border-color: #6a7b70;
+  }
+  .footnote:hover,
+  .footnote:has(:focus-visible),
+  .footnote[data-open] {
+    background: #33443a;
+    box-shadow: 0 0 0 2px #33443a;
+  }
+  .footnote-marker {
+    color: #a5d1bb;
+  }
+  .footnote:hover .footnote-marker,
+  .footnote[data-open] .footnote-marker {
+    color: #d3eadc;
+  }
+  .footnote-marker:focus-visible {
+    outline-color: #a5d1bb;
+  }
+  .callout {
+    --callout-bg: #28342d;
+  }
+  .callout[data-color] {
+    --callout-bg: #28342d;
+  }
+  th,
+  td {
+    border-color: #46524b;
+  }
+  th {
+    background: #28342d;
+  }
+  .unsupported {
+    background: #45382b;
+  }
+}

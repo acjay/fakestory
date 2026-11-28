@@ -1,0 +1,923 @@
+/*
+ * The demos' shared look. Every demo uses these tokens and building blocks,
+ * so they read as one family, inside the story and when embedded alone.
+ */
+
+.demo {
+  --demo-text: #1f2622;
+  --demo-muted: #5c6760;
+  --demo-accent: #264c45;
+  --demo-accent-text: #f8f7f3;
+  --demo-surface: #ffffff;
+  --demo-panel: #eef1ec;
+  --demo-border: #cbd6ca;
+  --demo-line: #264c45;
+  --demo-line-muted: #a3ada6;
+  --demo-zero: #d4d6cf;
+  --demo-error: #a4372b;
+
+  color: var(--demo-text);
+  font:
+    15px/1.5 system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  margin: 0 0 24px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .demo {
+    --demo-text: #eeefea;
+    --demo-muted: #b4c0b8;
+    --demo-accent: #a5d1bb;
+    --demo-accent-text: #191d1b;
+    --demo-surface: #1f2522;
+    --demo-panel: #28342d;
+    --demo-border: #53665b;
+    --demo-line: #a5d1bb;
+    --demo-line-muted: #5f6d64;
+    --demo-zero: #46524b;
+    --demo-error: #f0a093;
+  }
+}
+
+/* --- Controls ------------------------------------------------------------ */
+
+.demo button,
+.demo select,
+.demo input[type='number'] {
+  font: inherit;
+  color: inherit;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--demo-border);
+  background: var(--demo-surface);
+  padding: 0 14px;
+}
+
+.demo button {
+  cursor: pointer;
+}
+
+.demo button[aria-pressed='true'],
+.demo .demo-primary {
+  background: var(--demo-accent);
+  border-color: var(--demo-accent);
+  color: var(--demo-accent-text);
+  font-weight: 600;
+}
+
+.demo :focus-visible {
+  outline: 2px solid var(--demo-accent);
+  outline-offset: 2px;
+}
+
+.demo input[type='range'] {
+  width: 100%;
+  min-height: 32px;
+  accent-color: var(--demo-accent);
+}
+
+.demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: flex-end;
+}
+
+.demo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.demo-field-wide {
+  flex: 1 1 260px;
+}
+
+.demo-field label,
+.demo-segmented-label {
+  font-weight: 600;
+}
+
+.demo-field-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.demo-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--demo-muted);
+}
+
+/* Specific enough to beat `.demo input[type='number']` above. */
+.demo .demo-number input {
+  color: var(--demo-text);
+  width: 5.5em;
+  padding: 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.demo-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-top: 18px;
+}
+
+.demo-segmented,
+.demo-playback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.demo-segmented-label {
+  margin-right: 6px;
+}
+
+.demo-segmented button {
+  min-width: 44px;
+  padding: 0 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.demo-status {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: var(--demo-muted);
+}
+
+.demo-error {
+  color: var(--demo-error);
+  border-left: 3px solid var(--demo-error);
+  padding-left: 8px;
+}
+
+.demo-link {
+  margin-top: 8px;
+  border: 0 !important;
+  background: none !important;
+  padding: 0 !important;
+  color: var(--demo-accent) !important;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* --- Shared tone settings ("Tone" button and panel) ----------------------- */
+
+/* --- Header bar --------------------------------------------------------- */
+
+/* "Demo: <title>" on the left, the ♪ tone button on the right. */
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--demo-border);
+}
+
+.demo-header-title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.demo-header-kind {
+  color: var(--demo-muted);
+  font-weight: 500;
+}
+
+/* Compact controls, then the ♪, at the right of the header. */
+.demo-header {
+  flex-wrap: wrap;
+}
+
+.demo-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* A small segmented control for the header, e.g. the octave. */
+.demo-segmented-compact {
+  gap: 0;
+  flex-wrap: nowrap;
+}
+
+.demo .demo-segmented-compact button {
+  min-width: 0;
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+  border-radius: 0;
+  margin-left: -1px;
+}
+
+.demo .demo-segmented-compact button:first-child {
+  border-radius: 999px 0 0 999px;
+  margin-left: 0;
+}
+
+.demo .demo-segmented-compact button:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+/* The octave a held shortcut key plays in instead of the chosen one. */
+.demo .demo-segmented-compact button.is-overridden {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--demo-accent);
+  outline-offset: 1px;
+}
+
+/* --- Tone settings ------------------------------------------------------- */
+
+.tone-settings {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* A small round note button, out of the way in the header's corner. */
+.tone-settings-button {
+  width: 34px;
+  min-width: 0 !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  font-size: 19px !important;
+  line-height: 1;
+  color: var(--demo-muted) !important;
+}
+
+.tone-settings-button:hover,
+.tone-settings-button[aria-expanded='true'] {
+  color: var(--demo-text) !important;
+}
+
+/* Floats over the demo, like a menu, so opening or closing it never moves
+   the controls underneath (a click outside closes it and still lands).
+   Two compact rows, so it fits inside short embeds. */
+.tone-settings-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 3;
+  box-sizing: border-box;
+  width: min(460px, calc(100vw - 32px));
+  margin-top: 0 !important;
+  padding: 10px 12px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--demo-surface) !important;
+  border: 1px solid var(--demo-border);
+  box-shadow: 0 8px 24px #0000001f;
+}
+
+.tone-settings-panel button,
+.tone-settings-panel select,
+.tone-settings-panel input[type='number'] {
+  min-height: 36px;
+  padding: 0 10px;
+}
+
+.tone-settings-frequency {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tone-settings-frequency label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tone-settings-frequency input[type='range'] {
+  flex: 1;
+  min-width: 80px;
+}
+
+.tone-settings-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.tone-settings-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.tone-settings-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* --- Panels and graphs --------------------------------------------------- */
+
+.demo-panel {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: var(--demo-panel);
+}
+
+.demo-panel-head {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-bottom: 8px;
+}
+
+.demo-panel-head span {
+  color: var(--demo-muted);
+  font-size: 14px;
+}
+
+.demo-rows-head {
+  margin-top: 20px;
+}
+
+.waveform {
+  display: block;
+  width: 100%;
+}
+
+.waveform-zero {
+  stroke: var(--demo-zero);
+  stroke-width: 1;
+}
+
+.waveform-line {
+  fill: none;
+  stroke: var(--demo-line);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.waveform-muted .waveform-line {
+  stroke: var(--demo-line-muted);
+  stroke-dasharray: 4 4;
+}
+
+/* --- Demo index ---------------------------------------------------------- */
+
+.demo-index h1 {
+  font-size: 32px;
+  margin: 8px 0 8px;
+}
+
+.demo-index-intro {
+  color: var(--demo-muted);
+  max-width: 640px;
+}
+
+.demo-index-list {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+}
+
+.demo-index-list h2 {
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+
+.demo-index-list a {
+  color: var(--demo-accent);
+}
+
+.demo-index-url {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.demo-index-url code {
+  overflow-wrap: anywhere;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--demo-surface);
+}
+
+.demo-index-heading {
+  margin: 20px 0 8px;
+  font-size: 16px;
+}
+
+.demo-index-variants {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.demo-index-variants .demo-index-url {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.demo-index-parameters {
+  margin-top: 16px;
+  border-collapse: collapse;
+  font-size: 14px;
+  width: 100%;
+}
+
+.demo-index-parameters caption {
+  text-align: left;
+  font-weight: 600;
+  padding-bottom: 6px;
+}
+
+.demo-index-parameters th,
+.demo-index-parameters td {
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 12px 6px 0;
+  border-top: 1px solid var(--demo-border);
+}
+
+.demo-index-parameters thead th {
+  color: var(--demo-muted);
+  font-weight: 600;
+}
+
+/* --- Stepper (− value +) ----------------------------------------------- */
+
+.demo-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-stepper button {
+  min-width: 44px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.demo-stepper button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.demo-stepper output {
+  min-width: 5.5em;
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Octave circle ------------------------------------------------------- */
+
+.octave-circle {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.octave-circle-ring {
+  fill: none;
+  stroke: var(--demo-border);
+  stroke-width: 2;
+}
+
+.octave-circle-gap {
+  fill: var(--demo-muted);
+  font-size: 12px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.octave-circle-tick {
+  stroke: var(--demo-border);
+  stroke-width: 2;
+}
+
+.octave-circle-note {
+  cursor: pointer;
+  outline: none;
+}
+
+.octave-circle-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.octave-circle-focus {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 3;
+}
+
+.octave-circle-note:focus-visible .octave-circle-focus {
+  stroke: var(--demo-accent);
+}
+
+.octave-circle-note-playing .octave-circle-focus {
+  stroke: var(--demo-text);
+  stroke-width: 4;
+}
+
+/* --- Tables -------------------------------------------------------------- */
+
+/* Wide tables scroll sideways in their own box instead of widening the page. */
+.demo-table-scroll {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+/* --- Scale generator ------------------------------------------------------ */
+
+/* The circle and the table side by side where there's room, stacked otherwise. */
+.scale-generator-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 32px;
+}
+
+.scale-generator-circle {
+  flex: 1 1 300px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.scale-generator-statistics {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+/* A card about as tall as the circle, fitting the default 12 sizes; longer
+   tables scroll inside it. */
+.scale-generator-table-scroll {
+  max-height: 404px;
+  overflow-y: auto;
+  border: 1px solid var(--demo-border);
+  border-radius: 8px;
+  background: var(--demo-surface);
+}
+
+.scale-generator-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Column headings stay put while the rows scroll under them. */
+.scale-generator-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--demo-surface);
+  white-space: normal;
+  vertical-align: bottom;
+}
+
+.scale-generator-table th,
+.scale-generator-table td {
+  padding: 4px 8px;
+  border-top: 1px solid var(--demo-zero);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.scale-generator-table th[scope='row'] {
+  text-align: left;
+  font-weight: 600;
+  padding-right: 16px;
+}
+
+.scale-generator-table thead th {
+  color: var(--demo-muted);
+}
+
+.scale-generator-table tr.is-current > * {
+  background: var(--demo-panel);
+  color: var(--demo-text);
+  font-weight: 600;
+}
+
+/* --- Harmonic tone demo -------------------------------------------------- */
+
+.harmonic-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.harmonic-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 190px) 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  border-top: 1px solid var(--demo-zero);
+}
+
+.harmonic-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.harmonic-toggle input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--demo-accent);
+}
+
+.harmonic-toggle > span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.harmonic-title {
+  font-weight: 600;
+}
+
+.harmonic-detail {
+  color: var(--demo-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.harmonic-row-off .harmonic-title {
+  color: var(--demo-muted);
+  font-weight: 400;
+}
+
+.harmonic-solo {
+  min-width: 64px;
+}
+
+@media (max-width: 560px) {
+  /* Label and Solo share the first line; the graph gets the full width below. */
+  .harmonic-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'toggle solo'
+      'plot plot';
+    gap: 4px 12px;
+  }
+
+  .harmonic-toggle {
+    grid-area: toggle;
+  }
+
+  .harmonic-row .waveform {
+    grid-area: plot;
+  }
+
+  .harmonic-solo {
+    grid-area: solo;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo * {
+    transition: none !important;
+  }
+}
+
+/* --- Number line ---------------------------------------------------------- */
+
+/* Step buttons, then the step's caption beside them (below, if it doesn't fit). */
+.number-line-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.number-line-caption {
+  flex: 1 1 240px;
+  font-weight: 600;
+}
+
+/* Narrow screens scroll the line sideways instead of shrinking its labels. */
+.number-line-scroll {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+.number-line {
+  display: block;
+}
+
+.number-line-axis,
+.number-line-tick {
+  stroke: var(--demo-text);
+  stroke-width: 2;
+}
+
+.number-line-axis-arrow {
+  fill: var(--demo-text);
+}
+
+.number-line-arc {
+  fill: none;
+  stroke: var(--demo-muted);
+  stroke-width: 1.5;
+}
+
+.number-line-arrowhead {
+  fill: var(--demo-muted);
+}
+
+.number-line-gap,
+.number-line-value {
+  font-size: 12px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.number-line-gap {
+  fill: var(--demo-muted);
+}
+
+.number-line-value {
+  fill: var(--demo-text);
+}
+
+.number-line-note {
+  cursor: pointer;
+  outline: none;
+}
+
+.number-line-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.number-line-focus {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 3;
+}
+
+.number-line-note:focus-visible .number-line-focus {
+  stroke: var(--demo-accent);
+}
+
+.number-line-note-playing .number-line-focus {
+  stroke: var(--demo-text);
+  stroke-width: 4;
+}
+
+/* --- Note buttons -------------------------------------------------------- */
+
+.note-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Each button names its notes in their pitch colors, with the hertz below. */
+.demo .note-button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 0;
+  padding: 10px 14px;
+}
+
+/* Playing: outlined rather than filled, so the note colors stay visible. */
+.demo .note-button[aria-pressed='true'] {
+  background: var(--demo-surface);
+  color: inherit;
+  border-color: var(--demo-text);
+  box-shadow: inset 0 0 0 1px var(--demo-text);
+  font-weight: inherit;
+}
+
+.note-button-names {
+  display: inline-flex;
+  align-items: center;
+}
+
+.note-button-and {
+  margin: 0 6px;
+  color: var(--demo-muted);
+}
+
+.note-button-swatch {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.note-button-hertz {
+  font-size: 13px;
+  color: var(--demo-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Playing notes -------------------------------------------------------- */
+
+/* A note that's sounding pulses: a ring in its color grows and fades, over
+   and over. Buttons do the same with a glow. */
+.note-pulse {
+  fill: none;
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: note-pulse 1s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes note-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.demo .is-sounding {
+  animation: control-pulse 1s ease-out infinite;
+}
+
+@keyframes control-pulse {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--demo-accent) 55%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+
+/* Without motion: a steady ring and glow instead. */
+@media (prefers-reduced-motion: reduce) {
+  .note-pulse {
+    animation: none;
+    transform: scale(1.35);
+    opacity: 0.6;
+  }
+
+  .demo .is-sounding {
+    animation: none;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--demo-accent) 45%, transparent);
+  }
+}
+
+/* The home octave along a number line: a thin, light band in α's color. */
+.number-line-band {
+  opacity: 0.35;
+}
+
+/* How a step-through's new note got there: an arc from the note it came
+   from, labeled with the interval, stretching as the note slides. */
+.number-line-move {
+  fill: none;
+  stroke: var(--demo-accent);
+  stroke-width: 2;
+}
+
+.number-line-move-arrowhead {
+  fill: var(--demo-accent);
+}
+
+.number-line-move-label {
+  fill: var(--demo-accent);
+  font-size: 13px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-variant-numeric: tabular-nums;
+}

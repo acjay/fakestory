@@ -1,0 +1,27 @@
+<div class="svg-container">
+<svg viewBox="0 0 600 150" width="100%" height="100%">
+
+  <!-- =============  Arrowhead Definitions ============= -->
+  <defs>
+    <!-- Left arrow (faces left) -->
+    <marker id="arrowhead-left" markerWidth="10" markerHeight="10" refX="0" refY="5" orient="auto">
+      <polygon points="10 0, 0 5, 10 10" fill="black" />
+    </marker>
+    <!-- Right arrow (faces right) -->
+    <marker id="arrowhead-right" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto">
+      <polygon points="0 0, 10 5, 0 10" fill="black" />
+    </marker>
+  </defs>
+
+  
+  <!-- Main arrow line -->
+  <line 
+    x1="10" y1="75"
+    x2="590" y2="75"
+    class="main-line"
+  />
+  
+  <!-- Group to hold ticks -->
+  <g id="ticks"></g>
+</svg>
+</div>
