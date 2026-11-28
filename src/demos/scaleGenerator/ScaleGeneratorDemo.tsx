@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { DemoError } from '../DemoError';
 import { DemoHeader } from '../DemoHeader';
+import { useModifierKeys } from '../useModifierKeys';
 import { useNotePlayer } from '../useNotePlayer';
 import { OctaveCircle, type CircleNote, type Modifiers } from '../views/OctaveCircle';
 import {
@@ -29,6 +30,11 @@ export function ScaleGeneratorDemo({ params, title }: { params: URLSearchParams;
   const [size, setSize] = useState(() => sizeFromParams(params));
   const [octave, setOctave] = useState<OctaveChoice>(0);
   const { tone, playing, error, play } = useNotePlayer();
+
+  // While Shift and/or Ctrl/⌘ are held, the octave they'd play in instead
+  // of the chosen one, highlighted on the control.
+  const held = useModifierKeys();
+  const overridden = held.shift || held.down ? octaveFor(octave, held) : null;
 
   const notes = circleNotes(size);
   const table = statisticsTable(size);
@@ -65,7 +71,13 @@ export function ScaleGeneratorDemo({ params, title }: { params: URLSearchParams;
           title={OCTAVE_SHORTCUTS}
         >
           {([-1, 0, 1] as OctaveChoice[]).map((choice) => (
-            <button key={choice} type="button" aria-pressed={octave === choice} onClick={() => setOctave(choice)}>
+            <button
+              key={choice}
+              type="button"
+              className={overridden === choice ? 'is-overridden' : undefined}
+              aria-pressed={octave === choice}
+              onClick={() => setOctave(choice)}
+            >
               {OCTAVE_NAMES[choice]}
             </button>
           ))}

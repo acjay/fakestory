@@ -231,6 +231,14 @@
   border-radius: 0 999px 999px 0;
 }
 
+/* The octave a held shortcut key plays in instead of the chosen one. */
+.demo .demo-segmented-compact button.is-overridden {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--demo-accent);
+  outline-offset: 1px;
+}
+
 /* --- Tone settings ------------------------------------------------------- */
 
 .tone-settings {
