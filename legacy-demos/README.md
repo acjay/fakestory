@@ -38,7 +38,7 @@ Each pen and the rebuilt demo that replaces it. To migrate an embed, replace the
 | `two-note-harmonies` | `/demos/note-buttons/?buttons=α1,γ1\|α1,β1` | Rebuilt |
 | `our-happy-interval-number-line-hertz` | `/demos/number-line/?notes=α0,β0,α1,β1,α2,β2&scale=hertz` | Rebuilt |
 | `our-happy-interval-number-line-cents` | `/demos/number-line/?notes=α0,β0,α1,β1,α2,β2` (the default) | Rebuilt; its notes now play, like the others |
-| `3-s-a-crowd` | The "3’s a crowd" variant on `/demos/`: `/demos/number-line/?notes=α1\|α2\|β1\|γ2\|γ1&captions=…` | Rebuilt, with α2 as its own step and a caption for each step |
+| `3-s-a-crowd` | The "3’s a crowd" variant on `/demos/`: `/demos/number-line/?notes=α1\|α2,home\|β1\|γ2\|γ1&captions=…` | Rebuilt, with α2 as its own step and a caption for each step |
 | `the-quest-for-even-spacing` | `/demos/number-line/?fifths=5&gaps=1` | Rebuilt |
 | `onwards-to-7-tones-linear` | `/demos/number-line/?fifths=7&gaps=1` | Rebuilt |
 | `what-do-we-want-more-evenness` | `/demos/number-line/?fifths=12&gaps=1` | Rebuilt |

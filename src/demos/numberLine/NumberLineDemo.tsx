@@ -41,14 +41,6 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
   const positions = config.notes.map((lineNote) => positionValue(lineNote, scale));
   const domain: [number, number] = [Math.min(...positions), Math.max(...positions)];
 
-  // The home octave, α1 up to α2, highlighted in α's color.
-  const homeOctave = {
-    from: scale === 'cents' ? 0 : 1,
-    to: scale === 'cents' ? CENTS_PER_OCTAVE : 2,
-    color: colorForCents(0).css,
-    label: 'The home octave, from α1 to α2',
-  };
-
   // Stepping forward, each new note slides out of the note it comes from,
   // its arc stretching and its interval counting up as it goes.
   const lastStep = useRef(step);
@@ -90,6 +82,25 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
       isMoving: true,
     };
   });
+
+  // The home octave, α1 up to α2, highlighted in α's color from its step on.
+  // If α1 or α2 is sliding into place in that step, the band's end goes with it.
+  const homeEnds = scale === 'cents' ? [0, CENTS_PER_OCTAVE] : [1, 2];
+  const endAt = (end: number) => {
+    const sliding = marks.find(
+      (mark) => mark.isMoving && arrivals.some((a) => a.note.id === mark.id && positionValue(a.note, scale) === end),
+    );
+    return sliding?.position ?? end;
+  };
+  const homeOctave =
+    config.homeStep !== null && step >= config.homeStep
+      ? {
+          from: config.homeStep === step ? endAt(homeEnds[0]) : homeEnds[0],
+          to: config.homeStep === step ? endAt(homeEnds[1]) : homeEnds[1],
+          color: colorForCents(0).css,
+          label: 'The home octave, from α1 to α2',
+        }
+      : undefined;
 
   const moves = arrivals.map((arrival) => ({
     id: arrival.note.id,

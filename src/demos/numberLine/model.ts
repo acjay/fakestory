@@ -7,6 +7,7 @@
  *
  *   ?notes=α0,β0,α1,β1,α2,β2    these notes, by name and octave
  *   ?notes=α1|β1|α2,γ2|γ1       a step-through: `|` separates steps
+ *   ?notes=α1|α2,home|β1        `home` highlights the home octave, α1 to α2, from its step on
  *   ?fifths=5                   the first 5 pitch classes in the home octave, plus α2
  *   &captions=Start with α1.|…  what each step says, `|` between steps
  *   &scale=hertz                space by frequency instead of cents
@@ -52,6 +53,9 @@ export type LineConfig = {
   /** The author's text for each step, if given; empty where it's missing. */
   captions: string[];
 
+  /** The step from which the home octave (α1 to α2) is highlighted, or null for none. */
+  homeStep: number | null;
+
   scale: Scale;
   showGaps: boolean;
 };
@@ -69,16 +73,22 @@ export function configFromParams(params: URLSearchParams): LineConfig {
   const scale: Scale = params.get('scale') === 'hertz' ? 'hertz' : 'cents';
   const showGaps = params.get('gaps') === '1';
 
-  const fromNotes = params.has('notes') ? notesFromSteps(params.get('notes') ?? '') : [];
+  const fromNotes = params.has('notes') ? parseSteps(params.get('notes') ?? '') : { notes: [], homeStep: null };
   const fifths = Number(params.get('fifths'));
   const fromFifths =
     Number.isInteger(fifths) && fifths >= MIN_FIFTHS && fifths <= MAX_FIFTHS ? notesFromFifths(fifths) : [];
 
-  const notes = fromNotes.length > 0 ? fromNotes : fromFifths.length > 0 ? fromFifths : notesFromSteps(DEFAULT_NOTES);
-  const stepCount = Math.max(...notes.map((lineNote) => lineNote.step)) + 1;
+  const chosen =
+    fromNotes.notes.length > 0
+      ? fromNotes
+      : fromFifths.length > 0
+        ? { notes: fromFifths, homeStep: null }
+        : parseSteps(DEFAULT_NOTES);
+  const { notes, homeStep } = chosen;
+  const stepCount = Math.max(homeStep ?? 0, ...notes.map((lineNote) => lineNote.step)) + 1;
   const captions = (params.get('captions') ?? '').split('|').map((caption) => caption.trim());
 
-  return { notes, stepCount, captions, scale, showGaps };
+  return { notes, stepCount, captions, homeStep, scale, showGaps };
 }
 
 /**
@@ -87,15 +97,30 @@ export function configFromParams(params: URLSearchParams): LineConfig {
  * steps left empty by that.
  */
 export function notesFromSteps(text: string): LineNote[] {
+  return parseSteps(text).notes;
+}
+
+/** The word in `notes` that highlights the home octave from its step on. */
+export const HOME_OCTAVE_TOKEN = 'home';
+
+/** Notes and the home octave's step from a `notes` list, e.g. "α1|α2,home|β1". */
+export function parseSteps(text: string): { notes: LineNote[]; homeStep: number | null } {
   const seen = new Set<string>();
   const notes: LineNote[] = [];
+  let homeStep: number | null = null;
   let step = 0;
 
   for (const group of text.split('|')) {
     let added = false;
 
-    for (const token of group.split(',')) {
-      const parsed = parseNote(token.trim());
+    for (const token of group.split(',').map((part) => part.trim())) {
+      if (token === HOME_OCTAVE_TOKEN && homeStep === null) {
+        homeStep = step;
+        added = true;
+        continue;
+      }
+
+      const parsed = parseNote(token);
       if (parsed && !seen.has(noteLabel(parsed))) {
         seen.add(noteLabel(parsed));
         notes.push(lineNote(parsed, step));
@@ -108,7 +133,7 @@ export function notesFromSteps(text: string): LineNote[] {
     }
   }
 
-  return notes;
+  return { notes, homeStep };
 }
 
 /** The first `count` pitch classes, each a fifth above the last, folded into the home octave, plus α2 to close it. */
@@ -172,7 +197,11 @@ export function visibleNotes(config: LineConfig, step: number): LineNote[] {
  */
 export function stepCaption(config: LineConfig, step: number): string {
   const added = config.notes.filter((lineNote) => lineNote.step === step).map((lineNote) => lineNote.id);
-  const text = config.captions[step] || `${step === 0 ? 'Start with' : 'Add'} ${added.join(' and ')}.`;
+  const fallback =
+    added.length > 0
+      ? `${step === 0 ? 'Start with' : 'Add'} ${added.join(' and ')}.`
+      : 'Highlight the home octave, from α1 to α2.';
+  const text = config.captions[step] || fallback;
 
   return `Step ${step + 1} of ${config.stepCount}: ${text}`;
 }

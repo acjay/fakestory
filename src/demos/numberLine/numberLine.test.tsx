@@ -93,6 +93,18 @@ describe('step captions', () => {
   });
 });
 
+describe('the home octave in the notes list', () => {
+  it('starts from the step that lists home, which can be a step of its own', () => {
+    expect(config('notes=α1|α2,home|β1')).toMatchObject({ homeStep: 1, stepCount: 3 });
+    expect(config('notes=α1,α2|home')).toMatchObject({ homeStep: 1, stepCount: 2 });
+    expect(config('notes=α0,α1,α2').homeStep).toBeNull();
+  });
+
+  it('says so in a step that only highlights it', () => {
+    expect(stepCaption(config('notes=α1,α2|home'), 1)).toBe('Step 2 of 2: Highlight the home octave, from α1 to α2.');
+  });
+});
+
 describe('sliding notes in a step-through', () => {
   const walkthrough = config('notes=α1|α2|β1|γ2|γ1');
   const sources = (step: number) =>
@@ -169,12 +181,17 @@ describe('number line demo', () => {
     expect(render()).toMatch(/<\/svg><\/div><p class="demo-status">Click a note to play it.<\/p>/);
   });
 
-  it('highlights the home octave, from α1 to α2, in α’s color', () => {
-    const html = render();
+  it('highlights the home octave, from α1 to α2, in α’s color, when asked', () => {
+    const band =
+      /<rect class="number-line-band"[^>]*fill="#[0-9a-f]{6}"><title>The home octave, from α1 to α2<\/title>/;
 
-    expect(html).toMatch(
-      /<rect class="number-line-band"[^>]*fill="#[0-9a-f]{6}"><title>The home octave, from α1 to α2<\/title>/,
-    );
+    expect(render('notes=α0,α1,α2,home')).toMatch(band);
+    expect(render('notes=α0,α1,α2')).not.toContain('number-line-band');
+    expect(render('fifths=5')).not.toContain('number-line-band');
+  });
+
+  it('only highlights it from its step on in a step-through', () => {
+    expect(render('notes=α1|α2,home|β1')).not.toContain('number-line-band'); // starts at step 1
   });
 
   it('labels gaps, and describes them for screen readers', () => {
