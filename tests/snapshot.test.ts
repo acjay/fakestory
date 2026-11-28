@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { publishedStory, serializeStory } from '../scripts/snapshot.ts';
+import { isSignedUrl, publishedStory, serializeStory } from '../scripts/snapshot.ts';
 import type { Block, Story } from '../src/model.ts';
 
 /** A block as Notion's API returns it, with all its bookkeeping. */
@@ -70,6 +70,35 @@ describe('published snapshot', () => {
 
     expect(published.image).toEqual({ type: 'file', file: {}, caption: [] });
     expect(kept.image).toEqual({ type: 'external', external: { url: 'https://example.com/a.png' }, caption: [] });
+  });
+
+  it('drops signed links to uploaded files that Notion doesn’t mark as expiring, e.g. embedded HTML', () => {
+    const uploadedEmbed = fromNotion('emb', {
+      type: 'embed',
+      embed: {
+        url: 'https://prod-files-secure.s3.us-west-2.amazonaws.com/a/b/demo.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=X&X-Amz-Security-Token=T&X-Amz-Signature=S',
+        caption: [],
+      },
+    });
+    const ourDemo = fromNotion('ours', {
+      type: 'embed',
+      embed: { url: 'https://fakestory.alanjay1.workers.dev/demos/number-line/?fifths=5', caption: [] },
+    });
+
+    const [dropped, kept] = publishedStory(story([uploadedEmbed, ourDemo])).blocks;
+
+    expect(dropped.embed).toEqual({ caption: [] });
+    expect(kept.embed).toEqual({
+      url: 'https://fakestory.alanjay1.workers.dev/demos/number-line/?fifths=5',
+      caption: [],
+    });
+  });
+
+  it('recognizes signed links, and nothing else', () => {
+    expect(isSignedUrl('https://bucket.s3.amazonaws.com/f.html?X-Amz-Signature=abc')).toBe(true);
+    expect(isSignedUrl('https://codepen.io/acjay/embed/WNVQWKx?default-tab=result')).toBe(false);
+    expect(isSignedUrl('not a url')).toBe(false);
+    expect(isSignedUrl(undefined)).toBe(false);
   });
 
   it('keeps footnotes, title and glossary as they are', () => {
