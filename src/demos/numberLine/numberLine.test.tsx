@@ -6,11 +6,11 @@ import {
   gapLabel,
   notesFromFifths,
   notesFromSteps,
-  parseNote,
   stepCaption,
   valueLabel,
   visibleNotes,
 } from './model';
+import { parseNote } from '../../music/notes';
 import { NumberLineDemo } from './NumberLineDemo';
 
 const config = (query: string) => configFromParams(new URLSearchParams(query));

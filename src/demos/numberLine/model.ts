@@ -15,8 +15,8 @@
 
 import { colorForCents, type PitchColor } from '../../music/colors';
 import { DEFAULT_BASE_FREQUENCY } from '../../music/pitch';
-import { GREEK_NAMES, pythagoreanPitchClasses } from '../../music/pitchClasses';
-import { HOME_OCTAVE, note, noteCents, noteLabel, noteRatio, type Note } from '../../music/notes';
+import { pythagoreanPitchClasses } from '../../music/pitchClasses';
+import { HOME_OCTAVE, note, noteCents, noteLabel, noteRatio, parseNote, type Note } from '../../music/notes';
 
 export type Scale = 'cents' | 'hertz';
 
@@ -111,18 +111,6 @@ export function notesFromFifths(count: number): LineNote[] {
   const notes = pitchClasses.map((pitchClass) => lineNote(note(pitchClass), 0));
 
   return [...notes, lineNote(note(pitchClasses[0], HOME_OCTAVE + 1), 0)];
-}
-
-/** A note name like "γ2": a Greek letter for the pitch class, then the octave. */
-export function parseNote(token: string): Note | null {
-  const match = token.match(/^(\p{Script=Greek})(-?\d+)$/u);
-  const index = match ? GREEK_NAMES.indexOf(match[1]) : -1;
-  if (!match || index === -1) {
-    return null;
-  }
-
-  const pitchClass = pythagoreanPitchClasses(index + 1)[index];
-  return note(pitchClass, Number(match[2]));
 }
 
 function lineNote(n: Note, step: number): LineNote {

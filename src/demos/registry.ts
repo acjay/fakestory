@@ -13,6 +13,7 @@
 import type { ComponentType } from 'react';
 
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
+import { NoteButtonsDemo } from './noteButtons/NoteButtonsDemo';
 import { NumberLineDemo } from './numberLine/NumberLineDemo';
 import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
 
@@ -136,6 +137,27 @@ export const DEMOS: Record<string, DemoEntry> = {
       { name: 'More evenness: 12 notes', title: 'More evenness', query: 'fifths=12&gaps=1' },
     ],
     Component: NumberLineDemo,
+  },
+
+  'note-buttons': {
+    title: 'Note buttons',
+    description: 'Buttons that play a note, or a few notes together, in the reader’s tone.',
+    parameters: [
+      {
+        name: 'buttons',
+        values: 'e.g. α1,γ1|α1,β1',
+        description:
+          'Notes by Greek letter and octave. Use | between buttons and , to join the notes one button plays together. Default α1.',
+      },
+    ],
+    // The four CodePen pens this demo replaces (see legacy-demos/README.md).
+    variants: [
+      { name: 'Our base tone', title: 'Our base tone', query: 'buttons=α1' },
+      { name: 'An octave up', title: 'An octave up', query: 'buttons=α2' },
+      { name: 'An octave down', title: 'An octave down', query: 'buttons=α0' },
+      { name: 'Two-note harmonies', title: 'Two-note harmonies', query: 'buttons=α1,γ1|α1,β1' },
+    ],
+    Component: NoteButtonsDemo,
   },
 };
 
