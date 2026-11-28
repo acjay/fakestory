@@ -713,3 +713,57 @@
   stroke: var(--demo-text);
   stroke-width: 4;
 }
+
+/* --- Note buttons -------------------------------------------------------- */
+
+.note-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Each button names its notes in their pitch colors, with the hertz below. */
+.demo .note-button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 0;
+  padding: 10px 14px;
+}
+
+/* Playing: outlined rather than filled, so the note colors stay visible. */
+.demo .note-button[aria-pressed='true'] {
+  background: var(--demo-surface);
+  color: inherit;
+  border-color: var(--demo-text);
+  box-shadow: inset 0 0 0 1px var(--demo-text);
+  font-weight: inherit;
+}
+
+.note-button-names {
+  display: inline-flex;
+  align-items: center;
+}
+
+.note-button-and {
+  margin: 0 6px;
+  color: var(--demo-muted);
+}
+
+.note-button-swatch {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.note-button-hertz {
+  font-size: 13px;
+  color: var(--demo-muted);
+  font-variant-numeric: tabular-nums;
+}

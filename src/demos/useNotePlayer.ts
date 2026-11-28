@@ -1,5 +1,5 @@
 /**
- * Plays one note at a time for a demo, in the reader's shared tone, and keeps
+ * Plays one note or chord at a time for a demo, in the reader's shared tone, and keeps
  * track of what's sounding so the demo can highlight it and announce it.
  */
 
@@ -28,13 +28,17 @@ export function useNotePlayer() {
   // Stop when the demo goes away.
   useEffect(() => () => sound.current?.stop(), []);
 
-  /** Play a note, struck like a string, replacing whatever this demo was playing. */
-  async function play(frequency: number, now: Playing) {
+  /** Play a note or chord, struck like a string, replacing whatever this demo was playing. */
+  async function play(frequencies: number | number[], now: Playing) {
     sound.current?.stop();
     setError(null);
 
     try {
-      const started = await audioEngine().play([frequency], { owner, voice: toneVoice(tone), articulation: 'struck' });
+      const started = await audioEngine().play([frequencies].flat(), {
+        owner,
+        voice: toneVoice(tone),
+        articulation: 'struck',
+      });
       sound.current = started;
       setPlaying(now);
 

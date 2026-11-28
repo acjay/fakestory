@@ -32,10 +32,10 @@ Each pen and the rebuilt demo that replaces it. To migrate an embed, replace the
 
 | Pen | Replacement | Status |
 | --- | --- | --- |
-| `our-base-tone` | Not yet: note buttons | To do |
-| `our-base-tone-octave-up` | Not yet: note buttons | To do |
-| `our-base-tone-octave-down` | Not yet: note buttons | To do |
-| `two-note-harmonies` | Not yet: note buttons | To do |
+| `our-base-tone` | `/demos/note-buttons/?buttons=α1` (the default) | Rebuilt |
+| `our-base-tone-octave-up` | `/demos/note-buttons/?buttons=α2` | Rebuilt |
+| `our-base-tone-octave-down` | `/demos/note-buttons/?buttons=α0` | Rebuilt |
+| `two-note-harmonies` | `/demos/note-buttons/?buttons=α1,γ1\|α1,β1` | Rebuilt |
 | `our-happy-interval-number-line-hertz` | `/demos/number-line/?notes=α0,β0,α1,β1,α2,β2&scale=hertz` | Rebuilt |
 | `our-happy-interval-number-line-cents` | `/demos/number-line/?notes=α0,β0,α1,β1,α2,β2` (the default) | Rebuilt; its notes now play, like the others |
 | `3-s-a-crowd` | The "3’s a crowd" variant on `/demos/`: `/demos/number-line/?notes=α1\|α2\|β1\|γ2\|γ1&captions=…` | Rebuilt, with α2 as its own step and a caption for each step |
@@ -46,7 +46,8 @@ Each pen and the rebuilt demo that replaces it. To migrate an embed, replace the
 | `music-table-with-arcs` | Not yet: interval table | To do |
 | `the-ever-tightening-circle` | `/demos/scale-generator/` | Rebuilt |
 
-"Rebuilt" means the demo exists; the Notion embed still has to be swapped. Changes from the pens:
+"Rebuilt" means the demo exists; the Notion embed still has to be swapped. Each rebuilt pen is a variant on the `/demos/` index, with its embed URL ready to copy. Changes from the pens:
+- **Note buttons:** each button names its notes in their pitch colors, with the hertz below, following the reader's tone. Notes are struck in the shared tone rather than the pens' own pluck synth, like every other demo.
 - **Number lines:** notes are colored by pitch class (every γ the same color in every octave), rather than ad hoc colors. Labels name the octave. Every note plays, in the reader's tone. The step-through starts at step 1 with ← and → buttons, and the line keeps its full text size on phones, scrolling sideways when notes are close.
 
 ## What they share

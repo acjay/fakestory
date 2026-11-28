@@ -7,7 +7,7 @@
  */
 
 import { DEFAULT_BASE_FREQUENCY, ratioToCents } from './pitch';
-import type { PitchClass } from './pitchClasses';
+import { GREEK_NAMES, pythagoreanPitchClasses, type PitchClass } from './pitchClasses';
 
 /** The home octave, which contains the base frequency. */
 export const HOME_OCTAVE = 1;
@@ -38,4 +38,20 @@ export function noteCents(n: Note): number {
 
 export function noteFrequency(n: Note, baseFrequency = DEFAULT_BASE_FREQUENCY): number {
   return baseFrequency * noteRatio(n);
+}
+
+/**
+ * A note from its name, e.g. "γ2": a Greek letter for the pitch class (its
+ * place in the stack of fifths), then the octave. Used by demo URLs. Returns
+ * null for anything else.
+ */
+export function parseNote(name: string): Note | null {
+  const match = name.match(/^(\p{Script=Greek})(-?\d+)$/u);
+  const index = match ? GREEK_NAMES.indexOf(match[1]) : -1;
+  if (!match || index === -1) {
+    return null;
+  }
+
+  const pitchClass = pythagoreanPitchClasses(index + 1)[index];
+  return note(pitchClass, Number(match[2]));
 }

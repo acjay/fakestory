@@ -6,6 +6,7 @@ import type { Block } from '../model';
 import { Reader } from '../Reader';
 import { DemoIndex } from './DemoIndex';
 import { HarmonicToneDemo } from './harmonicTone/HarmonicToneDemo';
+import { NoteButtonsDemo } from './noteButtons/NoteButtonsDemo';
 import { NumberLineDemo } from './numberLine/NumberLineDemo';
 import { ScaleGeneratorDemo } from './scaleGenerator/ScaleGeneratorDemo';
 import { DEMOS, demoFromUrl, demoTitle, TITLE_PARAMETER } from './registry';
@@ -147,6 +148,7 @@ describe('demo header', () => {
     renderToStaticMarkup(<HarmonicToneDemo params={new URLSearchParams('')} title="Test" />),
     renderToStaticMarkup(<ScaleGeneratorDemo params={new URLSearchParams('')} title="Test" />),
     renderToStaticMarkup(<NumberLineDemo params={new URLSearchParams('')} title="Test" />),
+    renderToStaticMarkup(<NoteButtonsDemo params={new URLSearchParams('')} title="Test" />),
   ];
 
   it('starts every demo with "Demo:" and its title', () => {
