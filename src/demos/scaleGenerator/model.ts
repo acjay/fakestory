@@ -3,7 +3,8 @@
  *
  * The reader grows a scale one fifth at a time: each new note is a fifth
  * above the last, folded back into the octave. The circle shows the notes;
- * the table shows, for every size so far, how evenly they divide the octave.
+ * the table shows, for every size so far, how evenly they divide the octave:
+ * one row per size, so it sits beside the circle.
  */
 
 import { colorForCents } from '../../music/colors';
@@ -17,9 +18,6 @@ export const MIN_SIZE = 1;
 export const MAX_SIZE = 53;
 
 export const DEFAULT_SIZE = 12;
-
-/** The table shows this many scale sizes per row group, so it fits narrow screens. */
-export const TABLE_GROUP = 12;
 
 /** Which octave a note is played in, relative to the home octave (α1 = the base frequency). */
 export type OctaveChoice = -1 | 0 | 1;
@@ -43,18 +41,12 @@ export function circleNotes(size: number): CircleNote[] {
   }));
 }
 
-/** Gap statistics for every scale size from 1 to `size`, in table groups. */
-export function statisticsTable(size: number): { size: number; statistics: GapStatistics }[][] {
-  const rows = Array.from({ length: size }, (_, i) => ({
+/** Gap statistics for every scale size from 1 to `size`: one table row each. */
+export function statisticsTable(size: number): { size: number; statistics: GapStatistics }[] {
+  return Array.from({ length: size }, (_, i) => ({
     size: i + 1,
     statistics: gapStatistics(pythagoreanPitchClasses(i + 1)),
   }));
-
-  const groups = [];
-  for (let start = 0; start < rows.length; start += TABLE_GROUP) {
-    groups.push(rows.slice(start, start + TABLE_GROUP));
-  }
-  return groups;
 }
 
 /** A note's frequency in the chosen octave. */

@@ -78,6 +78,7 @@ export const DEMOS: Record<string, DemoEntry> = {
       'Grow a scale one fifth at a time on the octave circle, hear its notes, and see how evenly they divide the octave at each size.',
     parameters: [{ name: 'size', values: '1–53', description: 'Number of notes to start with. Default 12.' }],
     variants: [
+      { name: 'The ever-tightening circle', title: 'The ever-tightening circle', query: 'size=12' },
       { name: 'Starting at 5 notes', query: 'size=5' },
       { name: 'Starting at 7 notes', query: 'size=7' },
       { name: 'Starting at 53 notes', query: 'size=53' },

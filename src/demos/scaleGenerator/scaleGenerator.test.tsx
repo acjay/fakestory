@@ -20,11 +20,11 @@ describe('scale generator model', () => {
     expect(notes[1].color).toEqual(colorForCents(notes[1].cents));
   });
 
-  it('groups the statistics table by 12 sizes', () => {
+  it('has one statistics row per scale size so far', () => {
     const table = statisticsTable(14);
 
-    expect(table.map((group) => group.length)).toEqual([12, 2]);
-    expect(table[0][4].statistics.sizes).toBe(2); // 5 notes: two gap sizes
+    expect(table.map((row) => row.size)).toEqual(Array.from({ length: 14 }, (_, i) => i + 1));
+    expect(table[4].statistics.sizes).toBe(2); // 5 notes: two gap sizes
   });
 
   it('plays notes in the chosen octave, with Shift and Ctrl/⌘ as shortcuts', () => {
@@ -59,7 +59,8 @@ describe('scale generator demo', () => {
 
     expect(html).toContain('aria-label="Add a fifth above the last note"');
     expect(html).toContain('7 notes');
-    expect(html).toMatch(/<th scope="col" aria-current="true">7<\/th>/);
+    expect(html).toMatch(/<tr class="is-current" aria-current="true"><th scope="row">7<\/th>/);
+    expect(html.match(/<th scope="row">/g)).toHaveLength(7);
   });
 
   it('moves notes a comma apart onto an inner ring so they never overlap', () => {
