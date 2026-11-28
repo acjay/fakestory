@@ -5,15 +5,27 @@
  * `model.ts`).
  */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { colorForCents } from '../../music/colors';
 import { CENTS_PER_OCTAVE } from '../../music/pitch';
 import { DemoError } from '../DemoError';
 import { DemoHeader } from '../DemoHeader';
 import { useNotePlayer } from '../useNotePlayer';
+import { useSlide } from '../useSlide';
 import { NumberLine, type LineMark } from '../views/NumberLine';
-import { configFromParams, frequencyOf, gapLabel, positionValue, stepCaption, valueLabel, visibleNotes } from './model';
+import {
+  arrivalsAt,
+  configFromParams,
+  stepSounds,
+  frequencyOf,
+  gapLabel,
+  intervalLabel,
+  positionValue,
+  stepCaption,
+  valueLabel,
+  visibleNotes,
+} from './model';
 
 import '../demo.css';
 
@@ -30,24 +42,105 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
   const positions = config.notes.map((lineNote) => positionValue(lineNote, scale));
   const domain: [number, number] = [Math.min(...positions), Math.max(...positions)];
 
-  // The home octave, α1 up to α2, highlighted in α's color.
-  const homeOctave = {
-    from: scale === 'cents' ? 0 : 1,
-    to: scale === 'cents' ? CENTS_PER_OCTAVE : 2,
-    color: colorForCents(0).css,
-    label: 'The home octave, from α1 to α2',
-  };
+  // Stepping forward, each new note slides out of the note it comes from,
+  // its arc stretching and its interval counting up as it goes.
+  const lastStep = useRef(step);
+  const isForward = step > lastStep.current;
+  useEffect(() => {
+    lastStep.current = step;
+  }, [step]);
 
-  const marks: LineMark[] = shown.map((lineNote) => ({
-    id: lineNote.id,
-    label: lineNote.id,
-    position: positionValue(lineNote, scale),
-    value: valueLabel(lineNote, scale, tone.baseFrequency),
-    color: lineNote.color,
+  const arrivals = arrivalsAt(config, step);
+  const longest = Math.max(0, ...arrivals.map((arrival) => Math.abs(arrival.cents)));
+  const progress = useSlide(step, isForward && arrivals.length > 0, slideDuration(longest));
+  const along = (from: number, to: number) => from + (to - from) * progress;
+
+  const marks: LineMark[] = shown.map((lineNote) => {
+    const arrival = arrivals.find((candidate) => candidate.note.id === lineNote.id);
+    const position = positionValue(lineNote, scale);
+    if (!arrival || progress === 1) {
+      return {
+        id: lineNote.id,
+        label: lineNote.id,
+        position,
+        value: valueLabel(lineNote, scale, tone.baseFrequency),
+        color: lineNote.color,
+      };
+    }
+
+    // Partway: the note, and the value under it, between its source and its place.
+    const value =
+      scale === 'cents'
+        ? `${Math.round(along(arrival.from.cents, lineNote.cents))}¢`
+        : `${Math.round(along(frequencyOf(arrival.from, tone.baseFrequency), frequencyOf(lineNote, tone.baseFrequency)))} Hz`;
+
+    return {
+      id: lineNote.id,
+      label: lineNote.id,
+      position: along(positionValue(arrival.from, scale), position),
+      value,
+      color: lineNote.color,
+      isMoving: true,
+    };
+  });
+
+  // The home octave, α1 up to α2, highlighted in α's color from its step on.
+  // If α1 or α2 is sliding into place in that step, the band's end goes with it.
+  const homeEnds = scale === 'cents' ? [0, CENTS_PER_OCTAVE] : [1, 2];
+  const endAt = (end: number) => {
+    const sliding = marks.find(
+      (mark) => mark.isMoving && arrivals.some((a) => a.note.id === mark.id && positionValue(a.note, scale) === end),
+    );
+    return sliding?.position ?? end;
+  };
+  const homeOctave =
+    config.homeStep !== null && step >= config.homeStep
+      ? {
+          from: config.homeStep === step ? endAt(homeEnds[0]) : homeEnds[0],
+          to: config.homeStep === step ? endAt(homeEnds[1]) : homeEnds[1],
+          color: colorForCents(0).css,
+          label: 'The home octave, from α1 to α2',
+        }
+      : undefined;
+
+  const moves = arrivals.map((arrival) => ({
+    id: arrival.note.id,
+    from: positionValue(arrival.from, scale),
+    to: along(positionValue(arrival.from, scale), positionValue(arrival.note, scale)),
+    label: intervalLabel(arrival, scale, progress, tone.baseFrequency),
   }));
   const gaps = config.showGaps
     ? shown.slice(0, -1).map((lineNote, i) => gapLabel(lineNote, shown[i + 1], scale, tone.baseFrequency))
     : undefined;
+
+  // Stepping forward plays the step: the notes its new notes come from, then
+  // the new notes as they land. Started from the click itself, since some
+  // browsers only allow sound to start from one; the rest is scheduled.
+  const landing = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => clearTimeout(landing.current ?? undefined), []);
+
+  function goToStep(next: number) {
+    clearTimeout(landing.current ?? undefined);
+    setStep(next);
+    if (next <= step) {
+      return;
+    }
+
+    const { first, then } = stepSounds(config, next);
+    const playNotes = (notes: typeof first) =>
+      notes.length > 0 &&
+      void play(
+        notes.map((lineNote) => frequencyOf(lineNote, tone.baseFrequency)),
+        { id: notes[0].id, text: `Playing ${notes.map((lineNote) => lineNote.id).join(' & ')}` },
+      );
+
+    playNotes(first);
+    if (then.length > 0) {
+      const reduceMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+      const longestNext = Math.max(0, ...arrivalsAt(config, next).map((arrival) => Math.abs(arrival.cents)));
+      landing.current = setTimeout(() => playNotes(then), reduceMotion ? 600 : slideDuration(longestNext));
+    }
+  }
 
   function playMark(mark: LineMark) {
     const lineNote = shown.find((candidate) => candidate.id === mark.id);
@@ -72,14 +165,14 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
       {isStepped && (
         <div className="number-line-steps">
           <div className="demo-stepper" role="group" aria-label="Steps">
-            <button type="button" aria-label="Previous step" disabled={step === 0} onClick={() => setStep(step - 1)}>
+            <button type="button" aria-label="Previous step" disabled={step === 0} onClick={() => goToStep(step - 1)}>
               ←
             </button>
             <button
               type="button"
               aria-label="Next step"
               disabled={step === stepCount - 1}
-              onClick={() => setStep(step + 1)}
+              onClick={() => goToStep(step + 1)}
             >
               →
             </button>
@@ -94,6 +187,8 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
         marks={marks}
         domain={domain}
         gaps={gaps}
+        moves={moves}
+        reserveMoveSpace={isStepped}
         band={homeOctave}
         allPositions={positions}
         playingId={playing?.id}
@@ -104,4 +199,9 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
       <DemoError error={error} />
     </div>
   );
+}
+
+/** Longer intervals take a little longer to slide, within comfortable bounds. */
+function slideDuration(cents: number): number {
+  return Math.min(1400, 500 + 0.4 * cents);
 }
