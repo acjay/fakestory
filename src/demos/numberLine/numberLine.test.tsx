@@ -133,7 +133,15 @@ describe('number line demo', () => {
   });
 
   it('puts the hint to play notes below the line', () => {
-    expect(render()).toMatch(/<\/svg><\/div><p class="demo-status" role="status">Click a note to play it.<\/p>/);
+    expect(render()).toMatch(/<\/svg><\/div><p class="demo-status">Click a note to play it.<\/p>/);
+  });
+
+  it('highlights the home octave, from α1 to α2, in α’s color', () => {
+    const html = render();
+
+    expect(html).toMatch(
+      /<rect class="number-line-band"[^>]*fill="#[0-9a-f]{6}"><title>The home octave, from α1 to α2<\/title>/,
+    );
   });
 
   it('labels gaps, and describes them for screen readers', () => {

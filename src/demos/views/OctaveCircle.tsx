@@ -144,6 +144,8 @@ export function OctaveCircle({ notes, showGaps = true, playingId = null, onActiv
             }}
           >
             {isInward && <line className="octave-circle-tick" x1={ringX} y1={ringY} x2={x} y2={y} />}
+            {/* A ring pulsing out from the note while it sounds. */}
+            {isPlaying && <circle className="note-pulse" cx={x} cy={y} r={markRadius} stroke={note.color.css} />}
             <circle className="octave-circle-focus" cx={x} cy={y} r={markRadius + 4} />
             <circle cx={x} cy={y} r={markRadius} fill={note.color.css} />
             <text x={x} y={y} fill={note.color.text} fontSize={fontSize} className="octave-circle-label">

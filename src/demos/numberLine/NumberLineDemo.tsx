@@ -7,6 +7,9 @@
 
 import { useState } from 'react';
 
+import { colorForCents } from '../../music/colors';
+import { CENTS_PER_OCTAVE } from '../../music/pitch';
+import { DemoError } from '../DemoError';
 import { DemoHeader } from '../DemoHeader';
 import { useNotePlayer } from '../useNotePlayer';
 import { NumberLine, type LineMark } from '../views/NumberLine';
@@ -26,6 +29,14 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
   // Ends of the line fit every note, including ones still to come, so nothing moves as steps add notes.
   const positions = config.notes.map((lineNote) => positionValue(lineNote, scale));
   const domain: [number, number] = [Math.min(...positions), Math.max(...positions)];
+
+  // The home octave, α1 up to α2, highlighted in α's color.
+  const homeOctave = {
+    from: scale === 'cents' ? 0 : 1,
+    to: scale === 'cents' ? CENTS_PER_OCTAVE : 2,
+    color: colorForCents(0).css,
+    label: 'The home octave, from α1 to α2',
+  };
 
   const marks: LineMark[] = shown.map((lineNote) => ({
     id: lineNote.id,
@@ -83,15 +94,14 @@ export function NumberLineDemo({ params, title }: { params: URLSearchParams; tit
         marks={marks}
         domain={domain}
         gaps={gaps}
+        band={homeOctave}
         allPositions={positions}
         playingId={playing?.id}
         onActivate={playMark}
         label={description}
       />
 
-      <p className={`demo-status${error ? ' demo-error' : ''}`} role="status">
-        {error ?? playing?.text ?? 'Click a note to play it.'}
-      </p>
+      {error ? <DemoError error={error} /> : <p className="demo-status">Click a note to play it.</p>}
     </div>
   );
 }

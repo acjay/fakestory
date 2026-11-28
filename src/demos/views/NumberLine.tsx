@@ -36,6 +36,12 @@ type Props = {
   gaps?: string[];
 
   /**
+   * A stretch of the line to highlight, e.g. the home octave, in the line's
+   * units, drawn as a thin band in `color` along the axis.
+   */
+  band?: { from: number; to: number; color: string; label: string };
+
+  /**
    * Every position the line will ever show, including marks still to come in
    * a step-through. The line is made wide enough for the closest pair.
    */
@@ -59,6 +65,9 @@ const AXIS_END = 4;
 const ARROW_LENGTH = 14;
 const ARROW_HALF_WIDTH = 7;
 
+/** Half the height of the highlighted band along the line. */
+const BAND_HALF_HEIGHT = 5;
+
 /** The closest two marks may be, in pixels, before the line scrolls instead. */
 const MIN_SPACING = 36;
 
@@ -71,7 +80,7 @@ const labelWidth = (text: string) => text.length * 6.5 + 2;
 /** Lower rows for labels that would overlap their neighbor's, in pixels. */
 const STAGGER = 14;
 
-export function NumberLine({ marks, domain, gaps, allPositions, playingId = null, onActivate, label }: Props) {
+export function NumberLine({ marks, domain, gaps, band, allPositions, playingId = null, onActivate, label }: Props) {
   // An id for the arrowhead, unique to this line (useId's colons aren't valid in url()).
   const arrowId = `number-line-arrow-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 
@@ -116,6 +125,20 @@ export function NumberLine({ marks, domain, gaps, allPositions, playingId = null
             <polygon points="0 0, 8 3, 0 6" className="number-line-arrowhead" />
           </marker>
         </defs>
+
+        {/* The highlighted stretch, e.g. the home octave, clipped to the line's ends. */}
+        {band && (
+          <rect
+            className="number-line-band"
+            x={x(Math.max(band.from, low))}
+            y={LINE_Y - BAND_HALF_HEIGHT}
+            width={Math.max(0, x(Math.min(band.to, high)) - x(Math.max(band.from, low)))}
+            height={2 * BAND_HALF_HEIGHT}
+            fill={band.color}
+          >
+            <title>{band.label}</title>
+          </rect>
+        )}
 
         {/* The line, with an arrowhead at each end: it carries on past the notes shown. */}
         <line
@@ -176,6 +199,10 @@ export function NumberLine({ marks, domain, gaps, allPositions, playingId = null
               }}
             >
               <line className="number-line-tick" x1={markX} y1={LINE_Y - 6} x2={markX} y2={LINE_Y + 6} />
+              {/* A ring pulsing out from the note while it sounds. */}
+              {isPlaying && (
+                <circle className="note-pulse" cx={markX} cy={markY} r={MARK_RADIUS} stroke={mark.color.css} />
+              )}
               <circle className="number-line-focus" cx={markX} cy={markY} r={MARK_RADIUS + 4} />
               <circle cx={markX} cy={markY} r={MARK_RADIUS} fill={mark.color.css} />
               <text x={markX} y={markY} fill={mark.color.text} className="number-line-label">

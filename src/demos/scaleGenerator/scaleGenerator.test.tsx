@@ -35,6 +35,10 @@ describe('scale generator model', () => {
     expect(octaveFor(0, { shift: false, down: false })).toBe(0);
     expect(octaveFor(-1, { shift: true, down: false })).toBe(1);
     expect(octaveFor(1, { shift: false, down: true })).toBe(-1);
+
+    // Both together: home, so every octave is playable whatever's chosen.
+    expect(octaveFor(-1, { shift: true, down: true })).toBe(0);
+    expect(octaveFor(1, { shift: true, down: true })).toBe(0);
   });
 });
 
@@ -71,5 +75,16 @@ describe('scale generator demo', () => {
 
   it('disables removing the last note', () => {
     expect(render('size=1')).toMatch(/aria-label="Remove the last note" disabled=""/);
+  });
+
+  it('puts the octave control in the header bar, with its shortcuts in the tooltip', () => {
+    const html = render('');
+    const header = html.slice(html.indexOf('demo-header'), html.indexOf('tone-settings'));
+
+    expect(header).toContain('aria-label="Play notes in octave"');
+    expect(header).toContain(
+      'title="Shortcuts when selecting a note: Shift for the octave above, Ctrl or ⌘ for below, both for home."',
+    );
+    expect(html).not.toContain('demo-status');
   });
 });

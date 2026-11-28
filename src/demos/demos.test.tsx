@@ -76,7 +76,7 @@ describe('harmonic tone demo', () => {
     expect(html).toContain('4 partials enabled');
     expect(html.match(/<li class="harmonic-row/g)).toHaveLength(8);
     expect(html).toContain('Show all 16 harmonics');
-    expect(html).toContain('Audio stopped');
+    expect(html).not.toContain('demo-status'); // no status text until there's an error
   });
 
   it('marks the active preset', () => {
