@@ -44,7 +44,7 @@ Each pen and the rebuilt demo that replaces it. To migrate an embed, replace the
 | `what-do-we-want-more-evenness` | `/demos/number-line/?fifths=12&gaps=1` | Rebuilt |
 | `pentatonic-pitch-circle-arc-labels` | Not yet: the scale generator's circle, fixed at 5 notes | To do |
 | `music-table-with-arcs` | Not yet: interval table | To do |
-| `the-ever-tightening-circle` | `/demos/scale-generator/` | Rebuilt |
+| `the-ever-tightening-circle` | The "ever-tightening circle" variant: `/demos/scale-generator/?size=12&title=…` | Rebuilt; its table has one row per scale size, beside the circle |
 
 "Rebuilt" means the demo exists; the Notion embed still has to be swapped. Each rebuilt pen is a variant on the `/demos/` index, with its embed URL ready to copy. Changes from the pens:
 - **Note buttons:** each button names its notes in their pitch colors, with the hertz below, following the reader's tone. Notes are struck in the shared tone rather than the pens' own pluck synth, like every other demo.

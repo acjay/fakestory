@@ -4,7 +4,7 @@
  * CodePen on the shared engine, colors and octave circle.
  */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { DemoHeader } from '../DemoHeader';
 import { useNotePlayer } from '../useNotePlayer';
@@ -30,6 +30,16 @@ export function ScaleGeneratorDemo({ params, title }: { params: URLSearchParams;
 
   const notes = circleNotes(size);
   const table = statisticsTable(size);
+
+  // Keep the current size's row in view, scrolling only the table's own box.
+  const tableScroll = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const box = tableScroll.current;
+    const row = box?.querySelector<HTMLElement>('tr.is-current');
+    if (box && row) {
+      box.scrollTop = Math.max(0, row.offsetTop + row.offsetHeight - box.clientHeight);
+    }
+  }, [size]);
 
   // Played in the reader's shared tone, relative to its base frequency.
   function playNote(note: CircleNote, modifiers: Modifiers) {
@@ -84,72 +94,54 @@ export function ScaleGeneratorDemo({ params, title }: { params: URLSearchParams;
           'Select a note to hear it. Shortcuts: Shift for the octave above, Ctrl or ⌘ for below.'}
       </p>
 
-      <div className="scale-generator-circle">
-        <OctaveCircle
-          notes={notes}
-          playingId={playing?.id}
-          onActivate={playNote}
-          label={`Octave circle with ${size} notes, each a fifth above the last, folded into one octave.`}
-        />
-      </div>
-
-      <div className="demo-panel-head demo-rows-head">
-        <strong>Gaps by scale size</strong>
-        <span>in cents</span>
-      </div>
-
-      {table.map((group) => (
-        <div key={group[0].size} className="demo-table-scroll">
-          <table className="scale-generator-table">
-            <thead>
-              <tr>
-                <th scope="row">Notes</th>
-                {group.map(({ size: columnSize }) => (
-                  <th key={columnSize} scope="col" aria-current={columnSize === size || undefined}>
-                    {columnSize}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <StatisticRow label="Biggest gap" group={group} size={size} value={(s) => Math.round(s.biggest)} />
-              <StatisticRow label="Smallest gap" group={group} size={size} value={(s) => Math.round(s.smallest)} />
-              <StatisticRow label="Gap sizes" group={group} size={size} value={(s) => s.sizes} />
-              <StatisticRow
-                label="Std. deviation"
-                group={group}
-                size={size}
-                value={(s) => (s.sizes > 1 ? Math.round(s.standardDeviation) : '–')}
-              />
-            </tbody>
-          </table>
+      {/* The circle, with the table beside it where there's room, or below. */}
+      <div className="scale-generator-body">
+        <div className="scale-generator-circle">
+          <OctaveCircle
+            notes={notes}
+            playingId={playing?.id}
+            onActivate={playNote}
+            label={`Octave circle with ${size} notes, each a fifth above the last, folded into one octave.`}
+          />
         </div>
-      ))}
+
+        <div className="scale-generator-statistics">
+          <div className="demo-panel-head demo-rows-head">
+            <strong>Gaps by scale size</strong>
+            <span>in cents</span>
+          </div>
+
+          {/* Scrolls on its own once there are more sizes than fit beside the circle. */}
+          <div className="scale-generator-table-scroll" ref={tableScroll}>
+            <table className="scale-generator-table">
+              <thead>
+                <tr>
+                  <th scope="col">Notes</th>
+                  <th scope="col">Biggest gap</th>
+                  <th scope="col">Smallest gap</th>
+                  <th scope="col">Gap sizes</th>
+                  <th scope="col">Std. dev.</th>
+                </tr>
+              </thead>
+              <tbody>
+                {table.map(({ size: rowSize, statistics }) => (
+                  <tr
+                    key={rowSize}
+                    className={rowSize === size ? 'is-current' : undefined}
+                    aria-current={rowSize === size || undefined}
+                  >
+                    <th scope="row">{rowSize}</th>
+                    <td>{Math.round(statistics.biggest)}</td>
+                    <td>{Math.round(statistics.smallest)}</td>
+                    <td>{statistics.sizes}</td>
+                    <td>{statistics.sizes > 1 ? Math.round(statistics.standardDeviation) : '–'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
-  );
-}
-
-type Group = ReturnType<typeof statisticsTable>[number];
-
-function StatisticRow({
-  label,
-  group,
-  size,
-  value,
-}: {
-  label: string;
-  group: Group;
-  size: number;
-  value: (statistics: Group[number]['statistics']) => string | number;
-}) {
-  return (
-    <tr>
-      <th scope="row">{label}</th>
-      {group.map(({ size: columnSize, statistics }) => (
-        <td key={columnSize} className={columnSize === size ? 'is-current' : undefined}>
-          {value(statistics)}
-        </td>
-      ))}
-    </tr>
   );
 }

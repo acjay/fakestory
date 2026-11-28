@@ -504,20 +504,54 @@
 
 /* --- Scale generator ------------------------------------------------------ */
 
+/* The circle and the table side by side where there's room, stacked otherwise. */
+.scale-generator-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 32px;
+}
+
 .scale-generator-circle {
-  max-width: 440px;
-  margin: 8px auto 0;
+  flex: 1 1 300px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.scale-generator-statistics {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+/* A card about as tall as the circle, fitting the default 12 sizes; longer
+   tables scroll inside it. */
+.scale-generator-table-scroll {
+  max-height: 404px;
+  overflow-y: auto;
+  border: 1px solid var(--demo-border);
+  border-radius: 8px;
+  background: var(--demo-surface);
 }
 
 .scale-generator-table {
+  width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
 
+/* Column headings stay put while the rows scroll under them. */
+.scale-generator-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--demo-surface);
+  white-space: normal;
+  vertical-align: bottom;
+}
+
 .scale-generator-table th,
 .scale-generator-table td {
-  padding: 6px 8px;
+  padding: 4px 8px;
   border-top: 1px solid var(--demo-zero);
   text-align: right;
   white-space: nowrap;
@@ -533,8 +567,7 @@
   color: var(--demo-muted);
 }
 
-.scale-generator-table th[aria-current],
-.scale-generator-table td.is-current {
+.scale-generator-table tr.is-current > * {
   background: var(--demo-panel);
   color: var(--demo-text);
   font-weight: 600;
