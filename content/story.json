@@ -3405,12 +3405,12 @@
           },
           "children": [
             {
-              "id": "1115fa8f-f6f5-8075-863e-e6f5f8ef147f",
+              "id": "4265fa8f-f6f5-8020-8dd2-c2c1174d64de",
               "type": "embed",
               "has_children": false,
               "embed": {
                 "caption": [],
-                "url": "https://codepen.io/acjay/embed/WNVQWKx?default-tab=result&theme-id=light"
+                "url": "https://fakestory.alanjay1.workers.dev/demos/note-buttons/?buttons=%CE%B11&title=Our%20base%20tone"
               }
             }
           ]
@@ -3540,12 +3540,12 @@
           },
           "children": [
             {
-              "id": "1115fa8f-f6f5-8023-a2d4-eb86a5eb866c",
+              "id": "4265fa8f-f6f5-8047-b936-cce757e793a6",
               "type": "embed",
               "has_children": false,
               "embed": {
                 "caption": [],
-                "url": "https://codepen.io/acjay/embed/jOgbReV?default-tab=result&theme-id=light"
+                "url": "https://fakestory.alanjay1.workers.dev/demos/note-buttons/?buttons=%CE%B12&title=An%20octave%20up"
               }
             }
           ]
@@ -3638,12 +3638,12 @@
           },
           "children": [
             {
-              "id": "1115fa8f-f6f5-8022-9807-f2a3c63a45d7",
+              "id": "4265fa8f-f6f5-80bc-8bdb-d65cdb7e3a73",
               "type": "embed",
               "has_children": false,
               "embed": {
                 "caption": [],
-                "url": "https://codepen.io/acjay/embed/qBeOwJJ?default-tab=result&theme-id=light"
+                "url": "https://fakestory.alanjay1.workers.dev/demos/note-buttons/?buttons=%CE%B10&title=An%20octave%20down"
               }
             }
           ]
@@ -4983,12 +4983,12 @@
           },
           "children": [
             {
-              "id": "1125fa8f-f6f5-8005-8343-c46ccfb92a83",
+              "id": "4265fa8f-f6f5-80a9-bc41-dc73f929792b",
               "type": "embed",
               "has_children": false,
               "embed": {
                 "caption": [],
-                "url": "https://codepen.io/acjay/embed/jOgWOvj?default-tab=result&theme-id=light"
+                "url": "https://fakestory.alanjay1.workers.dev/demos/note-buttons/?buttons=%CE%B11,%CE%B31%7C%CE%B11,%CE%B21&title=Two-note%20harmonies"
               }
             }
           ]
